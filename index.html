@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="src\css\styles.css">
+</head>
+<body>
+	<section id="header">
+		<div class="overlay"></div>
+		<video autoplay muted loop preload="auto">
+			<source src="src\media\header\Editor[10].mp4" type="video/mp4">
+		</video>
+	</section>
+	<nav id="menu">
+		<a>
+			About Me
+		</a>
+		<a>
+			Portfolio
+		</a>
+		<a>
+			Contact
+		</a>
+	</nav>
+	<section id="aboutMe" class="content">
+		<div>
+			<div class="cube" front="0">
+				<div class="front">
+					1
+				</div>
+				<div class="back">
+					2
+				</div>
+				<div class="left">
+					3
+				</div>
+				<div class="right">
+					4
+				</div>
+				<div class="up">
+					5
+				</div>
+				<div class="down">
+					6
+				</div>
+			</div>
+		</div>
+		<div>
+			<h1>
+				About Me
+			</h1>
+			<p>
+				text 1
+			</p>
+			<p>
+				text 2
+			</p>
+			<p>
+				text 3
+			</p>
+		</div>
+	</section>
+	<section id="skills" class="content">
+		<div>
+			<canvas id="1">
+			</canvas>
+			
+			
+			<p>on ball</p>
+		</div>
+		
+		<div class="infoBox">
+			<h2>
+				Skill
+			</h2>
+			<h3>First Use</h3>
+			<p></p>
+			<h3>Most Recent</h3>
+			<p></p>
+			<a>Show More</a>
+		</div>
+	</section>
+	<section id="portfolio"></section>
+	<section id="footer"></section>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="https://raw.githubusercontent.com/caleb531/jcanvas/v21.0.1/dist/min/jcanvas.min.js"></script>
+	<script src="src/script/CubeFunctions.js"></script>
+	<script src="src/script/BallSim.js"></script>
+	<script>
+		function rotateCube() {
+			forwardFace($(".cube"), parseInt(Math.random() * 6))
+			setTimeout(rotateCube, 5000);
+		}
+		rotateCube();
+	</script>
+</body>
+</html>
