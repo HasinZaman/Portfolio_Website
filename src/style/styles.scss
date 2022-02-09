@@ -114,11 +114,19 @@ body {
 				position: absolute;
 			}
 
-			canvas {
-				transform-origin: left top;
+			.container {
 				height: 100%;
 				width: 100%;
+				svg {
+					height: 100%;
+					width: 100%;
+					
+					line {
+						stroke: white;
+					}
+				}
 			}
+			
 
 			.ball {
 				width: calc((#{$ballRadius} - #{$ballBorder}) * 2);

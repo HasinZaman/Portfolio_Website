@@ -1,4 +1,5 @@
-import { AttrVal, HTMLElem } from "../HTMLBuilder/HTMLBuilder";
+import { htmlPrefilter } from "jquery";
+import { AttrVal, HTMLElem, StyleAttr } from "../HTMLBuilder/HTMLBuilder";
 import { BezierCurve } from "./BezierCurve";
 import { Circle } from "./Circle";
 import { Line } from "./Line";
@@ -12,8 +13,43 @@ interface IRadiusAnimation {
 }
 
 export class Edge {
+    private static svgJquery : JQuery = $("svg").parent();
+    private static svg : HTMLElem = new HTMLElem("svg");
+    private static size : Vector = new Vector(0, 0);
+    
+    static setSVGElemSize(width : number, height : number) {
+        Edge.size.x = width;
+        Edge.size.y = height;
+        
+        if(this.svg.get("width").length == 0) {
+            this.svg.get("width").push(new AttrVal(width.toString()));
+        }
+        else {
+            this.svg.get("width")[0].value = width.toString();
+        }
+
+        if(this.svg.get("height").length == 0) {
+            this.svg.get("height").push(new AttrVal(height.toString()));
+        }
+        else {
+            this.svg.get("height")[0].value = height.toString();
+        }
+        
+    }
+
+    static updateSVGElem(edges : Edge[]) {
+        Edge.svgJquery.html(Edge.svg.generate());
+    }
+
+    //connections
     ball1 : SkillBall;
     ball2 : SkillBall;
+
+    //properties
+    width : number;
+    
+    //
+    line : HTMLElem;
 
     constructor(ball1 : SkillBall, ball2 : SkillBall) {
         if(ball1.id < ball2.id) {
@@ -24,6 +60,37 @@ export class Edge {
             this.ball2 = ball1;
             this.ball1 = ball2;
         }
+
+        this.width = 1;
+
+        let tmp : HTMLElem = new HTMLElem("line");
+        let id : string = `line-${this.ball1.id}-${this.ball2.id}`;
+
+        tmp.get("id").push(new AttrVal(id));
+
+        this.line = new HTMLElem("line");
+
+        this.line.get("style").push(new StyleAttr("stroke-width", this.width.toString()));
+        this.line.get("style").push(new StyleAttr("stroke", "white"));
+
+        this.line.get("x1").push(new AttrVal("0px"));
+        this.line.get("y1").push(new AttrVal("0px"));
+        this.line.get("x2").push(new AttrVal("0px"));
+        this.line.get("y2").push(new AttrVal("0px"));
+
+        this.updateLine();
+
+        Edge.svg.addChild(this.line);
+    }
+
+    public updateLine() : void {
+        this.line.get("style")[0].value = this.width.toString();
+
+        this.line.get("x1")[0].value = `${this.ball1.p.x}px`;
+        this.line.get("y1")[0].value = `${Edge.size.y - this.ball1.p.y}px`;
+
+        this.line.get("x2")[0].value = `${this.ball2.p.x}px`;
+        this.line.get("y2")[0].value = `${Edge.size.y - this.ball2.p.y}px`;
     }
 }
 

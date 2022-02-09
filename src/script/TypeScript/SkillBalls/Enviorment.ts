@@ -1,4 +1,3 @@
-import { CanvasController } from "../CanvasController/CanvasController";
 import { ballGenerate, randomBallPos } from "./BallGeneration";
 import { Circle } from "./Circle";
 import { interceptChecks } from "./Intercept";
@@ -6,18 +5,16 @@ import { ISkillBallGenerator } from "./ISkillBallGenerator";
 import { Line } from "./Line";
 import { Path } from "./Path";
 import { Rect } from "./Rect";
-import { SkillBall } from "./SkillBall";
+import { Edge, SkillBall } from "./SkillBall";
 import { Vector } from "./Vector";
 
 //enviorment
-let skillBox : JQuery = $("#skills div");
+let skillBox : JQuery = $("#skills div:first");
 
 let enviormentSize : Vector;
 let ballSize : Vector;
 
-let timeDelta : number = 20;//s
-
-let canvas : CanvasController;
+let timeDelta : number = 20;//ms
 
 //entites
 let entites : Path[] = []
@@ -30,8 +27,11 @@ function start(skillBallGenerator : ISkillBallGenerator) {
 
     console.log(entites);
 
+
     setTimeout(update, timeDelta);
 }
+
+var counter = 0;
 
 function update() : void {
     //calculate ball physics
@@ -91,15 +91,18 @@ function update() : void {
         render(ball);
     }
     
-    canvas.clear();
+    //edge rendering
+
+    counter++;
+
     SkillBall.edgeList.forEach(edge => {
-        canvas.drawLine(
-            edge.ball1.getCenter(),
-            edge.ball2.getCenter(),
-            1,
-            "white"
-        )
+        edge.updateLine();
     });
+
+    Edge.updateSVGElem(SkillBall.edgeList);
+
+    
+    
     //update after n time
     setTimeout(update, timeDelta);
 }
@@ -129,7 +132,7 @@ function reSize() : void {
     enviormentSize = new Vector(skillBox.width() as number, skillBox.height() as number);
     ballSize = new Vector(100, 100);
 
-    canvas = CanvasController.factory($("#skills canvas"), new Vector(enviormentSize.x, enviormentSize.y), new Vector(enviormentSize.x * 10, enviormentSize.y * 10)) as CanvasController;
+    Edge.setSVGElemSize(enviormentSize.x, enviormentSize.y);
 
     let gradientPath : Vector[] = [new Vector(1, 0),new Vector(0, 1),new Vector(-1, 0),new Vector(0, -1)]
     let start : Vector = new Vector(0,0);

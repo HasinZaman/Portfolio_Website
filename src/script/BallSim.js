@@ -1,64 +1,6 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CanvasController = void 0;
-const Vector_1 = require("../SkillBalls/Vector");
-class CanvasController {
-    constructor(context, virtualSize, resolution) {
-        this.context = context;
-        this.size = virtualSize;
-        this.resolution = resolution;
-        this.scaleFactor = new Vector_1.Vector(resolution.x / virtualSize.x, resolution.y / virtualSize.y);
-        //this.context.scale(10, 10);
-    }
-    static factory(canvasID, virtualSize, resolution) {
-        let jQuery;
-        let id;
-        let context;
-        if (typeof canvasID === "string") {
-            jQuery = $(canvasID);
-        }
-        else {
-            jQuery = canvasID;
-        }
-        if (jQuery[0] == undefined) {
-            return undefined;
-        }
-        id = jQuery.attr("id");
-        if (!CanvasController.instances.has(id)) {
-            context = jQuery[0].getContext("2d");
-            let tmp = new CanvasController(context, virtualSize, resolution);
-            CanvasController.instances.set(id, tmp);
-            //jQuery.css("width",`${tmp.resolution.x}px`);
-            jQuery.attr("width", `${tmp.resolution.x}px`);
-            //jQuery.css("height",`${tmp.resolution.y}px`);
-            jQuery.attr("height", `${tmp.resolution.y}px`);
-            //jQuery.css("transform",`scale(${1/tmp.scaleFactor.x},${1/tmp.scaleFactor.y})`);
-        }
-        return CanvasController.instances.get(id);
-    }
-    drawLine(start, end, width, colour) {
-        this.context.lineWidth = width * this.scaleFactor.x;
-        this.context.strokeStyle = colour;
-        //console.log("line")
-        //console.log(start);
-        //console.log(end);
-        this.context.beginPath();
-        this.context.moveTo(start.x * 10, (this.size.y - start.y) * 10);
-        this.context.lineTo(end.x * 10, (this.size.y - end.y) * 10);
-        this.context.closePath();
-        this.context.stroke();
-    }
-    clear() {
-        this.context.clearRect(0, 0, this.resolution.x, this.resolution.y);
-    }
-}
-exports.CanvasController = CanvasController;
-CanvasController.instances = new Map();
-
-},{"../SkillBalls/Vector":11}],2:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.HTMLElem = exports.StyleAttr = exports.AttrVal = void 0;
 class KeyValuePair {
     constructor(key, values) {
@@ -129,7 +71,7 @@ class HTMLElem {
 }
 exports.HTMLElem = HTMLElem;
 
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.randomBallPos = exports.ballGenerate = void 0;
@@ -163,7 +105,7 @@ function randomBallPos(radius, space, ignore, entites) {
 }
 exports.randomBallPos = randomBallPos;
 
-},{"./Circle":5,"./Intercept":7,"./Rect":9,"./SkillBall":10,"./Vector":11}],4:[function(require,module,exports){
+},{"./Circle":4,"./Intercept":6,"./Rect":8,"./SkillBall":9,"./Vector":10}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BezierCurve = void 0;
@@ -211,7 +153,7 @@ class BezierCurve {
 }
 exports.BezierCurve = BezierCurve;
 
-},{"./Line":8,"./Vector":11}],5:[function(require,module,exports){
+},{"./Line":7,"./Vector":10}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Circle = void 0;
@@ -241,10 +183,9 @@ class Circle {
 }
 exports.Circle = Circle;
 
-},{"./Vector":11}],6:[function(require,module,exports){
+},{"./Vector":10}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const CanvasController_1 = require("../CanvasController/CanvasController");
 const BallGeneration_1 = require("./BallGeneration");
 const Intercept_1 = require("./Intercept");
 const Line_1 = require("./Line");
@@ -252,11 +193,10 @@ const Rect_1 = require("./Rect");
 const SkillBall_1 = require("./SkillBall");
 const Vector_1 = require("./Vector");
 //enviorment
-let skillBox = $("#skills div");
+let skillBox = $("#skills div:first");
 let enviormentSize;
 let ballSize;
-let timeDelta = 20; //s
-let canvas;
+let timeDelta = 20; //ms
 //entites
 let entites = [];
 function start(skillBallGenerator) {
@@ -265,6 +205,7 @@ function start(skillBallGenerator) {
     console.log(entites);
     setTimeout(update, timeDelta);
 }
+var counter = 0;
 function update() {
     //calculate ball physics
     let ignore = [];
@@ -307,10 +248,12 @@ function update() {
         ball.move(timeDelta / 1000);
         render(ball);
     }
-    canvas.clear();
+    //edge rendering
+    counter++;
     SkillBall_1.SkillBall.edgeList.forEach(edge => {
-        canvas.drawLine(edge.ball1.getCenter(), edge.ball2.getCenter(), 1, "white");
+        edge.updateLine();
     });
+    SkillBall_1.Edge.updateSVGElem(SkillBall_1.SkillBall.edgeList);
     //update after n time
     setTimeout(update, timeDelta);
 }
@@ -331,7 +274,7 @@ function render(ball) {
 function reSize() {
     enviormentSize = new Vector_1.Vector(skillBox.width(), skillBox.height());
     ballSize = new Vector_1.Vector(100, 100);
-    canvas = CanvasController_1.CanvasController.factory($("#skills canvas"), new Vector_1.Vector(enviormentSize.x, enviormentSize.y), new Vector_1.Vector(enviormentSize.x * 10, enviormentSize.y * 10));
+    SkillBall_1.Edge.setSVGElemSize(enviormentSize.x, enviormentSize.y);
     let gradientPath = [new Vector_1.Vector(1, 0), new Vector_1.Vector(0, 1), new Vector_1.Vector(-1, 0), new Vector_1.Vector(0, -1)];
     let start = new Vector_1.Vector(0, 0);
     if (entites.length > 4) {
@@ -371,7 +314,7 @@ $(window).on("load", () => {
     start(BallGeneration_1.ballGenerate);
 });
 
-},{"../CanvasController/CanvasController":1,"./BallGeneration":3,"./Intercept":7,"./Line":8,"./Rect":9,"./SkillBall":10,"./Vector":11}],7:[function(require,module,exports){
+},{"./BallGeneration":2,"./Intercept":6,"./Line":7,"./Rect":8,"./SkillBall":9,"./Vector":10}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.interceptCheck = exports.interceptChecks = exports.rayCheck = exports.rayChecks = void 0;
@@ -554,7 +497,7 @@ function LineRectIntercept(l, r) {
     return tmp;
 }
 
-},{"./Circle":5,"./Line":8,"./Rect":9,"./Vector":11}],8:[function(require,module,exports){
+},{"./Circle":4,"./Line":7,"./Rect":8,"./Vector":10}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Line = void 0;
@@ -593,7 +536,7 @@ class Line {
 }
 exports.Line = Line;
 
-},{"./Vector":11}],9:[function(require,module,exports){
+},{"./Vector":10}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Rect = void 0;
@@ -687,7 +630,7 @@ class Rect {
 }
 exports.Rect = Rect;
 
-},{"./Line":8,"./Vector":11}],10:[function(require,module,exports){
+},{"./Line":7,"./Vector":10}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SkillBall = exports.Edge = void 0;
@@ -706,9 +649,51 @@ class Edge {
             this.ball2 = ball1;
             this.ball1 = ball2;
         }
+        this.width = 1;
+        let tmp = new HTMLBuilder_1.HTMLElem("line");
+        let id = `line-${this.ball1.id}-${this.ball2.id}`;
+        tmp.get("id").push(new HTMLBuilder_1.AttrVal(id));
+        this.line = new HTMLBuilder_1.HTMLElem("line");
+        this.line.get("style").push(new HTMLBuilder_1.StyleAttr("stroke-width", this.width.toString()));
+        this.line.get("style").push(new HTMLBuilder_1.StyleAttr("stroke", "white"));
+        this.line.get("x1").push(new HTMLBuilder_1.AttrVal("0px"));
+        this.line.get("y1").push(new HTMLBuilder_1.AttrVal("0px"));
+        this.line.get("x2").push(new HTMLBuilder_1.AttrVal("0px"));
+        this.line.get("y2").push(new HTMLBuilder_1.AttrVal("0px"));
+        this.updateLine();
+        Edge.svg.addChild(this.line);
+    }
+    static setSVGElemSize(width, height) {
+        Edge.size.x = width;
+        Edge.size.y = height;
+        if (this.svg.get("width").length == 0) {
+            this.svg.get("width").push(new HTMLBuilder_1.AttrVal(width.toString()));
+        }
+        else {
+            this.svg.get("width")[0].value = width.toString();
+        }
+        if (this.svg.get("height").length == 0) {
+            this.svg.get("height").push(new HTMLBuilder_1.AttrVal(height.toString()));
+        }
+        else {
+            this.svg.get("height")[0].value = height.toString();
+        }
+    }
+    static updateSVGElem(edges) {
+        Edge.svgJquery.html(Edge.svg.generate());
+    }
+    updateLine() {
+        this.line.get("style")[0].value = this.width.toString();
+        this.line.get("x1")[0].value = `${this.ball1.p.x}px`;
+        this.line.get("y1")[0].value = `${Edge.size.y - this.ball1.p.y}px`;
+        this.line.get("x2")[0].value = `${this.ball2.p.x}px`;
+        this.line.get("y2")[0].value = `${Edge.size.y - this.ball2.p.y}px`;
     }
 }
 exports.Edge = Edge;
+Edge.svgJquery = $("svg").parent();
+Edge.svg = new HTMLBuilder_1.HTMLElem("svg");
+Edge.size = new Vector_1.Vector(0, 0);
 class SkillBall extends Circle_1.Circle {
     constructor(id, radius, start, intialVelocity, mass, environment, iconName) {
         super(radius, start);
@@ -968,7 +953,7 @@ SkillBall.defaultAnimation = new BezierCurve_1.BezierCurve([
 ]);
 SkillBall.edgeList = [];
 
-},{"../HTMLBuilder/HTMLBuilder":2,"./BezierCurve":4,"./Circle":5,"./Line":8,"./Vector":11}],11:[function(require,module,exports){
+},{"../HTMLBuilder/HTMLBuilder":1,"./BezierCurve":3,"./Circle":4,"./Line":7,"./Vector":10}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Vector = void 0;
@@ -1017,4 +1002,4 @@ class Vector {
 }
 exports.Vector = Vector;
 
-},{}]},{},[6]);
+},{}]},{},[5]);
