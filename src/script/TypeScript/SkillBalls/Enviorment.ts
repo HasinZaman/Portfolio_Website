@@ -1,10 +1,11 @@
 import { CanvasController } from "../CanvasController/CanvasController";
-import { ballGenerate } from "./BallGeneration";
+import { ballGenerate, randomBallPos } from "./BallGeneration";
 import { Circle } from "./Circle";
 import { interceptChecks } from "./Intercept";
 import { ISkillBallGenerator } from "./ISkillBallGenerator";
 import { Line } from "./Line";
 import { Path } from "./Path";
+import { Rect } from "./Rect";
 import { SkillBall } from "./SkillBall";
 import { Vector } from "./Vector";
 
@@ -25,7 +26,7 @@ let entites : Path[] = []
 function start(skillBallGenerator : ISkillBallGenerator) {
     reSize();
 
-    skillBallGenerator(ballSize, enviormentSize, skillBox).forEach(ball => entites.push(ball));
+    skillBallGenerator(ballSize.x / 2, enviormentSize, skillBox).forEach(ball => entites.push(ball));
 
     console.log(entites);
 
@@ -70,7 +71,11 @@ function update() : void {
         //check if ball is within enviorment
         if(!boundaryCheck(ball)) {
             //update position
-            let pos : Vector = randomBallPos(ball.radius, [i1]);
+            let pos : Vector = randomBallPos(
+                ball.radius,
+                new Rect(enviormentSize.x, enviormentSize.y, 0, new Vector(0, 0)),
+                [i1],
+                entites);
 
             ball.p.x = pos.x;
             ball.p.y = pos.y;
@@ -112,19 +117,6 @@ function boundaryCheck(ball : SkillBall) : boolean {
     }
 
     return true;
-}
-
-function randomBallPos(radius : number, ignore : number[]) : Vector {
-    let circle : Circle;
-    let pos :  Vector = new Vector(0, 0);
-    circle = new Circle(radius, pos);
-
-    do{
-        pos.x = Math.random() * enviormentSize.x;
-        pos.y = Math.random() * enviormentSize.y;
-    } while(interceptChecks(circle, entites, ignore).length > 0) ;
-
-    return pos;
 }
 
 function render(ball : SkillBall) : void
