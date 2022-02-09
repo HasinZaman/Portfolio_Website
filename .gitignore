@@ -74,3 +74,7 @@ typings/
 
 # FuseBox cache
 .fusebox/
+
+# compiled js files that are not used on pages
+/src/script/TypeScript/**/*.js
+/src/script/TypeScript/**/*.js.map
