@@ -1,43 +1,12 @@
 import { CanvasController } from "../CanvasController/CanvasController";
+import { ballGenerate } from "./BallGeneration";
 import { Circle } from "./Circle";
 import { interceptChecks } from "./Intercept";
 import { ISkillBallGenerator } from "./ISkillBallGenerator";
 import { Line } from "./Line";
 import { Path } from "./Path";
-import { Rect } from "./Rect";
 import { SkillBall } from "./SkillBall";
 import { Vector } from "./Vector";
-
-class OneBall extends ISkillBallGenerator {
-    generate(ballSize : Vector) : SkillBall[]
-    {
-        return [new SkillBall(1, ballSize.x / 2 , new Vector((enviormentSize.x - ballSize.x)/2, (enviormentSize.y - ballSize.y)/2), Vector.mult(new Vector(1,1), 100), 1, skillBox, "javascript")];
-    }
-}
-class TwoBall extends ISkillBallGenerator {
-    generate(ballSize : Vector) : SkillBall[]
-    {
-        return [
-            new SkillBall(1, ballSize.x / 2 , new Vector((enviormentSize.x - ballSize.x)/4, (enviormentSize.y - ballSize.y)/4), Vector.mult(new Vector(0.5,1), 100), 1, skillBox, "javascript"),
-            new SkillBall(2, ballSize.x / 2 , new Vector(3*(enviormentSize.x - ballSize.x)/4, 3*(enviormentSize.y - ballSize.y)/4), Vector.mult(new Vector(1,0.5), 100), 1, skillBox, "css"),
-        ];
-    }
-}
-class ThreeBall extends ISkillBallGenerator {
-    generate(ballSize : Vector) : SkillBall[]
-    {
-        let tmp = [
-            new SkillBall(1, ballSize.x / 2 , new Vector((enviormentSize.x - ballSize.x)/4, (enviormentSize.y - ballSize.y)/4), Vector.mult(new Vector(0.5,1), 100), 1, skillBox, "javascript"),
-            new SkillBall(2, ballSize.x / 2 , new Vector(3*(enviormentSize.x - ballSize.x)/4, 3*(enviormentSize.y - ballSize.y)/4), Vector.mult(new Vector(1,0.5), 100), 1, skillBox, "css"),
-            new SkillBall(3, ballSize.x / 2 , new Vector(500, 300), Vector.mult(new Vector(1,1), 100), 1, skillBox, "html")
-        ];
-
-        SkillBall.addEdge(tmp[0],tmp[1])
-        SkillBall.addEdge(tmp[1],tmp[2])
-        console.log(SkillBall.edgeList);
-        return tmp;
-    }
-}
 
 //enviorment
 let skillBox : JQuery = $("#skills div");
@@ -56,7 +25,7 @@ let entites : Path[] = []
 function start(skillBallGenerator : ISkillBallGenerator) {
     reSize();
 
-    skillBallGenerator.generate(ballSize).forEach(ball => entites.push(ball));
+    skillBallGenerator(ballSize, enviormentSize, skillBox).forEach(ball => entites.push(ball));
 
     console.log(entites);
 
@@ -210,5 +179,5 @@ function reSize() : void {
 
 $(window).on("load", () => {
     $(window).on('resize', reSize);
-    start(new ThreeBall());
+    start(ballGenerate);
 })
