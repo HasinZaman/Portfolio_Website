@@ -132,6 +132,40 @@ exports.HTMLElem = HTMLElem;
 },{}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.randomBallPos = exports.ballGenerate = void 0;
+const Circle_1 = require("./Circle");
+const Intercept_1 = require("./Intercept");
+const Rect_1 = require("./Rect");
+const SkillBall_1 = require("./SkillBall");
+const Vector_1 = require("./Vector");
+let skills = ["html", "css", "javascript"];
+let connections = [[0, 1], [1, 2]];
+function ballGenerate(ballRadius, enviormentSize, skillBox) {
+    let tmp = [];
+    for (let i1 = 0; i1 < skills.length; i1++) {
+        tmp.push(new SkillBall_1.SkillBall(i1, ballRadius, randomBallPos(ballRadius, new Rect_1.Rect(enviormentSize.x, enviormentSize.y, 0, new Vector_1.Vector(0, 0)), [], tmp), Vector_1.Vector.mult(Vector_1.Vector.normalize(new Vector_1.Vector(Math.random() * 2 - 1, Math.random() * 2 - 1)), 100), 1, skillBox, skills[i1]));
+    }
+    SkillBall_1.SkillBall.addEdge(tmp[0], tmp[1]);
+    SkillBall_1.SkillBall.addEdge(tmp[1], tmp[2]);
+    console.log(SkillBall_1.SkillBall.edgeList);
+    return tmp;
+}
+exports.ballGenerate = ballGenerate;
+function randomBallPos(radius, space, ignore, entites) {
+    let circle;
+    let pos = new Vector_1.Vector(0, 0);
+    circle = new Circle_1.Circle(radius, pos);
+    do {
+        pos.x = Math.random() * space.getWidth();
+        pos.y = Math.random() * space.getHeight();
+    } while ((0, Intercept_1.interceptChecks)(circle, entites, ignore).length > 0);
+    return pos;
+}
+exports.randomBallPos = randomBallPos;
+
+},{"./Circle":5,"./Intercept":7,"./Rect":9,"./SkillBall":10,"./Vector":11}],4:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.BezierCurve = void 0;
 const Line_1 = require("./Line");
 const Vector_1 = require("./Vector");
@@ -177,7 +211,7 @@ class BezierCurve {
 }
 exports.BezierCurve = BezierCurve;
 
-},{"./Line":8,"./Vector":11}],4:[function(require,module,exports){
+},{"./Line":8,"./Vector":11}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Circle = void 0;
@@ -207,42 +241,16 @@ class Circle {
 }
 exports.Circle = Circle;
 
-},{"./Vector":11}],5:[function(require,module,exports){
+},{"./Vector":11}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const CanvasController_1 = require("../CanvasController/CanvasController");
-const Circle_1 = require("./Circle");
+const BallGeneration_1 = require("./BallGeneration");
 const Intercept_1 = require("./Intercept");
-const ISkillBallGenerator_1 = require("./ISkillBallGenerator");
 const Line_1 = require("./Line");
+const Rect_1 = require("./Rect");
 const SkillBall_1 = require("./SkillBall");
 const Vector_1 = require("./Vector");
-class OneBall extends ISkillBallGenerator_1.ISkillBallGenerator {
-    generate(ballSize) {
-        return [new SkillBall_1.SkillBall(1, ballSize.x / 2, new Vector_1.Vector((enviormentSize.x - ballSize.x) / 2, (enviormentSize.y - ballSize.y) / 2), Vector_1.Vector.mult(new Vector_1.Vector(1, 1), 100), 1, skillBox, "javascript")];
-    }
-}
-class TwoBall extends ISkillBallGenerator_1.ISkillBallGenerator {
-    generate(ballSize) {
-        return [
-            new SkillBall_1.SkillBall(1, ballSize.x / 2, new Vector_1.Vector((enviormentSize.x - ballSize.x) / 4, (enviormentSize.y - ballSize.y) / 4), Vector_1.Vector.mult(new Vector_1.Vector(0.5, 1), 100), 1, skillBox, "javascript"),
-            new SkillBall_1.SkillBall(2, ballSize.x / 2, new Vector_1.Vector(3 * (enviormentSize.x - ballSize.x) / 4, 3 * (enviormentSize.y - ballSize.y) / 4), Vector_1.Vector.mult(new Vector_1.Vector(1, 0.5), 100), 1, skillBox, "css"),
-        ];
-    }
-}
-class ThreeBall extends ISkillBallGenerator_1.ISkillBallGenerator {
-    generate(ballSize) {
-        let tmp = [
-            new SkillBall_1.SkillBall(1, ballSize.x / 2, new Vector_1.Vector((enviormentSize.x - ballSize.x) / 4, (enviormentSize.y - ballSize.y) / 4), Vector_1.Vector.mult(new Vector_1.Vector(0.5, 1), 100), 1, skillBox, "javascript"),
-            new SkillBall_1.SkillBall(2, ballSize.x / 2, new Vector_1.Vector(3 * (enviormentSize.x - ballSize.x) / 4, 3 * (enviormentSize.y - ballSize.y) / 4), Vector_1.Vector.mult(new Vector_1.Vector(1, 0.5), 100), 1, skillBox, "css"),
-            new SkillBall_1.SkillBall(3, ballSize.x / 2, new Vector_1.Vector(500, 300), Vector_1.Vector.mult(new Vector_1.Vector(1, 1), 100), 1, skillBox, "html")
-        ];
-        SkillBall_1.SkillBall.addEdge(tmp[0], tmp[1]);
-        SkillBall_1.SkillBall.addEdge(tmp[1], tmp[2]);
-        console.log(SkillBall_1.SkillBall.edgeList);
-        return tmp;
-    }
-}
 //enviorment
 let skillBox = $("#skills div");
 let enviormentSize;
@@ -253,7 +261,7 @@ let canvas;
 let entites = [];
 function start(skillBallGenerator) {
     reSize();
-    skillBallGenerator.generate(ballSize).forEach(ball => entites.push(ball));
+    skillBallGenerator(ballSize.x / 2, enviormentSize, skillBox).forEach(ball => entites.push(ball));
     console.log(entites);
     setTimeout(update, timeDelta);
 }
@@ -288,7 +296,7 @@ function update() {
         //check if ball is within enviorment
         if (!boundaryCheck(ball)) {
             //update position
-            let pos = randomBallPos(ball.radius, [i1]);
+            let pos = (0, BallGeneration_1.randomBallPos)(ball.radius, new Rect_1.Rect(enviormentSize.x, enviormentSize.y, 0, new Vector_1.Vector(0, 0)), [i1], entites);
             ball.p.x = pos.x;
             ball.p.y = pos.y;
             ball.vel = Vector_1.Vector.mult(new Vector_1.Vector(Math.random(), Math.random()), Vector_1.Vector.dist(ball.vel));
@@ -315,16 +323,6 @@ function boundaryCheck(ball) {
         return false;
     }
     return true;
-}
-function randomBallPos(radius, ignore) {
-    let circle;
-    let pos = new Vector_1.Vector(0, 0);
-    circle = new Circle_1.Circle(radius, pos);
-    do {
-        pos.x = Math.random() * enviormentSize.x;
-        pos.y = Math.random() * enviormentSize.y;
-    } while ((0, Intercept_1.interceptChecks)(circle, entites, ignore).length > 0);
-    return pos;
 }
 function render(ball) {
     let tmp = Vector_1.Vector.sub(ball.p, new Vector_1.Vector(ballSize.x / 2, -1 * ballSize.y / 2));
@@ -370,21 +368,10 @@ function reSize() {
 }
 $(window).on("load", () => {
     $(window).on('resize', reSize);
-    start(new ThreeBall());
+    start(BallGeneration_1.ballGenerate);
 });
 
-},{"../CanvasController/CanvasController":1,"./Circle":4,"./ISkillBallGenerator":6,"./Intercept":7,"./Line":8,"./SkillBall":10,"./Vector":11}],6:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ISkillBallGenerator = void 0;
-class ISkillBallGenerator {
-    generate(ballSize) {
-        return [];
-    }
-}
-exports.ISkillBallGenerator = ISkillBallGenerator;
-
-},{}],7:[function(require,module,exports){
+},{"../CanvasController/CanvasController":1,"./BallGeneration":3,"./Intercept":7,"./Line":8,"./Rect":9,"./SkillBall":10,"./Vector":11}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.interceptCheck = exports.interceptChecks = exports.rayCheck = exports.rayChecks = void 0;
@@ -567,7 +554,7 @@ function LineRectIntercept(l, r) {
     return tmp;
 }
 
-},{"./Circle":4,"./Line":8,"./Rect":9,"./Vector":11}],8:[function(require,module,exports){
+},{"./Circle":5,"./Line":8,"./Rect":9,"./Vector":11}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Line = void 0;
@@ -958,6 +945,13 @@ class SkillBall extends Circle_1.Circle {
         this.updateRadius(time);
     }
     destroy() {
+        let edge;
+        for (let i1 = SkillBall.edgeList.length - 1; i1 >= 0; i1--) {
+            edge = SkillBall.edgeList[i1];
+            if (edge.ball1.id == this.id || edge.ball2.id == this.id) {
+                SkillBall.edgeList.splice(i1, 1);
+            }
+        }
     }
 }
 exports.SkillBall = SkillBall;
@@ -974,7 +968,7 @@ SkillBall.defaultAnimation = new BezierCurve_1.BezierCurve([
 ]);
 SkillBall.edgeList = [];
 
-},{"../HTMLBuilder/HTMLBuilder":2,"./BezierCurve":3,"./Circle":4,"./Line":8,"./Vector":11}],11:[function(require,module,exports){
+},{"../HTMLBuilder/HTMLBuilder":2,"./BezierCurve":4,"./Circle":5,"./Line":8,"./Vector":11}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Vector = void 0;
@@ -1023,4 +1017,4 @@ class Vector {
 }
 exports.Vector = Vector;
 
-},{}]},{},[5]);
+},{}]},{},[6]);
