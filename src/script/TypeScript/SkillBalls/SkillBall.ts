@@ -1,6 +1,7 @@
 import { AttrVal, HTMLElem, StyleAttr } from "../HTMLBuilder/HTMLBuilder";
 import { BezierCurve } from "./BezierCurve";
 import { Circle } from "./Circle";
+import { openInfoBox } from "./InfoBox";
 import { Line } from "./Line";
 import { Vector } from "./Vector";
 
@@ -299,7 +300,7 @@ export class SkillBall extends Circle
         let skillBall : SkillBall = this;
 
         tmp.on("click", function() {
-            skillBall.onClick();
+            openInfoBox(skillBall.iconName);
         })
         
         tmp.on("mouseenter", function() {
@@ -332,11 +333,7 @@ export class SkillBall extends Circle
     }
 
     private onClick() : void {
-        this.foo("click",this.id,this.iconName)
-    }
-
-    public foo(action : string, id : number, iconName : string) {
-        console.log(`${action}:${id}-${iconName}`);
+        //this.foo("click",this.id,this.iconName)
     }
 
     public bounce(collisionPlane  : Vector) : void

@@ -325,10 +325,34 @@ function initializeInfoBox() {
     });
 }
 exports.initializeInfoBox = initializeInfoBox;
-function openInfoBox() {
+function openInfoBox(skillName) {
     $("#skills .infoBox").addClass("active");
+    $("#skills .infoBox h2").text(skillName.toUpperCase());
+    //insert data reterival system
+    let tmpDate1 = new Date();
+    tmpDate1.setFullYear(2020, 12);
+    let tmpDate2 = new Date();
+    tmpDate1.setFullYear(2012, 8);
+    let first = {
+        name: "project 1",
+        date: tmpDate1,
+        description: "This is project 1 and this is a description"
+    };
+    let last = {
+        name: "project 2",
+        date: tmpDate2,
+        description: "This is project 2 and this is a description"
+    };
+    updateInfoBox($("#skills .infoBox .skillInfo").first(), first);
+    updateInfoBox($("#skills .infoBox .skillInfo").last(), last);
 }
 exports.openInfoBox = openInfoBox;
+function updateInfoBox(target, data) {
+    target.find(".projectName").text(data.name);
+    target.find(".date").text(data.date.toLocaleString("en-US", { month: "long", year: "numeric" }));
+    target.find(".description").text(data.description);
+    target.find(".readMore").on("click", () => { console.log(`${data.name}-click`); });
+}
 
 },{}],7:[function(require,module,exports){
 "use strict";
@@ -850,7 +874,7 @@ class SkillBall extends Circle_1.Circle {
         //setting functionality
         let skillBall = this;
         tmp.on("click", function () {
-            (0, InfoBox_1.openInfoBox)();
+            (0, InfoBox_1.openInfoBox)(skillBall.iconName);
         });
         tmp.on("mouseenter", function () {
             skillBall.onMouseEnter();
