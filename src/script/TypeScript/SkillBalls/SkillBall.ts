@@ -1,4 +1,3 @@
-import { htmlPrefilter } from "jquery";
 import { AttrVal, HTMLElem, StyleAttr } from "../HTMLBuilder/HTMLBuilder";
 import { BezierCurve } from "./BezierCurve";
 import { Circle } from "./Circle";
