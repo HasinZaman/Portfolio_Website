@@ -189,7 +189,7 @@ body {
 
 			background-color: black;
 
-			display: felx;
+			translate: transform ease-in-out 2s;
 
 			//desktop veiw
 			@media screen and (min-width: 768px) {
@@ -198,6 +198,8 @@ body {
 
 				$width: 50%;
 				$height: 80%;
+				
+				display: none;
 
 				//display: none;
 				width: $width;
@@ -223,6 +225,8 @@ body {
 				$paddingWidth: 10vw;
 
 				position: fixed;
+
+				transform: translate(-100%);
 
 				width: 100vw - $paddingWidth * 2;
 				height: 100%;
@@ -330,6 +334,19 @@ body {
 				a {
 					width: fit-content;
 				}
+			}
+		}
+
+		.active {
+			//desktop veiw
+			@media screen and (min-width: 768px) {
+				display: flex;
+				flex-direction: column;
+			}
+			
+			//tablet & mobile veiw
+			@media screen and (max-width: 768px) {
+				transform: translate(0);
 			}
 		}
 	}

@@ -106,7 +106,7 @@ function randomBallPos(radius, space, ignore, entites) {
 }
 exports.randomBallPos = randomBallPos;
 
-},{"./Circle":4,"./Intercept":6,"./Rect":8,"./SkillBall":9,"./Vector":10}],3:[function(require,module,exports){
+},{"./Circle":4,"./Intercept":7,"./Rect":9,"./SkillBall":10,"./Vector":11}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BezierCurve = void 0;
@@ -154,7 +154,7 @@ class BezierCurve {
 }
 exports.BezierCurve = BezierCurve;
 
-},{"./Line":7,"./Vector":10}],4:[function(require,module,exports){
+},{"./Line":8,"./Vector":11}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Circle = void 0;
@@ -184,10 +184,11 @@ class Circle {
 }
 exports.Circle = Circle;
 
-},{"./Vector":10}],5:[function(require,module,exports){
+},{"./Vector":11}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const BallGeneration_1 = require("./BallGeneration");
+const InfoBox_1 = require("./InfoBox");
 const Intercept_1 = require("./Intercept");
 const Line_1 = require("./Line");
 const Rect_1 = require("./Rect");
@@ -203,10 +204,10 @@ let entites = [];
 function start(skillBallGenerator) {
     reSize();
     skillBallGenerator(ballSize.x / 2, enviormentSize, skillBox).forEach(ball => entites.push(ball));
+    (0, InfoBox_1.initializeInfoBox)();
     console.log(entites);
     setTimeout(update, timeDelta);
 }
-var counter = 0;
 function update() {
     //calculate ball physics
     let ignore = [];
@@ -250,7 +251,6 @@ function update() {
         render(ball);
     }
     //edge rendering
-    counter++;
     SkillBall_1.SkillBall.edgeList.forEach(edge => {
         edge.updateLine();
     });
@@ -315,7 +315,22 @@ $(window).on("load", () => {
     start(BallGeneration_1.ballGenerate);
 });
 
-},{"./BallGeneration":2,"./Intercept":6,"./Line":7,"./Rect":8,"./SkillBall":9,"./Vector":10}],6:[function(require,module,exports){
+},{"./BallGeneration":2,"./InfoBox":6,"./Intercept":7,"./Line":8,"./Rect":9,"./SkillBall":10,"./Vector":11}],6:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.openInfoBox = exports.initializeInfoBox = void 0;
+function initializeInfoBox() {
+    $("#skills .infoBox nav #close").on("click", () => {
+        $("#skills .infoBox").removeClass("active");
+    });
+}
+exports.initializeInfoBox = initializeInfoBox;
+function openInfoBox() {
+    $("#skills .infoBox").addClass("active");
+}
+exports.openInfoBox = openInfoBox;
+
+},{}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.interceptCheck = exports.interceptChecks = exports.rayCheck = exports.rayChecks = void 0;
@@ -498,7 +513,7 @@ function LineRectIntercept(l, r) {
     return tmp;
 }
 
-},{"./Circle":4,"./Line":7,"./Rect":8,"./Vector":10}],7:[function(require,module,exports){
+},{"./Circle":4,"./Line":8,"./Rect":9,"./Vector":11}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Line = void 0;
@@ -537,7 +552,7 @@ class Line {
 }
 exports.Line = Line;
 
-},{"./Vector":10}],8:[function(require,module,exports){
+},{"./Vector":11}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Rect = void 0;
@@ -631,13 +646,14 @@ class Rect {
 }
 exports.Rect = Rect;
 
-},{"./Line":7,"./Vector":10}],9:[function(require,module,exports){
+},{"./Line":8,"./Vector":11}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SkillBall = exports.Edge = void 0;
 const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
 const BezierCurve_1 = require("./BezierCurve");
 const Circle_1 = require("./Circle");
+const InfoBox_1 = require("./InfoBox");
 const Line_1 = require("./Line");
 const Vector_1 = require("./Vector");
 class Edge {
@@ -834,7 +850,7 @@ class SkillBall extends Circle_1.Circle {
         //setting functionality
         let skillBall = this;
         tmp.on("click", function () {
-            skillBall.onClick();
+            (0, InfoBox_1.openInfoBox)();
         });
         tmp.on("mouseenter", function () {
             skillBall.onMouseEnter();
@@ -859,10 +875,7 @@ class SkillBall extends Circle_1.Circle {
         });
     }
     onClick() {
-        this.foo("click", this.id, this.iconName);
-    }
-    foo(action, id, iconName) {
-        console.log(`${action}:${id}-${iconName}`);
+        //this.foo("click",this.id,this.iconName)
     }
     bounce(collisionPlane) {
         let parallel = collisionPlane;
@@ -965,7 +978,7 @@ SkillBall.defaultAnimation = new BezierCurve_1.BezierCurve([
 ]);
 SkillBall.edgeList = [];
 
-},{"../HTMLBuilder/HTMLBuilder":1,"./BezierCurve":3,"./Circle":4,"./Line":7,"./Vector":10}],10:[function(require,module,exports){
+},{"../HTMLBuilder/HTMLBuilder":1,"./BezierCurve":3,"./Circle":4,"./InfoBox":6,"./Line":8,"./Vector":11}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Vector = void 0;

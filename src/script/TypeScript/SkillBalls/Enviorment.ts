@@ -1,5 +1,6 @@
 import { ballGenerate, randomBallPos } from "./BallGeneration";
 import { Circle } from "./Circle";
+import { initializeInfoBox } from "./InfoBox";
 import { interceptChecks } from "./Intercept";
 import { ISkillBallGenerator } from "./ISkillBallGenerator";
 import { Line } from "./Line";
@@ -25,13 +26,13 @@ function start(skillBallGenerator : ISkillBallGenerator) {
 
     skillBallGenerator(ballSize.x / 2, enviormentSize, skillBox).forEach(ball => entites.push(ball));
 
+    initializeInfoBox();
+
     console.log(entites);
 
 
     setTimeout(update, timeDelta);
 }
-
-var counter = 0;
 
 function update() : void {
     //calculate ball physics
@@ -92,17 +93,12 @@ function update() : void {
     }
     
     //edge rendering
-
-    counter++;
-
     SkillBall.edgeList.forEach(edge => {
         edge.updateLine();
     });
 
     Edge.updateSVGElem(SkillBall.edgeList);
 
-    
-    
     //update after n time
     setTimeout(update, timeDelta);
 }
