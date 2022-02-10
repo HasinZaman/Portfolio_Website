@@ -27,8 +27,9 @@ export function ballGenerate(ballRadius : number, enviormentSize : Vector, skill
         ));
     }
 
-    SkillBall.addEdge(tmp[0],tmp[1])
-    SkillBall.addEdge(tmp[1],tmp[2])
+    connections.forEach(index => {
+        SkillBall.addEdge(tmp[index[0]], tmp[index[1]])
+    });
     
     console.log(SkillBall.edgeList);
     

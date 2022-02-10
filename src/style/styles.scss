@@ -99,7 +99,7 @@ body {
 		height: fit-content;
 
 		margin: 10px $whiteSpace;
-		div {
+		> div {
 			$ballRadius: 50px;
 			$ballBorder: 3px;
 

@@ -87,8 +87,9 @@ function ballGenerate(ballRadius, enviormentSize, skillBox) {
     for (let i1 = 0; i1 < skills.length; i1++) {
         tmp.push(new SkillBall_1.SkillBall(i1, ballRadius, randomBallPos(ballRadius, new Rect_1.Rect(enviormentSize.x, enviormentSize.y, 0, new Vector_1.Vector(0, 0)), [], tmp), Vector_1.Vector.mult(Vector_1.Vector.normalize(new Vector_1.Vector(Math.random() * 2 - 1, Math.random() * 2 - 1)), 100), 1, skillBox, skills[i1]));
     }
-    SkillBall_1.SkillBall.addEdge(tmp[0], tmp[1]);
-    SkillBall_1.SkillBall.addEdge(tmp[1], tmp[2]);
+    connections.forEach(index => {
+        SkillBall_1.SkillBall.addEdge(tmp[index[0]], tmp[index[1]]);
+    });
     console.log(SkillBall_1.SkillBall.edgeList);
     return tmp;
 }
@@ -649,13 +650,13 @@ class Edge {
             this.ball2 = ball1;
             this.ball1 = ball2;
         }
-        this.width = 1;
+        this.width = Edge.defaultWidth;
         let tmp = new HTMLBuilder_1.HTMLElem("line");
         let id = `line-${this.ball1.id}-${this.ball2.id}`;
         tmp.get("id").push(new HTMLBuilder_1.AttrVal(id));
         this.line = new HTMLBuilder_1.HTMLElem("line");
         this.line.get("style").push(new HTMLBuilder_1.StyleAttr("stroke-width", this.width.toString()));
-        this.line.get("style").push(new HTMLBuilder_1.StyleAttr("stroke", "white"));
+        //this.line.get("style").push(new StyleAttr("stroke", "white"));
         this.line.get("x1").push(new HTMLBuilder_1.AttrVal("0px"));
         this.line.get("y1").push(new HTMLBuilder_1.AttrVal("0px"));
         this.line.get("x2").push(new HTMLBuilder_1.AttrVal("0px"));
@@ -694,6 +695,8 @@ exports.Edge = Edge;
 Edge.svgJquery = $("svg").parent();
 Edge.svg = new HTMLBuilder_1.HTMLElem("svg");
 Edge.size = new Vector_1.Vector(0, 0);
+Edge.defaultWidth = 3;
+Edge.focusedWidth = 10;
 class SkillBall extends Circle_1.Circle {
     constructor(id, radius, start, intialVelocity, mass, environment, iconName) {
         super(radius, start);
@@ -714,14 +717,16 @@ class SkillBall extends Circle_1.Circle {
         this.setLerpRadius(radius * 0.5, 0.5, SkillBall.creationAnimation);
     }
     static addEdge(ball1, ball2) {
-        let tmp = new Edge(ball1, ball2);
+        let edge = new Edge(ball1, ball2);
         if (this.edgeList.length == 0) {
-            this.edgeList.push(tmp);
+            this.edgeList.push(edge);
+            ball1.connections.push(edge);
+            ball2.connections.push(edge);
             return;
         }
         let id1, id2;
-        id1 = tmp.ball1.id;
-        id2 = tmp.ball2.id;
+        id1 = edge.ball1.id;
+        id2 = edge.ball2.id;
         if (id1 == id2) {
             return;
         }
@@ -755,7 +760,9 @@ class SkillBall extends Circle_1.Circle {
         if (edgeTmp.ball1.id == id1 && edgeTmp.ball2.id == id2) {
             return;
         }
-        this.edgeList.splice(start + 1, 0, tmp);
+        ball1.connections.push(edge);
+        ball2.connections.push(edge);
+        this.edgeList.splice(start + 1, 0, edge);
     }
     static findEdge(ball1, ball2) {
         if (this.edgeList.length == 0) {
@@ -841,10 +848,16 @@ class SkillBall extends Circle_1.Circle {
     onMouseEnter() {
         this.setLerpRadius(this.intialRadius, 0.25, null);
         this.slowCond = false;
+        this.connections.forEach(edge => {
+            edge.width = Edge.focusedWidth;
+        });
     }
     onMouseLeave() {
         this.setLerpRadius(this.intialRadius * 0.5, 0.25, null);
         this.slowCond = true;
+        this.connections.forEach(edge => {
+            edge.width = Edge.defaultWidth;
+        });
     }
     onClick() {
         this.foo("click", this.id, this.iconName);

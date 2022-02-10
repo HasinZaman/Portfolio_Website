@@ -16,8 +16,11 @@ export class Edge {
     private static svgJquery : JQuery = $("svg").parent();
     private static svg : HTMLElem = new HTMLElem("svg");
     private static size : Vector = new Vector(0, 0);
+
+    static defaultWidth : number = 3;
+    static focusedWidth : number = 10;
     
-    static setSVGElemSize(width : number, height : number) {
+    public static setSVGElemSize(width : number, height : number) {
         Edge.size.x = width;
         Edge.size.y = height;
         
@@ -37,7 +40,7 @@ export class Edge {
         
     }
 
-    static updateSVGElem(edges : Edge[]) {
+    public static updateSVGElem(edges : Edge[]) {
         Edge.svgJquery.html(Edge.svg.generate());
     }
 
@@ -48,7 +51,7 @@ export class Edge {
     //properties
     width : number;
     
-    //
+    //line Element
     line : HTMLElem;
 
     constructor(ball1 : SkillBall, ball2 : SkillBall) {
@@ -61,7 +64,7 @@ export class Edge {
             this.ball1 = ball2;
         }
 
-        this.width = 1;
+        this.width = Edge.defaultWidth;
 
         let tmp : HTMLElem = new HTMLElem("line");
         let id : string = `line-${this.ball1.id}-${this.ball2.id}`;
@@ -71,7 +74,7 @@ export class Edge {
         this.line = new HTMLElem("line");
 
         this.line.get("style").push(new StyleAttr("stroke-width", this.width.toString()));
-        this.line.get("style").push(new StyleAttr("stroke", "white"));
+        //this.line.get("style").push(new StyleAttr("stroke", "white"));
 
         this.line.get("x1").push(new AttrVal("0px"));
         this.line.get("y1").push(new AttrVal("0px"));
@@ -130,21 +133,23 @@ export class SkillBall extends Circle
     iconName : string;
 
     //connected balls
-    connections : number[] = [];
+    connections : Edge[] = [];
     static edgeList : Edge[] = [];
 
     static addEdge(ball1 : SkillBall, ball2 : SkillBall) : void {
-        let tmp : Edge = new Edge(ball1, ball2);
+        let edge : Edge = new Edge(ball1, ball2);
 
         if(this.edgeList.length == 0) {
-            this.edgeList.push(tmp);
+            this.edgeList.push(edge);
+            ball1.connections.push(edge);
+            ball2.connections.push(edge);
             return;
         }
         
         let id1, id2;
         
-        id1 = tmp.ball1.id;
-        id2 = tmp.ball2.id;
+        id1 = edge.ball1.id;
+        id2 = edge.ball2.id;
 
         if(id1 == id2) {
             return;
@@ -180,10 +185,15 @@ export class SkillBall extends Circle
         }
         edgeTmp = this.edgeList[start];
         
+
         if(edgeTmp.ball1.id == id1 && edgeTmp.ball2.id == id2){
             return ;
         }
-        this.edgeList.splice(start+1, 0, tmp);
+
+        ball1.connections.push(edge);
+        ball2.connections.push(edge);
+
+        this.edgeList.splice(start+1, 0, edge);
     }
     static findEdge(ball1 : SkillBall | number, ball2 : SkillBall | number) : Edge | null {
         if(this.edgeList.length == 0) {
@@ -308,11 +318,19 @@ export class SkillBall extends Circle
     private onMouseEnter() : void {
         this.setLerpRadius(this.intialRadius, 0.25, null);
         this.slowCond = false;
+
+        this.connections.forEach(edge => {
+            edge.width = Edge.focusedWidth;
+        });
     }
     
     private onMouseLeave() : void {
         this.setLerpRadius(this.intialRadius * 0.5, 0.25, null);
         this.slowCond = true;
+
+        this.connections.forEach(edge => {
+            edge.width = Edge.defaultWidth;
+        });
     }
 
     private onClick() : void {
