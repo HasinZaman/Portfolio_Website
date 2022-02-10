@@ -656,7 +656,6 @@ class Edge {
         tmp.get("id").push(new HTMLBuilder_1.AttrVal(id));
         this.line = new HTMLBuilder_1.HTMLElem("line");
         this.line.get("style").push(new HTMLBuilder_1.StyleAttr("stroke-width", this.width.toString()));
-        //this.line.get("style").push(new StyleAttr("stroke", "white"));
         this.line.get("x1").push(new HTMLBuilder_1.AttrVal("0px"));
         this.line.get("y1").push(new HTMLBuilder_1.AttrVal("0px"));
         this.line.get("x2").push(new HTMLBuilder_1.AttrVal("0px"));

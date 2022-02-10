@@ -73,7 +73,6 @@ export class Edge {
         this.line = new HTMLElem("line");
 
         this.line.get("style").push(new StyleAttr("stroke-width", this.width.toString()));
-        //this.line.get("style").push(new StyleAttr("stroke", "white"));
 
         this.line.get("x1").push(new AttrVal("0px"));
         this.line.get("y1").push(new AttrVal("0px"));
