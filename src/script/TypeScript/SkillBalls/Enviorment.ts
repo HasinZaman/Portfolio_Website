@@ -9,26 +9,26 @@ import { Rect } from "./Rect";
 import { Edge, SkillBall } from "./SkillBall";
 import { Vector } from "./Vector";
 
-//enviorment
+//environment
 let skillBox : JQuery = $("#skills div:first");
 
-let enviormentSize : Vector;
+let environmentSize : Vector;
 let ballSize : Vector;
 
 let timeDelta : number = 20;//ms
 
-//entites
-let entites : Path[] = []
+//entities
+let entities : Path[] = []
 
 
 function start(skillBallGenerator : ISkillBallGenerator) {
     reSize();
 
-    skillBallGenerator(ballSize.x / 2, enviormentSize, skillBox).forEach(ball => entites.push(ball));
+    skillBallGenerator(ballSize.x / 2, environmentSize, skillBox).forEach(ball => entities.push(ball));
 
     initializeInfoBox();
 
-    console.log(entites);
+    console.log(entities);
 
 
     setTimeout(update, timeDelta);
@@ -37,18 +37,18 @@ function start(skillBallGenerator : ISkillBallGenerator) {
 function update() : void {
     //calculate ball physics
     let ignore : number[] = [];
-    for(let i1 : number = 4; i1 < entites.length; i1++) {
-        let ball = entites[i1] as SkillBall;
+    for(let i1 : number = 4; i1 < entities.length; i1++) {
+        let ball = entities[i1] as SkillBall;
         ignore.push(i1);
-        let collisions : number[] = interceptChecks(ball, entites, ignore);
+        let collisions : number[] = interceptChecks(ball, entities, ignore);
         //bounces
         for(let i2 : number = 0; i2 < collisions.length; i2++) {
             if(collisions[i2] < 4) {//wall collision
-                let wall : Line = entites[collisions[i2]] as Line;
+                let wall : Line = entities[collisions[i2]] as Line;
                 ball.bounce(wall.gradient);
             }
             else {//ball collision
-                let ballCollison : SkillBall = entites[collisions[i2]] as SkillBall;
+                let ballCollison : SkillBall = entities[collisions[i2]] as SkillBall;
                 let ballTangent : Vector = Vector.normalize(Vector.sub(ball.p, ballCollison.p));
                 ballTangent = new Vector(ballTangent.y, -1*ballTangent.x);
                 
@@ -65,18 +65,18 @@ function update() : void {
     }
 
     //ball rendering
-    for(let i1 = 4; i1 < entites.length; i1++)
+    for(let i1 = 4; i1 < entities.length; i1++)
     {
-        let ball = entites[i1] as SkillBall;
+        let ball = entities[i1] as SkillBall;
 
-        //check if ball is within enviorment
+        //check if ball is within environment
         if(!boundaryCheck(ball)) {
             //update position
             let pos : Vector = randomBallPos(
                 ball.radius,
-                new Rect(enviormentSize.x, enviormentSize.y, 0, new Vector(0, 0)),
+                new Rect(environmentSize.x, environmentSize.y, 0, new Vector(0, 0)),
                 [i1],
-                entites);
+                entities);
 
             ball.p.x = pos.x;
             ball.p.y = pos.y;
@@ -105,12 +105,12 @@ function update() : void {
 
 function boundaryCheck(ball : SkillBall) : boolean {
     let bufferZone = 5;
-    if(ball.p.x - ball.radius + bufferZone < 0 || enviormentSize.x < ball.p.x + ball.radius - bufferZone)
+    if(ball.p.x - ball.radius + bufferZone < 0 || environmentSize.x < ball.p.x + ball.radius - bufferZone)
     {
         return false;
     }
 
-    if(ball.p.y - ball.radius + bufferZone < 0 || enviormentSize.y < ball.p.y + ball.radius - bufferZone)
+    if(ball.p.y - ball.radius + bufferZone < 0 || environmentSize.y < ball.p.y + ball.radius - bufferZone)
     {
         return false;
     }
@@ -121,54 +121,55 @@ function boundaryCheck(ball : SkillBall) : boolean {
 function render(ball : SkillBall) : void
 {
     let tmp : Vector = Vector.sub(ball.p, new Vector(ballSize.x/2, -1 * ballSize.y/2));
-    ball.element.css("transform", `translate(${tmp.x}px, ${enviormentSize.y - tmp.y}px) scale(${ball.scale})`);
+    ball.element.css("transform", `translate(${tmp.x}px, ${environmentSize.y - tmp.y}px) scale(${ball.scale})`);
 }
 
 function reSize() : void {
-    enviormentSize = new Vector(skillBox.width() as number, skillBox.height() as number);
+    environmentSize = new Vector(skillBox.width() as number, skillBox.height() as number);
     ballSize = new Vector(100, 100);
 
-    Edge.setSVGElemSize(enviormentSize.x, enviormentSize.y);
+    Edge.setSVGElemSize(environmentSize.x, environmentSize.y);
 
     let gradientPath : Vector[] = [new Vector(1, 0),new Vector(0, 1),new Vector(-1, 0),new Vector(0, -1)]
     let start : Vector = new Vector(0,0);
 
-    if(entites.length > 4) {
+    if(entities.length > 4) {
         for(let i : number = 0; i < 4; i++) {
             switch(i) {
                 case 0:
                 case 2:
-                    entites[i] = new Line(start,  gradientPath[i],   enviormentSize.x);
+                    entities[i] = new Line(start,  gradientPath[i],   environmentSize.x);
                     break;
                 case 1:
                 case 3:
-                    entites[i] = new Line(start,  gradientPath[i],   enviormentSize.y);
+                    entities[i] = new Line(start,  gradientPath[i],   environmentSize.y);
                     break;
             }
             
-            start = entites[i].getPoint((entites[i] as Line).l);
+            start = entities[i].getPoint((entities[i] as Line).l);
         }
     }
     else {
-        entites = []
+        entities = []
         for(let i : number = 0; i < 4; i++) {
             switch(i) {
                 case 0:
                 case 2:
-                    entites.push(new Line(start,  gradientPath[i],   enviormentSize.x))
+                    entities.push(new Line(start,  gradientPath[i],   environmentSize.x))
                     break;
                 case 1:
                 case 3:
-                    entites.push(new Line(start,  gradientPath[i],   enviormentSize.y))
+                    entities.push(new Line(start,  gradientPath[i],   environmentSize.y))
                     break;
             }
             
-            start = entites[i].getPoint((entites[i] as Line).l);
+            start = entities[i].getPoint((entities[i] as Line).l);
         }
     }
 }
 
 $(window).on("load", () => {
     $(window).on('resize', reSize);
+
     start(ballGenerate);
 })
