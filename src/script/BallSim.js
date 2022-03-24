@@ -1,6 +1,113 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SkillList = exports.Skill = void 0;
+class Skill {
+    constructor(id, colour, symbol, tagType) {
+        this.id_ = id;
+        this.colour_ = colour;
+        this.symbol_ = symbol;
+        this.tagType_ = tagType;
+    }
+    get id() {
+        return this.id_;
+    }
+    get colour() {
+        return this.colour_;
+    }
+    get symbol() {
+        return this.symbol_;
+    }
+    get tagType() {
+        return this.tagType_;
+    }
+}
+exports.Skill = Skill;
+class SkillList {
+    constructor() {
+        this.skills_ = {};
+        this.keys = [];
+        this.connections_ = [];
+        this.skills_ = {};
+        this.connections_ = [];
+    }
+    get skills() {
+        let skills = [];
+        for (let i = 0; i < this.keys.length; i++) {
+            skills.push(this.skills_[this.keys[i]]);
+        }
+        return skills;
+    }
+    get connections() {
+        let map = {};
+        for (let i = 0; i < this.keys.length; i++) {
+            map[this.keys[i]] = i;
+        }
+        let connectionsTmp = [];
+        for (let i = 0; i < this.connections_.length; i++) {
+            let edge = this.connections_[i];
+            connectionsTmp.push([map[edge[0]], map[edge[1]]]);
+        }
+        return connectionsTmp;
+    }
+    static getInstance(listener = () => { }) {
+        if (!SkillList.instance) {
+            SkillList.instance = new SkillList();
+            SkillList.instance.update(listener);
+        }
+        return SkillList.instance;
+    }
+    update(listener) {
+        $.ajax({
+            type: "POST",
+            url: "get_data",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(["skill", "related"])
+        }).done(function (dataRaw) {
+            if (dataRaw.length != 2) {
+                Error("Expect one value");
+            }
+            let skillJson = JSON.parse(dataRaw[0])["data"];
+            let connectionsJson = JSON.parse(dataRaw[1])["data"];
+            for (let i = 0; i < skillJson.length; i++) {
+                SkillList.getInstance().updateSkill(skillJson[i]["id"], skillJson[i]["colour"], skillJson[i]["symbol"], skillJson[i]["tag_type"]);
+            }
+            for (let i = 0; i < connectionsJson.length; i++) {
+                SkillList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"]);
+            }
+            console.log(SkillList.instance.connections_);
+            console.log(SkillList.instance.skills_);
+            console.log(SkillList.instance.keys);
+            listener();
+        });
+    }
+    updateSkill(id, colour, symbol, tagType) {
+        if (!this.skills_.hasOwnProperty(id)) {
+            this.keys.push(id);
+            this.keys = this.keys.sort((a, b) => { return a - b; });
+        }
+        this.skills_[id] = new Skill(id, colour, symbol, tagType);
+    }
+    updateConnection(id1, id2) {
+        if (!this.skills_.hasOwnProperty(id1) || !this.skills_.hasOwnProperty(id2)) {
+            return;
+        }
+        //sort connections
+        //check if id1, id2 exist
+        this.connections_.push([id1, id2]);
+    }
+    restart() {
+        this.skills_ = {};
+        this.connections_ = [];
+    }
+}
+exports.SkillList = SkillList;
+
+},{}],2:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.HTMLElem = exports.StyleAttr = exports.AttrVal = void 0;
 class KeyValuePair {
     constructor(key, values) {
@@ -71,7 +178,7 @@ class HTMLElem {
 }
 exports.HTMLElem = HTMLElem;
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.randomBallPos = exports.ballGenerate = void 0;
@@ -80,14 +187,16 @@ const Intercept_1 = require("./Intercept");
 const Rect_1 = require("./Rect");
 const SkillBall_1 = require("./SkillBall");
 const Vector_1 = require("./Vector");
-let skills = ["html", "css", "javascript"];
-let connections = [[0, 1], [1, 2]];
-function ballGenerate(ballRadius, enviormentSize, skillBox) {
+function ballGenerate(environment, ballInput) {
     let tmp = [];
-    for (let i1 = 0; i1 < skills.length; i1++) {
-        tmp.push(new SkillBall_1.SkillBall(i1, ballRadius, randomBallPos(ballRadius, new Rect_1.Rect(enviormentSize.x, enviormentSize.y, 0, new Vector_1.Vector(0, 0)), [], tmp), Vector_1.Vector.mult(Vector_1.Vector.normalize(new Vector_1.Vector(Math.random() * 2 - 1, Math.random() * 2 - 1)), 100), 1, skillBox, skills[i1]));
+    let skillName = ballInput.getSkills();
+    let skillConnections = ballInput.getConnections();
+    console.log(ballInput.getSkills());
+    console.log(ballInput.getConnections());
+    for (let i1 = 0; i1 < skillName.length; i1++) {
+        tmp.push(new SkillBall_1.SkillBall(i1, ballInput.getBallRadius(), randomBallPos(ballInput.getBallRadius(), new Rect_1.Rect(environment.getEnvironmentSize().x, environment.getEnvironmentSize().y, 0, new Vector_1.Vector(0, 0)), [], tmp), Vector_1.Vector.mult(Vector_1.Vector.normalize(new Vector_1.Vector(Math.random() * 2 - 1, Math.random() * 2 - 1)), 100), 1, environment.getSkillBox(), skillName[i1]));
     }
-    connections.forEach(index => {
+    skillConnections.forEach(index => {
         SkillBall_1.SkillBall.addEdge(tmp[index[0]], tmp[index[1]]);
     });
     console.log(SkillBall_1.SkillBall.edgeList);
@@ -106,7 +215,7 @@ function randomBallPos(radius, space, ignore, entites) {
 }
 exports.randomBallPos = randomBallPos;
 
-},{"./Circle":4,"./Intercept":7,"./Rect":9,"./SkillBall":10,"./Vector":11}],3:[function(require,module,exports){
+},{"./Circle":5,"./Intercept":8,"./Rect":10,"./SkillBall":11,"./Vector":12}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BezierCurve = void 0;
@@ -154,7 +263,7 @@ class BezierCurve {
 }
 exports.BezierCurve = BezierCurve;
 
-},{"./Line":8,"./Vector":11}],4:[function(require,module,exports){
+},{"./Line":9,"./Vector":12}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Circle = void 0;
@@ -184,9 +293,10 @@ class Circle {
 }
 exports.Circle = Circle;
 
-},{"./Vector":11}],5:[function(require,module,exports){
+},{"./Vector":12}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const Skill_1 = require("../DataBaseHandler/Skill");
 const BallGeneration_1 = require("./BallGeneration");
 const InfoBox_1 = require("./InfoBox");
 const Intercept_1 = require("./Intercept");
@@ -194,52 +304,71 @@ const Line_1 = require("./Line");
 const Rect_1 = require("./Rect");
 const SkillBall_1 = require("./SkillBall");
 const Vector_1 = require("./Vector");
-//enviorment
+//environment
 let skillBox = $("#skills div:first");
-let enviormentSize;
+let environmentSize;
 let ballSize;
 let timeDelta = 20; //ms
-//entites
-let entites = [];
-function start(skillBallGenerator) {
+//entities
+let entities = [];
+function start(environmentSettings, ballSettings) {
     reSize();
-    skillBallGenerator(ballSize.x / 2, enviormentSize, skillBox).forEach(ball => entites.push(ball));
+    /*let environmentSettings:IEnvironmentSettings = {
+        getEnvironmentSize: function (){
+            return environmentSize;
+        },
+        getSkillBox: function() {
+            return skillBox;
+        },
+    };
+    let ballSettings:IBallSettings = {
+        getBallRadius: function () {
+            return ballSize.x / 2;
+        },
+        getSkills: function () {
+            return ["HTML", "CSS", "JS"]
+        },
+        getConnections: function() {
+            return [[0,1], [1,0], [1,2]]
+        }
+    }*/
+    (0, BallGeneration_1.ballGenerate)(environmentSettings, ballSettings).forEach(ball => entities.push(ball));
     (0, InfoBox_1.initializeInfoBox)();
-    console.log(entites);
+    console.log(entities);
     setTimeout(update, timeDelta);
 }
 function update() {
     //calculate ball physics
     let ignore = [];
-    for (let i1 = 4; i1 < entites.length; i1++) {
-        let ball = entites[i1];
+    for (let i1 = 4; i1 < entities.length; i1++) {
+        let ball = entities[i1];
         ignore.push(i1);
-        let collisions = (0, Intercept_1.interceptChecks)(ball, entites, ignore);
+        let collisions = (0, Intercept_1.interceptChecks)(ball, entities, ignore);
         //bounces
         for (let i2 = 0; i2 < collisions.length; i2++) {
             if (collisions[i2] < 4) { //wall collision
-                let wall = entites[collisions[i2]];
+                let wall = entities[collisions[i2]];
                 ball.bounce(wall.gradient);
             }
             else { //ball collision
-                let ballCollison = entites[collisions[i2]];
-                let ballTangent = Vector_1.Vector.normalize(Vector_1.Vector.sub(ball.p, ballCollison.p));
+                let ballCollision = entities[collisions[i2]];
+                let ballTangent = Vector_1.Vector.normalize(Vector_1.Vector.sub(ball.p, ballCollision.p));
                 ballTangent = new Vector_1.Vector(ballTangent.y, -1 * ballTangent.x);
                 //bounce current ball
                 ball.bounce(ballTangent);
                 //bounce with colliding ball
-                ballCollison.bounce(ballTangent);
+                ballCollision.bounce(ballTangent);
             }
             ball.move(timeDelta / 1000);
         }
     }
     //ball rendering
-    for (let i1 = 4; i1 < entites.length; i1++) {
-        let ball = entites[i1];
-        //check if ball is within enviorment
+    for (let i1 = 4; i1 < entities.length; i1++) {
+        let ball = entities[i1];
+        //check if ball is within environment
         if (!boundaryCheck(ball)) {
             //update position
-            let pos = (0, BallGeneration_1.randomBallPos)(ball.radius, new Rect_1.Rect(enviormentSize.x, enviormentSize.y, 0, new Vector_1.Vector(0, 0)), [i1], entites);
+            let pos = (0, BallGeneration_1.randomBallPos)(ball.radius, new Rect_1.Rect(environmentSize.x, environmentSize.y, 0, new Vector_1.Vector(0, 0)), [i1], entities);
             ball.p.x = pos.x;
             ball.p.y = pos.y;
             ball.vel = Vector_1.Vector.mult(new Vector_1.Vector(Math.random(), Math.random()), Vector_1.Vector.dist(ball.vel));
@@ -260,62 +389,87 @@ function update() {
 }
 function boundaryCheck(ball) {
     let bufferZone = 5;
-    if (ball.p.x - ball.radius + bufferZone < 0 || enviormentSize.x < ball.p.x + ball.radius - bufferZone) {
+    if (ball.p.x - ball.radius + bufferZone < 0 || environmentSize.x < ball.p.x + ball.radius - bufferZone) {
         return false;
     }
-    if (ball.p.y - ball.radius + bufferZone < 0 || enviormentSize.y < ball.p.y + ball.radius - bufferZone) {
+    if (ball.p.y - ball.radius + bufferZone < 0 || environmentSize.y < ball.p.y + ball.radius - bufferZone) {
         return false;
     }
     return true;
 }
 function render(ball) {
     let tmp = Vector_1.Vector.sub(ball.p, new Vector_1.Vector(ballSize.x / 2, -1 * ballSize.y / 2));
-    ball.element.css("transform", `translate(${tmp.x}px, ${enviormentSize.y - tmp.y}px) scale(${ball.scale})`);
+    ball.element.css("transform", `translate(${tmp.x}px, ${environmentSize.y - tmp.y}px) scale(${ball.scale})`);
 }
 function reSize() {
-    enviormentSize = new Vector_1.Vector(skillBox.width(), skillBox.height());
+    environmentSize = new Vector_1.Vector(skillBox.width(), skillBox.height());
     ballSize = new Vector_1.Vector(100, 100);
-    SkillBall_1.Edge.setSVGElemSize(enviormentSize.x, enviormentSize.y);
+    SkillBall_1.Edge.setSVGElemSize(environmentSize.x, environmentSize.y);
     let gradientPath = [new Vector_1.Vector(1, 0), new Vector_1.Vector(0, 1), new Vector_1.Vector(-1, 0), new Vector_1.Vector(0, -1)];
     let start = new Vector_1.Vector(0, 0);
-    if (entites.length > 4) {
+    if (entities.length > 4) {
         for (let i = 0; i < 4; i++) {
             switch (i) {
                 case 0:
                 case 2:
-                    entites[i] = new Line_1.Line(start, gradientPath[i], enviormentSize.x);
+                    entities[i] = new Line_1.Line(start, gradientPath[i], environmentSize.x);
                     break;
                 case 1:
                 case 3:
-                    entites[i] = new Line_1.Line(start, gradientPath[i], enviormentSize.y);
+                    entities[i] = new Line_1.Line(start, gradientPath[i], environmentSize.y);
                     break;
             }
-            start = entites[i].getPoint(entites[i].l);
+            start = entities[i].getPoint(entities[i].l);
         }
     }
     else {
-        entites = [];
+        entities = [];
         for (let i = 0; i < 4; i++) {
             switch (i) {
                 case 0:
                 case 2:
-                    entites.push(new Line_1.Line(start, gradientPath[i], enviormentSize.x));
+                    entities.push(new Line_1.Line(start, gradientPath[i], environmentSize.x));
                     break;
                 case 1:
                 case 3:
-                    entites.push(new Line_1.Line(start, gradientPath[i], enviormentSize.y));
+                    entities.push(new Line_1.Line(start, gradientPath[i], environmentSize.y));
                     break;
             }
-            start = entites[i].getPoint(entites[i].l);
+            start = entities[i].getPoint(entities[i].l);
         }
     }
 }
 $(window).on("load", () => {
     $(window).on('resize', reSize);
-    start(BallGeneration_1.ballGenerate);
+    Skill_1.SkillList.getInstance(() => {
+        let environmentSettings = {
+            getEnvironmentSize: function () {
+                return environmentSize;
+            },
+            getSkillBox: function () {
+                return skillBox;
+            },
+        };
+        console.log(Skill_1.SkillList.getInstance().skills);
+        console.log(Skill_1.SkillList.getInstance().connections);
+        let ballSettings = {
+            getBallRadius: function () {
+                return ballSize.x / 2;
+            },
+            getSkills: function () {
+                let tmp = Object.assign([], Skill_1.SkillList.getInstance().skills);
+                return tmp.map((val) => { return val.symbol; });
+            },
+            getConnections: function () {
+                let tmp = Object.assign([], Skill_1.SkillList.getInstance().connections);
+                return tmp;
+            }
+        };
+        start(environmentSettings, ballSettings);
+    });
 });
 
-},{"./BallGeneration":2,"./InfoBox":6,"./Intercept":7,"./Line":8,"./Rect":9,"./SkillBall":10,"./Vector":11}],6:[function(require,module,exports){
+},{"../DataBaseHandler/Skill":1,"./BallGeneration":3,"./InfoBox":7,"./Intercept":8,"./Line":9,"./Rect":10,"./SkillBall":11,"./Vector":12}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.openInfoBox = exports.initializeInfoBox = void 0;
@@ -354,7 +508,7 @@ function updateInfoBox(target, data) {
     target.find(".readMore").on("click", () => { console.log(`${data.name}-click`); });
 }
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.interceptCheck = exports.interceptChecks = exports.rayCheck = exports.rayChecks = void 0;
@@ -537,7 +691,7 @@ function LineRectIntercept(l, r) {
     return tmp;
 }
 
-},{"./Circle":4,"./Line":8,"./Rect":9,"./Vector":11}],8:[function(require,module,exports){
+},{"./Circle":5,"./Line":9,"./Rect":10,"./Vector":12}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Line = void 0;
@@ -576,7 +730,7 @@ class Line {
 }
 exports.Line = Line;
 
-},{"./Vector":11}],9:[function(require,module,exports){
+},{"./Vector":12}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Rect = void 0;
@@ -670,7 +824,7 @@ class Rect {
 }
 exports.Rect = Rect;
 
-},{"./Line":8,"./Vector":11}],10:[function(require,module,exports){
+},{"./Line":9,"./Vector":12}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SkillBall = exports.Edge = void 0;
@@ -737,20 +891,20 @@ Edge.size = new Vector_1.Vector(0, 0);
 Edge.defaultWidth = 3;
 Edge.focusedWidth = 10;
 class SkillBall extends Circle_1.Circle {
-    constructor(id, radius, start, intialVelocity, mass, environment, iconName) {
+    constructor(id, radius, start, initialVelocity, mass, environment, iconName) {
         super(radius, start);
         this.radiusAnim = null;
         //physics
         this.slowCond = true;
         //connected balls
         this.connections = [];
-        this.intialRadius = radius;
+        this.initialRadius = radius;
         this.id = id;
-        this.vel = intialVelocity;
+        this.vel = initialVelocity;
         this.mass = mass;
         this.scale = 1;
         this.iconName = iconName;
-        this.element = this.buidHTML(this.id, this.iconName, environment);
+        this.element = this.buildHTML(this.id, this.iconName, environment);
         this.movementLine = new Line_1.Line(this.p, this.vel, -1);
         this.setRadius(0);
         this.setLerpRadius(radius * 0.5, 0.5, SkillBall.creationAnimation);
@@ -783,7 +937,7 @@ class SkillBall extends Circle_1.Circle {
                 //first half
                 if (id2 < edgeTmp.ball2.id) {
                     end = pointer;
-                } //secodn half
+                } //second half
                 else {
                     start = pointer;
                 }
@@ -839,7 +993,7 @@ class SkillBall extends Circle_1.Circle {
                 //first half
                 if (id2 < edgeTmp.ball2.id) {
                     end = pointer;
-                } //secodn half
+                } //second half
                 else {
                     start = pointer;
                 }
@@ -857,13 +1011,13 @@ class SkillBall extends Circle_1.Circle {
         }
         return null;
     }
-    buidHTML(id, iconName, environment) {
+    buildHTML(id, iconName, environment) {
         let elem = new HTMLBuilder_1.HTMLElem("div");
         let image = new HTMLBuilder_1.HTMLElem("img");
         let ballId = elem.get("id");
         ballId.push(new HTMLBuilder_1.AttrVal(`ball-${id}`));
-        let ballclass = elem.get("class");
-        ballclass.push(new HTMLBuilder_1.AttrVal("ball"));
+        let ballClass = elem.get("class");
+        ballClass.push(new HTMLBuilder_1.AttrVal("ball"));
         let imageLocation = image.get("src");
         imageLocation.push(new HTMLBuilder_1.AttrVal(`${SkillBall.mediaImageFolder}\\${iconName}_icon.svg`));
         elem.addChild(image);
@@ -885,14 +1039,14 @@ class SkillBall extends Circle_1.Circle {
         return tmp;
     }
     onMouseEnter() {
-        this.setLerpRadius(this.intialRadius, 0.25, null);
+        this.setLerpRadius(this.initialRadius, 0.25, null);
         this.slowCond = false;
         this.connections.forEach(edge => {
             edge.width = Edge.focusedWidth;
         });
     }
     onMouseLeave() {
-        this.setLerpRadius(this.intialRadius * 0.5, 0.25, null);
+        this.setLerpRadius(this.initialRadius * 0.5, 0.25, null);
         this.slowCond = true;
         this.connections.forEach(edge => {
             edge.width = Edge.defaultWidth;
@@ -944,7 +1098,7 @@ class SkillBall extends Circle_1.Circle {
             return false;
         }
         this.radius = radius;
-        this.scale = radius / this.intialRadius;
+        this.scale = radius / this.initialRadius;
         return true;
     }
     updateRadius(time) {
@@ -1002,7 +1156,7 @@ SkillBall.defaultAnimation = new BezierCurve_1.BezierCurve([
 ]);
 SkillBall.edgeList = [];
 
-},{"../HTMLBuilder/HTMLBuilder":1,"./BezierCurve":3,"./Circle":4,"./InfoBox":6,"./Line":8,"./Vector":11}],11:[function(require,module,exports){
+},{"../HTMLBuilder/HTMLBuilder":2,"./BezierCurve":4,"./Circle":5,"./InfoBox":7,"./Line":9,"./Vector":12}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Vector = void 0;
@@ -1051,4 +1205,4 @@ class Vector {
 }
 exports.Vector = Vector;
 
-},{}]},{},[5]);
+},{}]},{},[6]);
