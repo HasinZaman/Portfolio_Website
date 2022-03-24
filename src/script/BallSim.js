@@ -67,7 +67,7 @@ class SkillList {
             data: JSON.stringify(["skill", "related"])
         }).done(function (dataRaw) {
             if (dataRaw.length != 2) {
-                Error("Expect one value");
+                throw Error("Expect one value");
             }
             let skillJson = JSON.parse(dataRaw[0])["data"];
             let connectionsJson = JSON.parse(dataRaw[1])["data"];
@@ -203,14 +203,14 @@ function ballGenerate(environment, ballInput) {
     return tmp;
 }
 exports.ballGenerate = ballGenerate;
-function randomBallPos(radius, space, ignore, entites) {
+function randomBallPos(radius, space, ignore, entities) {
     let circle;
     let pos = new Vector_1.Vector(0, 0);
     circle = new Circle_1.Circle(radius, pos);
     do {
         pos.x = Math.random() * space.getWidth();
         pos.y = Math.random() * space.getHeight();
-    } while ((0, Intercept_1.interceptChecks)(circle, entites, ignore).length > 0);
+    } while ((0, Intercept_1.interceptChecks)(circle, entities, ignore).length > 0);
     return pos;
 }
 exports.randomBallPos = randomBallPos;
@@ -374,7 +374,7 @@ function update() {
             ball.vel = Vector_1.Vector.mult(new Vector_1.Vector(Math.random(), Math.random()), Vector_1.Vector.dist(ball.vel));
             let radius = ball.radius;
             ball.setRadius(0);
-            ball.setLerpRadius(radius, 1, null);
+            ball.setRadiusAnimation(radius, 1, null);
         }
         ball.move(timeDelta / 1000);
         render(ball);
@@ -834,8 +834,21 @@ const Circle_1 = require("./Circle");
 const InfoBox_1 = require("./InfoBox");
 const Line_1 = require("./Line");
 const Vector_1 = require("./Vector");
+/**
+ * Edge class defines data and methods related to lines between balls
+ */
 class Edge {
+    /**
+     * Edge constructor creates Edge instance
+     * @constructor
+     * @param {SkillBall} ball1: reference of starting ball
+     * @param {SkillBall} ball2: reference of ending ball
+     * @throws {Error} will throw error if ball1 and ball2 reference the same edge
+     */
     constructor(ball1, ball2) {
+        if (ball1.id == ball2.id) {
+            throw Error("Edge cannot connect ball to itself");
+        }
         if (ball1.id < ball2.id) {
             this.ball1 = ball1;
             this.ball2 = ball2;
@@ -857,6 +870,11 @@ class Edge {
         this.updateLine();
         Edge.svg.addChild(this.line);
     }
+    /**
+     * setSVGElemSize method sets the width and height of SVG object
+     * @param {number} width
+     * @param {number} height
+     */
     static setSVGElemSize(width, height) {
         Edge.size.x = width;
         Edge.size.y = height;
@@ -873,9 +891,16 @@ class Edge {
             this.svg.get("height")[0].value = height.toString();
         }
     }
+    /**
+     * updateSVGElem updates edges on SVG element
+     * @param edges array of edges that are being updated
+     */
     static updateSVGElem(edges) {
         Edge.svgJquery.html(Edge.svg.generate());
     }
+    /**
+     * updateLine method update attributes of line
+     */
     updateLine() {
         this.line.get("style")[0].value = this.width.toString();
         this.line.get("x1")[0].value = `${this.ball1.p.x}px`;
@@ -885,18 +910,58 @@ class Edge {
     }
 }
 exports.Edge = Edge;
+/**
+ * svgJquery: HTML element that in which edges are drawn upon
+ */
 Edge.svgJquery = $("svg").parent();
+/**
+ * svg: HTMLElem object that generates HTML DOM
+ */
 Edge.svg = new HTMLBuilder_1.HTMLElem("svg");
+/**
+ * size: Define the length and width of HTMLElem
+ */
 Edge.size = new Vector_1.Vector(0, 0);
+/**
+ * defaultWidth: Width of default edge between balls
+ */
 Edge.defaultWidth = 3;
+/**
+ * focusedWidth: Width of focused edge
+ * focused edge should be used to bring attention to certain edges
+ */
 Edge.focusedWidth = 10;
+/**
+ * SkillBall class handles data related to skill balls in environment
+ * @extends {Circle}
+ */
 class SkillBall extends Circle_1.Circle {
+    /**
+     * constructor creates Skill Ball
+     * @constructor
+     * @param {number} id: id of skill ball
+     * @param {number} radius: initial radius of skill ball
+     * @param {Vector} start: vector position of start position
+     * @param {Vector} initialVelocity: initial velocity of skill ball
+     * @param {number} mass: mass of skill ball
+     * @param {JQuery} environment: JQuery object that references the HTML physics ball environment
+     * @param {string} iconName: name of skill ball
+     */
     constructor(id, radius, start, initialVelocity, mass, environment, iconName) {
         super(radius, start);
+        /**
+         * radiusAnim: cached values of playing animation
+         */
         this.radiusAnim = null;
         //physics
+        /**
+         * slowCond: defines whether the ball is traveling in slow motion
+         */
         this.slowCond = true;
         //connected balls
+        /**
+         * connections: array of connections that link balls
+         */
         this.connections = [];
         this.initialRadius = radius;
         this.id = id;
@@ -904,11 +969,38 @@ class SkillBall extends Circle_1.Circle {
         this.mass = mass;
         this.scale = 1;
         this.iconName = iconName;
-        this.element = this.buildHTML(this.id, this.iconName, environment);
+        this.element = this.buildHTML(environment);
         this.movementLine = new Line_1.Line(this.p, this.vel, -1);
         this.setRadius(0);
-        this.setLerpRadius(radius * 0.5, 0.5, SkillBall.creationAnimation);
+        this.setRadiusAnimation(radius * 0.5, 0.5, SkillBall.creationAnimation);
     }
+    /**
+     * creationAnimation: Static const that defines default creation animation curve
+     */
+    static get creationAnimation() {
+        return new BezierCurve_1.BezierCurve([
+            new Vector_1.Vector(0, 0),
+            new Vector_1.Vector(1, 0),
+            new Vector_1.Vector(0.1, 1.5),
+            new Vector_1.Vector(1, 1)
+        ]);
+    }
+    ;
+    /**
+     * defaultAnimation: Static const that defines default animation curve
+     */
+    static get defaultAnimation() {
+        return new BezierCurve_1.BezierCurve([
+            new Vector_1.Vector(0, 0),
+            new Vector_1.Vector(1, 1)
+        ]);
+    }
+    ;
+    /**
+     * addEdge method adds an edge between ball1 and ball2
+     * @param {SkillBall} ball1
+     * @param {SkillBall} ball2
+     */
     static addEdge(ball1, ball2) {
         let edge = new Edge(ball1, ball2);
         if (this.edgeList.length == 0) {
@@ -957,6 +1049,13 @@ class SkillBall extends Circle_1.Circle {
         ball2.connections.push(edge);
         this.edgeList.splice(start + 1, 0, edge);
     }
+    /**
+     * findEdge method finds edge that connects ball1 and ball2.
+     * Order of ball1 and ball2 does not matter
+     * @param {SkillBall | number} ball1: reference or id of ball
+     * @param {SkillBall | number} ball2: reference or id of ball
+     * @returns {Edge | null} Edge is returned if it exists else, null is returned
+     */
     static findEdge(ball1, ball2) {
         if (this.edgeList.length == 0) {
             return null;
@@ -1011,19 +1110,24 @@ class SkillBall extends Circle_1.Circle {
         }
         return null;
     }
-    buildHTML(id, iconName, environment) {
+    /**
+     * utility method to create HTML DOM required to make Skill Ball in environment
+     * @param {JQuery} environment: JQuery object that references the HTML physics ball environment
+     * @returns {JQuery} JQuery object that references HTML DOM of skill ball
+     */
+    buildHTML(environment) {
         let elem = new HTMLBuilder_1.HTMLElem("div");
         let image = new HTMLBuilder_1.HTMLElem("img");
         let ballId = elem.get("id");
-        ballId.push(new HTMLBuilder_1.AttrVal(`ball-${id}`));
+        ballId.push(new HTMLBuilder_1.AttrVal(`ball-${this.id}`));
         let ballClass = elem.get("class");
         ballClass.push(new HTMLBuilder_1.AttrVal("ball"));
         let imageLocation = image.get("src");
-        imageLocation.push(new HTMLBuilder_1.AttrVal(`${SkillBall.mediaImageFolder}\\${iconName}_icon.svg`));
+        imageLocation.push(new HTMLBuilder_1.AttrVal(`${SkillBall.mediaImageFolder}\\${this.iconName}_icon.svg`));
         elem.addChild(image);
         //create dom
         environment.append(elem.generate());
-        let tmp = environment.find(`#ball-${id}`);
+        let tmp = environment.find(`#ball-${this.id}`);
         ;
         //setting functionality
         let skillBall = this;
@@ -1038,23 +1142,36 @@ class SkillBall extends Circle_1.Circle {
         });
         return tmp;
     }
+    /**
+     * onMouseEnter method defines skill ball behavior when mouse begins to hover on skill ball
+     */
     onMouseEnter() {
-        this.setLerpRadius(this.initialRadius, 0.25, null);
+        this.setRadiusAnimation(this.initialRadius, 0.25, null);
         this.slowCond = false;
         this.connections.forEach(edge => {
             edge.width = Edge.focusedWidth;
         });
     }
+    /**
+     * onMouseLeave method defines skill ball behavior when mouse stops hovering on skill ball
+     */
     onMouseLeave() {
-        this.setLerpRadius(this.initialRadius * 0.5, 0.25, null);
+        this.setRadiusAnimation(this.initialRadius * 0.5, 0.25, null);
         this.slowCond = true;
         this.connections.forEach(edge => {
             edge.width = Edge.defaultWidth;
         });
     }
+    /**
+     * onClick method defines skill ball behavior when mouse clicks on skill ball
+     */
     onClick() {
         //this.foo("click",this.id,this.iconName)
     }
+    /**
+     * bounce updates skill ball velocity based on bounce plane
+     * @param {Vector} collisionPlane direction of plane in which a bounce occurs
+     */
     bounce(collisionPlane) {
         let parallel = collisionPlane;
         let orthogonal = new Vector_1.Vector(parallel.y, -1 * parallel.x);
@@ -1062,7 +1179,14 @@ class SkillBall extends Circle_1.Circle {
         let v2 = Vector_1.Vector.projection(this.vel, parallel);
         this.vel = Vector_1.Vector.add(v1, v2);
     }
-    setLerpRadius(radius, duration, animationCurve) {
+    /**
+     * setRadiusAnimation method sets radius based on animationCurve
+     * @param {number} radius: new radius of skill ball
+     * @param {number | null} duration: number of seconds for a radius interpolate animation
+     * @param {BezierCurve | null | undefined} animationCurve: animation curve interpolation
+     * @returns {boolean} boolean whether animation has been set
+     */
+    setRadiusAnimation(radius, duration, animationCurve) {
         if (radius < 0) {
             return false;
         }
@@ -1093,6 +1217,12 @@ class SkillBall extends Circle_1.Circle {
         };
         return true;
     }
+    /**
+     * setRadius sets the radius of skill ball
+     * @deprecated
+     * @param {number} radius: new radius of skill ball
+     * @returns: boolean if new radius is set
+     */
     setRadius(radius) {
         if (radius < 0) {
             return false;
@@ -1101,13 +1231,17 @@ class SkillBall extends Circle_1.Circle {
         this.scale = radius / this.initialRadius;
         return true;
     }
-    updateRadius(time) {
+    /**
+     * updateRadius method updates radius based on timeDelta and radius animation curve
+     * @param {number} timeDelta: delta time used to calculate new radius
+     */
+    updateRadius(timeDelta) {
         if (this.radiusAnim == null) {
             return;
         }
         let deltaRadius = Math.abs(this.radius - this.radiusAnim.target);
         if (deltaRadius > 0.01) {
-            this.radiusAnim.time += time;
+            this.radiusAnim.time += timeDelta;
             let pos = this.radiusAnim.time / this.radiusAnim.duration;
             if (pos > 1) {
                 this.radius = this.radiusAnim.target;
@@ -1119,19 +1253,30 @@ class SkillBall extends Circle_1.Circle {
             this.radiusAnim = null;
         }
     }
+    /**
+     * toString returns a string of Skill Ball
+     * @returns {String} string representation of skill ball
+     */
     toString() {
         return `radius:${this.radius}\np:${this.p.x},${this.p.y}\ndir:${this.vel.x},${this.vel.y}`;
     }
-    move(time) {
+    /**
+     * move method moves ball
+     * @param {number} deltaTime: delta time used to calculate new ball position & ball radius
+     */
+    move(deltaTime) {
         if (!this.slowCond) {
-            time = time / 4;
+            deltaTime = deltaTime / 4;
         }
         this.movementLine.p = this.p;
         this.movementLine.gradient = this.vel;
-        this.p = this.movementLine.getPoint(time);
+        this.p = this.movementLine.getPoint(deltaTime);
         //update radius
-        this.updateRadius(time);
+        this.updateRadius(deltaTime);
     }
+    /**
+     * destroy method handles the deconstruction of SkillBall
+     */
     destroy() {
         let edge;
         for (let i1 = SkillBall.edgeList.length - 1; i1 >= 0; i1--) {
@@ -1143,17 +1288,13 @@ class SkillBall extends Circle_1.Circle {
     }
 }
 exports.SkillBall = SkillBall;
+/**
+ * mediaImageFolder: Static const that defines location of icons
+ */
 SkillBall.mediaImageFolder = "src\\media\\img\\icons";
-SkillBall.creationAnimation = new BezierCurve_1.BezierCurve([
-    new Vector_1.Vector(0, 0),
-    new Vector_1.Vector(1, 0),
-    new Vector_1.Vector(0.1, 1.5),
-    new Vector_1.Vector(1, 1)
-]);
-SkillBall.defaultAnimation = new BezierCurve_1.BezierCurve([
-    new Vector_1.Vector(0, 0),
-    new Vector_1.Vector(1, 1)
-]);
+/**
+ * edgeList: static array of all edges
+ */
 SkillBall.edgeList = [];
 
 },{"../HTMLBuilder/HTMLBuilder":2,"./BezierCurve":4,"./Circle":5,"./InfoBox":7,"./Line":9,"./Vector":12}],12:[function(require,module,exports){
