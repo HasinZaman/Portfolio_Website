@@ -115,7 +115,7 @@ export class SkillBall extends Circle
     id : number;
 
     //cached values
-    intialRadius : number;
+    initialRadius : number;
     radiusAnim : IRadiusAnimation | null = null;
 
     //physics
@@ -127,7 +127,7 @@ export class SkillBall extends Circle
     //css values
     scale : number;
 
-    //DOM refrence
+    //DOM reference
     element : JQuery;
     iconName : string;
 
@@ -170,7 +170,7 @@ export class SkillBall extends Circle
                 //first half
                 if(id2 < edgeTmp.ball2.id) {
                     end = pointer;
-                }//secodn half
+                }//second half
                 else {
                     start = pointer;
                 }
@@ -237,7 +237,7 @@ export class SkillBall extends Circle
                 //first half
                 if(id2 < edgeTmp.ball2.id) {
                     end = pointer;
-                }//secodn half
+                }//second half
                 else {
                     start = pointer;
                 }
@@ -258,18 +258,18 @@ export class SkillBall extends Circle
         return null;
     }
 
-    constructor(id : number, radius : number, start : Vector, intialVelocity : Vector, mass : number, environment : JQuery, iconName : string) {
+    constructor(id : number, radius : number, start : Vector, initialVelocity : Vector, mass : number, environment : JQuery, iconName : string) {
         super(radius, start);
 
-        this.intialRadius = radius;
+        this.initialRadius = radius;
 
         this.id = id;
-        this.vel = intialVelocity;
+        this.vel = initialVelocity;
         this.mass = mass;
         this.scale = 1;
         this.iconName = iconName
 
-        this.element = this.buidHTML(this.id, this.iconName, environment);
+        this.element = this.buildHTML(this.id, this.iconName, environment);
 
         this.movementLine = new Line(this.p, this.vel, -1);
 
@@ -277,15 +277,15 @@ export class SkillBall extends Circle
         this.setLerpRadius(radius * 0.5, 0.5, SkillBall.creationAnimation);
     }
 
-    private buidHTML(id : number, iconName : string, environment : JQuery) : JQuery {
+    private buildHTML(id : number, iconName : string, environment : JQuery) : JQuery {
         let elem : HTMLElem = new HTMLElem("div");
         let image : HTMLElem = new HTMLElem("img");
 
         let ballId : AttrVal[] = elem.get("id");
         ballId.push(new AttrVal(`ball-${id}`));
 
-        let ballclass : AttrVal[] = elem.get("class");
-        ballclass.push(new AttrVal("ball"));
+        let ballClass : AttrVal[] = elem.get("class");
+        ballClass.push(new AttrVal("ball"));
 
         let imageLocation : AttrVal[] = image.get("src");
         imageLocation.push(new AttrVal(`${SkillBall.mediaImageFolder}\\${iconName}_icon.svg`))
@@ -315,7 +315,7 @@ export class SkillBall extends Circle
     }
 
     private onMouseEnter() : void {
-        this.setLerpRadius(this.intialRadius, 0.25, null);
+        this.setLerpRadius(this.initialRadius, 0.25, null);
         this.slowCond = false;
 
         this.connections.forEach(edge => {
@@ -324,7 +324,7 @@ export class SkillBall extends Circle
     }
     
     private onMouseLeave() : void {
-        this.setLerpRadius(this.intialRadius * 0.5, 0.25, null);
+        this.setLerpRadius(this.initialRadius * 0.5, 0.25, null);
         this.slowCond = true;
 
         this.connections.forEach(edge => {
@@ -394,7 +394,7 @@ export class SkillBall extends Circle
         }
 
         this.radius = radius;
-        this.scale = radius / this.intialRadius;
+        this.scale = radius / this.initialRadius;
         return true;
     }
 
