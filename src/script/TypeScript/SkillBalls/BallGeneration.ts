@@ -5,29 +5,43 @@ import { Rect } from "./Rect";
 import { SkillBall } from "./SkillBall";
 import { Vector } from "./Vector";
 
-let skills : string[] = ["html", "css", "javascript"];
-let connections : number[][] = [[0, 1], [1, 2]];
+export interface IEnvironmentSettings {
+    getEnvironmentSize:  () => Vector;
+    getSkillBox:  () => JQuery;
+}
 
-export function ballGenerate(ballRadius : number, enviormentSize : Vector, skillBox : JQuery) : SkillBall[] {
+export interface IBallSettings {
+    getBallRadius: () => number;
+    getSkills: () => string[],
+    getConnections: () => number[][]
+}
+
+export function ballGenerate(environment : IEnvironmentSettings, ballInput : IBallSettings) : SkillBall[] {
     let tmp : SkillBall[] = [];
 
-    for(let i1 = 0; i1 < skills.length; i1++) {
+    let skillName : string[] = ballInput.getSkills();
+    let skillConnections : number[][] = ballInput.getConnections();
+
+    console.log(ballInput.getSkills())
+    console.log(ballInput.getConnections())
+
+    for(let i1 = 0; i1 < skillName.length; i1++) {
         tmp.push(new SkillBall(
             i1,
-            ballRadius,
+            ballInput.getBallRadius(),
             randomBallPos(
-                ballRadius,
-                new Rect(enviormentSize.x, enviormentSize.y,0, new Vector(0,0)),
+                ballInput.getBallRadius(),
+                new Rect(environment.getEnvironmentSize().x, environment.getEnvironmentSize().y,0, new Vector(0,0)),
                 [],
                 tmp),
             Vector.mult(Vector.normalize(new Vector(Math.random() * 2 - 1, Math.random() * 2 - 1)), 100),
             1,
-            skillBox,
-            skills[i1]
+            environment.getSkillBox(),
+            skillName[i1]
         ));
     }
 
-    connections.forEach(index => {
+    skillConnections.forEach(index => {
         SkillBall.addEdge(tmp[index[0]], tmp[index[1]])
     });
     

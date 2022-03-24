@@ -1,8 +1,7 @@
-import { ballGenerate, randomBallPos } from "./BallGeneration";
-import { Circle } from "./Circle";
+import { Skill, SkillList } from "../DataBaseHandler/Skill";
+import { ballGenerate, randomBallPos, IEnvironmentSettings, IBallSettings } from "./BallGeneration";
 import { initializeInfoBox } from "./InfoBox";
 import { interceptChecks } from "./Intercept";
-import { ISkillBallGenerator } from "./ISkillBallGenerator";
 import { Line } from "./Line";
 import { Path } from "./Path";
 import { Rect } from "./Rect";
@@ -21,10 +20,28 @@ let timeDelta : number = 20;//ms
 let entities : Path[] = []
 
 
-function start(skillBallGenerator : ISkillBallGenerator) {
+function start(environmentSettings : IEnvironmentSettings, ballSettings:IBallSettings) {
     reSize();
-
-    skillBallGenerator(ballSize.x / 2, environmentSize, skillBox).forEach(ball => entities.push(ball));
+    /*let environmentSettings:IEnvironmentSettings = {
+        getEnvironmentSize: function (){
+            return environmentSize;
+        },
+        getSkillBox: function() {
+            return skillBox;
+        },
+    };
+    let ballSettings:IBallSettings = {
+        getBallRadius: function () {
+            return ballSize.x / 2;
+        },
+        getSkills: function () {
+            return ["HTML", "CSS", "JS"]
+        },
+        getConnections: function() {
+            return [[0,1], [1,0], [1,2]]
+        }
+    }*/
+    ballGenerate(environmentSettings, ballSettings).forEach(ball => entities.push(ball));
 
     initializeInfoBox();
 
@@ -48,15 +65,15 @@ function update() : void {
                 ball.bounce(wall.gradient);
             }
             else {//ball collision
-                let ballCollison : SkillBall = entities[collisions[i2]] as SkillBall;
-                let ballTangent : Vector = Vector.normalize(Vector.sub(ball.p, ballCollison.p));
+                let ballCollision : SkillBall = entities[collisions[i2]] as SkillBall;
+                let ballTangent : Vector = Vector.normalize(Vector.sub(ball.p, ballCollision.p));
                 ballTangent = new Vector(ballTangent.y, -1*ballTangent.x);
                 
                 //bounce current ball
                 ball.bounce(ballTangent);
 
                 //bounce with colliding ball
-                ballCollison.bounce(ballTangent);
+                ballCollision.bounce(ballTangent);
                 
             }
 
@@ -171,5 +188,31 @@ function reSize() : void {
 $(window).on("load", () => {
     $(window).on('resize', reSize);
 
-    start(ballGenerate);
+    SkillList.getInstance(() => {
+        let environmentSettings:IEnvironmentSettings = {
+            getEnvironmentSize: function (){
+                return environmentSize;
+            },
+            getSkillBox: function() {
+                return skillBox;
+            },
+        };
+        console.log(SkillList.getInstance().skills)
+        console.log(SkillList.getInstance().connections)
+        let ballSettings:IBallSettings = {
+            getBallRadius: function () {
+                return ballSize.x / 2;
+            },
+            getSkills: function () {
+                let tmp = Object.assign([], SkillList.getInstance().skills);
+                return tmp.map((val:Skill) => {return val.symbol})
+            },
+            getConnections: function() {
+                let tmp = Object.assign([], SkillList.getInstance().connections);
+                return tmp;
+            }
+        }
+
+        start(environmentSettings, ballSettings);
+    })
 })
