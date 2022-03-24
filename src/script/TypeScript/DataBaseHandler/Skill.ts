@@ -86,7 +86,7 @@ export class SkillList{
             data : JSON.stringify(["skill", "related"])
         }).done(function( dataRaw ) {
             if (dataRaw.length != 2) {
-                Error("Expect one value")
+                throw Error("Expect one value")
             }
             let skillJson = JSON.parse(dataRaw[0])["data"];
             let connectionsJson = JSON.parse(dataRaw[1])["data"];
