@@ -102,7 +102,7 @@ function update() : void {
             
             let radius = ball.radius;
             ball.setRadius(0)
-            ball.setLerpRadius(radius, 1, null);
+            ball.setRadiusAnimation(radius, 1, null);
         }
 
         ball.move(timeDelta / 1000);

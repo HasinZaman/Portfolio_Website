@@ -50,7 +50,7 @@ export function ballGenerate(environment : IEnvironmentSettings, ballInput : IBa
     return tmp;
 }
 
-export function randomBallPos(radius : number, space : Rect, ignore : number[], entites : Path[]) : Vector {
+export function randomBallPos(radius : number, space : Rect, ignore : number[], entities : Path[]) : Vector {
     let circle : Circle;
     let pos :  Vector = new Vector(0, 0);
     
@@ -59,7 +59,7 @@ export function randomBallPos(radius : number, space : Rect, ignore : number[], 
     do{
         pos.x = Math.random() * space.getWidth();
         pos.y = Math.random() * space.getHeight();
-    } while(interceptChecks(circle, entites, ignore).length > 0) ;
+    } while(interceptChecks(circle, entities, ignore).length > 0) ;
 
     return pos;
 }

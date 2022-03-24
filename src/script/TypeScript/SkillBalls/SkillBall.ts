@@ -5,21 +5,60 @@ import { openInfoBox } from "./InfoBox";
 import { Line } from "./Line";
 import { Vector } from "./Vector";
 
+/**
+ * IRadiusAnimation is an interface that defines how a ball should animate
+ */
 interface IRadiusAnimation {
+    /**
+     * duration: the number of seconds for a given radius animation
+     */
     duration : number;
+    /**
+     * time: The initial start time
+     */
     time : number;
+    /**
+     * animationCurve: BezierCurve of rate of change of animation
+     */
     animationCurve : BezierCurve;
+    /**
+     * target: final ball radius
+     */
     target : number;
 }
 
+/**
+ * Edge class defines data and methods related to lines between balls
+ */
 export class Edge {
+    /**
+     * svgJquery: HTML element that in which edges are drawn upon
+     */
     private static svgJquery : JQuery = $("svg").parent();
+    /**
+     * svg: HTMLElem object that generates HTML DOM
+     */
     private static svg : HTMLElem = new HTMLElem("svg");
+    /**
+     * size: Define the length and width of HTMLElem
+     */
     private static size : Vector = new Vector(0, 0);
 
+    /**
+     * defaultWidth: Width of default edge between balls
+     */
     static defaultWidth : number = 3;
+    /**
+     * focusedWidth: Width of focused edge
+     * focused edge should be used to bring attention to certain edges
+     */
     static focusedWidth : number = 10;
     
+    /**
+     * setSVGElemSize method sets the width and height of SVG object
+     * @param {number} width
+     * @param {number} height 
+     */
     public static setSVGElemSize(width : number, height : number) {
         Edge.size.x = width;
         Edge.size.y = height;
@@ -40,21 +79,47 @@ export class Edge {
         
     }
 
+    /**
+     * updateSVGElem updates edges on SVG element
+     * @param edges array of edges that are being updated
+     */
     public static updateSVGElem(edges : Edge[]) {
         Edge.svgJquery.html(Edge.svg.generate());
     }
 
     //connections
+    /**
+     * ball1: reference of ball of starting position
+     */
     ball1 : SkillBall;
+    /**
+     * ball2: reference of ball of ending position
+     */
     ball2 : SkillBall;
 
     //properties
+    /**
+     * width: width of edge between ball1 and ball2
+     */
     width : number;
     
     //line Element
+    /**
+     * line: HTMLElem of edge
+     */
     line : HTMLElem;
 
+    /**
+     * Edge constructor creates Edge instance
+     * @constructor
+     * @param {SkillBall} ball1: reference of starting ball
+     * @param {SkillBall} ball2: reference of ending ball
+     * @throws {Error} will throw error if ball1 and ball2 reference the same edge
+     */
     constructor(ball1 : SkillBall, ball2 : SkillBall) {
+        if(ball1.id == ball2.id) {
+            throw Error("Edge cannot connect ball to itself")
+        }
         if(ball1.id < ball2.id) {
             this.ball1 = ball1;
             this.ball2 = ball2;
@@ -85,6 +150,9 @@ export class Edge {
         Edge.svg.addChild(this.line);
     }
 
+    /**
+     * updateLine method update attributes of line
+     */
     public updateLine() : void {
         this.line.get("style")[0].value = this.width.toString();
 
@@ -96,45 +164,105 @@ export class Edge {
     }
 }
 
+/**
+ * SkillBall class handles data related to skill balls in environment
+ * @extends {Circle}
+ */
 export class SkillBall extends Circle
 {
-    static mediaImageFolder : string = "src\\media\\img\\icons"
 
-    static creationAnimation : BezierCurve = new BezierCurve([
-        new Vector(0,0),
-        new Vector(1,0),
-        new Vector(0.1,1.5),
-        new Vector(1,1)
-    ]);
-    static defaultAnimation : BezierCurve = new BezierCurve([
-        new Vector(0,0),
-        new Vector(1,1)
-    ]);
+    /**
+     * mediaImageFolder: Static const that defines location of icons
+     */
+    public static readonly mediaImageFolder: string = "src\\media\\img\\icons"
+
+    /**
+     * creationAnimation: Static const that defines default creation animation curve
+     */
+    public static get creationAnimation(): BezierCurve {
+        return new BezierCurve([
+            new Vector(0,0),
+            new Vector(1,0),
+            new Vector(0.1,1.5),
+            new Vector(1,1)
+        ])
+    };
+
+    /**
+     * defaultAnimation: Static const that defines default animation curve
+     */
+    public static get defaultAnimation(): BezierCurve {
+        return new BezierCurve([
+            new Vector(0,0),
+            new Vector(1,1)
+        ])
+    };
 
     //id
+    /**
+     * id: unique of number skill ball
+     */
     id : number;
 
     //cached values
+    /**
+     * initialRadius: cached value radius before animation
+     */
     initialRadius : number;
+    /**
+     * radiusAnim: cached values of playing animation
+     */
     radiusAnim : IRadiusAnimation | null = null;
 
     //physics
+    /**
+     * slowCond: defines whether the ball is traveling in slow motion
+     */
     slowCond : boolean = true;
+    /**
+     * vel: physics value used to represent velocity of ball
+     */
     vel : Vector;
+    /**
+     * mass: physics value used to represent mass of ball
+     */
     mass : number;
+    /**
+     * movementLine: cached Line object used to find next ball position
+     */
     private movementLine : Line;
 
     //css values
+    /**
+     * scale: scale defines the size of ball
+     */
     scale : number;
 
     //DOM reference
+    /**
+     * element: reference to ball DOM
+     */
     element : JQuery;
+    /**
+     * iconName: name of icon
+     */
     iconName : string;
 
     //connected balls
+    /**
+     * connections: array of connections that link balls
+     */
     connections : Edge[] = [];
+    /**
+     * edgeList: static array of all edges
+     */
     static edgeList : Edge[] = [];
 
+    /**
+     * addEdge method adds an edge between ball1 and ball2
+     * @param {SkillBall} ball1
+     * @param {SkillBall} ball2  
+     */
     static addEdge(ball1 : SkillBall, ball2 : SkillBall) : void {
         let edge : Edge = new Edge(ball1, ball2);
 
@@ -194,6 +322,14 @@ export class SkillBall extends Circle
 
         this.edgeList.splice(start+1, 0, edge);
     }
+
+    /**
+     * findEdge method finds edge that connects ball1 and ball2.
+     * Order of ball1 and ball2 does not matter
+     * @param {SkillBall | number} ball1: reference or id of ball
+     * @param {SkillBall | number} ball2: reference or id of ball 
+     * @returns {Edge | null} Edge is returned if it exists else, null is returned
+     */
     static findEdge(ball1 : SkillBall | number, ball2 : SkillBall | number) : Edge | null {
         if(this.edgeList.length == 0) {
             return null;
@@ -258,6 +394,17 @@ export class SkillBall extends Circle
         return null;
     }
 
+    /**
+     * constructor creates Skill Ball
+     * @constructor
+     * @param {number} id: id of skill ball
+     * @param {number} radius: initial radius of skill ball
+     * @param {Vector} start: vector position of start position
+     * @param {Vector} initialVelocity: initial velocity of skill ball
+     * @param {number} mass: mass of skill ball
+     * @param {JQuery} environment: JQuery object that references the HTML physics ball environment
+     * @param {string} iconName: name of skill ball
+     */
     constructor(id : number, radius : number, start : Vector, initialVelocity : Vector, mass : number, environment : JQuery, iconName : string) {
         super(radius, start);
 
@@ -269,32 +416,37 @@ export class SkillBall extends Circle
         this.scale = 1;
         this.iconName = iconName
 
-        this.element = this.buildHTML(this.id, this.iconName, environment);
+        this.element = this.buildHTML(environment);
 
         this.movementLine = new Line(this.p, this.vel, -1);
 
         this.setRadius(0);
-        this.setLerpRadius(radius * 0.5, 0.5, SkillBall.creationAnimation);
+        this.setRadiusAnimation(radius * 0.5, 0.5, SkillBall.creationAnimation);
     }
 
-    private buildHTML(id : number, iconName : string, environment : JQuery) : JQuery {
+    /**
+     * utility method to create HTML DOM required to make Skill Ball in environment 
+     * @param {JQuery} environment: JQuery object that references the HTML physics ball environment
+     * @returns {JQuery} JQuery object that references HTML DOM of skill ball
+     */
+    private buildHTML(environment : JQuery) : JQuery {
         let elem : HTMLElem = new HTMLElem("div");
         let image : HTMLElem = new HTMLElem("img");
 
         let ballId : AttrVal[] = elem.get("id");
-        ballId.push(new AttrVal(`ball-${id}`));
+        ballId.push(new AttrVal(`ball-${this.id}`));
 
         let ballClass : AttrVal[] = elem.get("class");
         ballClass.push(new AttrVal("ball"));
 
         let imageLocation : AttrVal[] = image.get("src");
-        imageLocation.push(new AttrVal(`${SkillBall.mediaImageFolder}\\${iconName}_icon.svg`))
+        imageLocation.push(new AttrVal(`${SkillBall.mediaImageFolder}\\${this.iconName}_icon.svg`))
 
         elem.addChild(image);
 
         //create dom
         environment.append(elem.generate());
-        let tmp : JQuery = environment.find(`#ball-${id}`);;
+        let tmp : JQuery = environment.find(`#ball-${this.id}`);;
 
         //setting functionality
         let skillBall : SkillBall = this;
@@ -314,8 +466,11 @@ export class SkillBall extends Circle
         return tmp;
     }
 
+    /**
+     * onMouseEnter method defines skill ball behavior when mouse begins to hover on skill ball
+     */
     private onMouseEnter() : void {
-        this.setLerpRadius(this.initialRadius, 0.25, null);
+        this.setRadiusAnimation(this.initialRadius, 0.25, null);
         this.slowCond = false;
 
         this.connections.forEach(edge => {
@@ -323,8 +478,11 @@ export class SkillBall extends Circle
         });
     }
     
+    /**
+     * onMouseLeave method defines skill ball behavior when mouse stops hovering on skill ball
+     */
     private onMouseLeave() : void {
-        this.setLerpRadius(this.initialRadius * 0.5, 0.25, null);
+        this.setRadiusAnimation(this.initialRadius * 0.5, 0.25, null);
         this.slowCond = true;
 
         this.connections.forEach(edge => {
@@ -332,10 +490,17 @@ export class SkillBall extends Circle
         });
     }
 
+    /**
+     * onClick method defines skill ball behavior when mouse clicks on skill ball
+     */
     private onClick() : void {
         //this.foo("click",this.id,this.iconName)
     }
 
+    /**
+     * bounce updates skill ball velocity based on bounce plane
+     * @param {Vector} collisionPlane direction of plane in which a bounce occurs
+     */
     public bounce(collisionPlane  : Vector) : void
     {
         let parallel : Vector = collisionPlane;
@@ -348,7 +513,14 @@ export class SkillBall extends Circle
         this.vel = Vector.add(v1, v2);
     }
 
-    public setLerpRadius(radius : number, duration : number | null, animationCurve : BezierCurve | null | undefined) : boolean {
+    /**
+     * setRadiusAnimation method sets radius based on animationCurve
+     * @param {number} radius: new radius of skill ball
+     * @param {number | null} duration: number of seconds for a radius interpolate animation
+     * @param {BezierCurve | null | undefined} animationCurve: animation curve interpolation
+     * @returns {boolean} boolean whether animation has been set
+     */
+    public setRadiusAnimation(radius : number, duration : number | null, animationCurve : BezierCurve | null | undefined) : boolean {
         if(radius < 0) {
             return false;
         }
@@ -388,6 +560,12 @@ export class SkillBall extends Circle
         return true;
     }
 
+    /**
+     * setRadius sets the radius of skill ball
+     * @deprecated
+     * @param {number} radius: new radius of skill ball 
+     * @returns: boolean if new radius is set
+     */
     public setRadius(radius : number) : boolean {
         if(radius < 0) {
             return false;
@@ -398,7 +576,11 @@ export class SkillBall extends Circle
         return true;
     }
 
-    private updateRadius(time : number) : void {
+    /**
+     * updateRadius method updates radius based on timeDelta and radius animation curve
+     * @param {number} timeDelta: delta time used to calculate new radius
+     */
+    private updateRadius(timeDelta : number) : void {
         if(this.radiusAnim == null) {
             return;
         }
@@ -406,7 +588,7 @@ export class SkillBall extends Circle
         let deltaRadius = Math.abs(this.radius - this.radiusAnim.target);
 
         if(deltaRadius > 0.01) {
-            this.radiusAnim.time+= time;
+            this.radiusAnim.time+= timeDelta;
 
             let pos : number = this.radiusAnim.time / this.radiusAnim.duration;
 
@@ -422,24 +604,34 @@ export class SkillBall extends Circle
         }
     }
 
+    /**
+     * toString returns a string of Skill Ball
+     * @returns {String} string representation of skill ball
+     */
     public toString() : string {
         return `radius:${this.radius}\np:${this.p.x},${this.p.y}\ndir:${this.vel.x},${this.vel.y}`
     }
 
-    public move(time : number) {
+    /**
+     * move method moves ball
+     * @param {number} deltaTime: delta time used to calculate new ball position & ball radius
+     */
+    public move(deltaTime : number) {
         if(!this.slowCond) {
-            time = time/4;
+            deltaTime = deltaTime/4;
         }
         this.movementLine.p = this.p;
         this.movementLine.gradient = this.vel;
 
-        this.p = this.movementLine.getPoint(time);
+        this.p = this.movementLine.getPoint(deltaTime);
 
         //update radius
-        this.updateRadius(time);
+        this.updateRadius(deltaTime);
     }
 
-
+    /**
+     * destroy method handles the deconstruction of SkillBall
+     */
     public destroy() : void {
         let edge : Edge;
         for(let i1 = SkillBall.edgeList.length - 1; i1 >= 0; i1--) {
