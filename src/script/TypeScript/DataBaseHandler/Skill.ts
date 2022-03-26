@@ -1,3 +1,6 @@
+/**
+ * Skill is class that stores the values related to
+ */
 export class Skill{
     private id_: number;
     private colour_: string;
