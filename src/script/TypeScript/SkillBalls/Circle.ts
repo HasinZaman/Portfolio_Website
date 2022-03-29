@@ -3,6 +3,7 @@ import { Path } from "./Path";
 
 /**
  * Circle class define methods and variables to create circle path
+ * @extends {Path}
  */
 export class Circle implements Path
 {

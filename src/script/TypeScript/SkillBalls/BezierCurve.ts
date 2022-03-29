@@ -4,6 +4,7 @@ import { Vector } from "./Vector";
 
 /**
  * BezierCurve class defines a point and methods required to make a bezier curve
+ * @extends {Path}
  */
 export class BezierCurve implements Path {
 
