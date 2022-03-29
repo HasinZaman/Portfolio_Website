@@ -1,7 +1,6 @@
 import { AttrVal, HTMLElem, StyleAttr } from "../HTMLBuilder/HTMLBuilder";
 import { BezierCurve } from "./BezierCurve";
 import { Circle } from "./Circle";
-import { openInfoBox } from "./InfoBox";
 import { Line } from "./Line";
 import { Vector } from "./Vector";
 
@@ -452,7 +451,7 @@ export class SkillBall extends Circle
         let skillBall : SkillBall = this;
 
         tmp.on("click", function() {
-            openInfoBox(skillBall.iconName);
+            //openInfoBox(skillBall.iconName);
         })
         
         tmp.on("mouseenter", function() {

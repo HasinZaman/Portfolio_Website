@@ -1,6 +1,5 @@
 import { Tag, SkillList } from "../DataBaseHandler/Skill";
 import { ballGenerate, randomBallPos, IEnvironmentSettings, IBallSettings } from "./BallGeneration";
-import { initializeInfoBox } from "./InfoBox";
 import { interceptChecks } from "./Intercept";
 import { Line } from "./Line";
 import { Path } from "./Path";
@@ -28,8 +27,6 @@ function start(environmentSettings : IEnvironmentSettings, ballSettings : IBallS
     reSize();
     
     ballGenerate(environmentSettings, ballSettings).forEach(ball => entities.push(ball));
-
-    initializeInfoBox();
 
     console.log(entities);
     setTimeout(update, timeDelta);
