@@ -4,12 +4,21 @@ import { Rect } from "./Rect";
 import { Path } from "./Path";
 import { Vector } from "./Vector";
 
+/**
+ * Intercept class defines the variables that are can be used to derive vector position of intercepts
+ */
 class Intercept
 {
     exists : boolean
     t1 : number;
     t2 : number;
 
+    /**
+     * @constructor creates an intercept object
+     * @param {boolean} exists: boolean whether an intercept exists
+     * @param {number} t1: t value of intercept on path 1 
+     * @param {number} t2: t value of intercept on path 2
+     */
     constructor(exists : boolean, t1 : number, t2 : number) {
         this.exists = exists;
         this.t1 = t1;
@@ -17,6 +26,12 @@ class Intercept
     }
 }
 
+/**
+ * rayChecks returns index of the first collider the ray has an intercept with
+ * @param {Line} ray: line that is used to determine ray 
+ * @param {Path[]} colliders: array of paths that will be intercept checked with the inputted ray
+ * @returns {number} index of the first collider the ray hits
+ */
 export function rayChecks(ray : Line, colliders : Path[]) : number {
     for(let i1 : number = 0; i1 < colliders.length; i1++)
     {
@@ -27,6 +42,12 @@ export function rayChecks(ray : Line, colliders : Path[]) : number {
     return -1;
 }
 
+/**
+ * rayCheck returns the position on ray of an intercept between Path and Ray
+ * @param {Line} ray: Line of ray
+ * @param {Path} p: path that will be checked against ray
+ * @returns {number} position on ray where the ray and path intercept or -1 if there is not intersection
+ */
 export function rayCheck(ray : Line, p : Path) : number {
     console.log("Ray Check")
     console.log(p)
@@ -39,12 +60,19 @@ export function rayCheck(ray : Line, p : Path) : number {
     return -1;
 }
 
-export function interceptChecks(p1 : Path, paths : Path[], ignoreIndex : number[]) : number[] {
+/**
+ * interceptChecks finds all the colliders that intersect with p1
+ * @param {Path} path: path that will be used to be checked against colliders
+ * @param {Path[]} colliders: array of colliders that will be checked against path
+ * @param {number[]} ignoreIndex: array of index of colliders that won't be checked
+ * @returns {number[]} array of indexes colliders that intersect path
+ */
+export function interceptChecks(path : Path, colliders : Path[], ignoreIndex : number[]) : number[] {
     let tmp : number[] = [];
-    for(let i : number = 0; i < paths.length; i++)
+    for(let i : number = 0; i < colliders.length; i++)
     {
         if(!ignoreIndex.includes(i)) {
-            if(interceptCheck(p1, paths[i])) {
+            if(interceptCheck(path, colliders[i])) {
                 tmp.push(i);
             }
         }
@@ -52,6 +80,12 @@ export function interceptChecks(p1 : Path, paths : Path[], ignoreIndex : number[
     return tmp;
 }
 
+/**
+ * interceptCheck checks if two paths intercept
+ * @param {Path} p1 
+ * @param {Path} p2 
+ * @returns {boolean} boolean if an intercept exists
+ */
 export function interceptCheck(p1 : Path, p2 : Path) : boolean {
     let line : Line;
     let i : Intercept;
@@ -97,6 +131,12 @@ export function interceptCheck(p1 : Path, p2 : Path) : boolean {
     return t2.t1 <= t1.t1 && t1.exists && t2.exists;
 }
 
+/**
+ * getIntercept returns Intercept between a line a path
+ * @param {Line} line: line that is checked against path
+ * @param {Path} p: path that is checked against line
+ * @returns {Intercept} intercept of line and p
+ */
 function getIntercept(line : Line, p : Path) : Intercept {
     if(p instanceof Line) {
         return LineLineIntercept(line, p as Line);
@@ -109,6 +149,13 @@ function getIntercept(line : Line, p : Path) : Intercept {
     }
     throw new Error("Error");
 }
+
+/**
+ * LineLineIntercept returns the intercept of two lines
+ * @param {Line} l1 
+ * @param {Line} l2 
+ * @returns {Intercept} intercept of two lines
+ */
 function LineLineIntercept(l1 : Line, l2 : Line) : Intercept {
     let tmp : Intercept = new Intercept(true, 0, 0);
 
@@ -116,7 +163,7 @@ function LineLineIntercept(l1 : Line, l2 : Line) : Intercept {
     v1 = l1.gradient;
     v2 = l2.gradient;
 
-/*
+    /*
     let n1 : number = v1.x * v2.y - v2.x * v1.y;
 
     if(n1 == 0) {
@@ -171,6 +218,12 @@ function LineLineIntercept(l1 : Line, l2 : Line) : Intercept {
     return tmp;
 }
 
+/**
+ * LineLineIntercept returns the intercept of line and circle
+ * @param {Line} l
+ * @param {Circle} c 
+ * @returns {Intercept} Intercept object of line and circle
+ */
 function LineCircleIntercept(l : Line, c : Circle) : Intercept {
     let tmp : Intercept = new Intercept(true, 0, 0);
 
@@ -208,6 +261,12 @@ function LineCircleIntercept(l : Line, c : Circle) : Intercept {
     return tmp;
 }
 
+/**
+ * LineLineIntercept returns the intercept of line and rect
+ * @param {Line} l
+ * @param {Rect} r 
+ * @returns {Intercept} Intercept object of line and rect
+ */
 function LineRectIntercept(l : Line, r : Rect) {
     let tmp : Intercept = new Intercept(false, 0, 0);
     for(let i1 : number = 0; i1 < 4; i1++)
