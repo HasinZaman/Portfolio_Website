@@ -74,8 +74,8 @@ export function randomBallPos(radius : number, space : Rect, ignore : number[], 
     circle = new Circle(radius, pos);
 
     do{
-        pos.x = Math.random() * space.getWidth();
-        pos.y = Math.random() * space.getHeight();
+        pos.x = Math.random() * space.width;
+        pos.y = Math.random() * space.height;
     } while(interceptChecks(circle, entities, ignore).length > 0) ;
 
     return pos;
