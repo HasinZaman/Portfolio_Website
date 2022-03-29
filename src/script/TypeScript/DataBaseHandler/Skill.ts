@@ -15,6 +15,22 @@ export class Skill{
         return this.colour_;
     }
 
+    set colour(value: string) {
+        if (value.length != 6) {
+            return;
+        }
+
+        let chars = value.split("");
+        
+        for(let i = 0; i < chars.length; i++) {
+            if ("0123456789abcdef".indexOf(chars[i].toLowerCase()) == -1) {
+                return;
+            }
+        }
+
+        this.colour_ = value;
+    }
+
     get symbol() {
         return this.symbol_;
     }
