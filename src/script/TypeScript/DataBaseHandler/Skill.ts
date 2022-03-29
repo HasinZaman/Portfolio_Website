@@ -1,5 +1,5 @@
 /**
- * Skill is class that stores the values related to
+ * Skill is class that stores the values related to Skill tags
  */
 export class Tag{
     private id_: number = 0;
@@ -10,7 +10,7 @@ export class Tag{
     get id() {
         return this.id_;
     }
-
+    
     get colour() {
         return this.colour_;
     }
@@ -39,25 +39,39 @@ export class Tag{
         return this.tagType_;
     }
 
+    /**
+     * constructor for Skill 
+     * @param {number} id: integer representation of id of object
+     * @param {string} colour: hexadecimal representation of skill
+     * @param {string} symbol: name of symbol string 
+     * @param {number} tagType: tagType represents type of tag
+     */
     constructor(id: number, colour: string, symbol: string, tagType: number){
         this.id_ = id;
-        this.colour_ = colour;
+        this.colour = colour;
         this.symbol_ = symbol;
         this.tagType_ = tagType;
     }
 }
 
+/**
+ * Skill List is a singleton pattern of all Skills stored on Database
+ */
 export class SkillList{
     private static instance : SkillList;
 
-
-    private skills_ : { [key: number]: Skill } = {};
+    /**
+     * {[key: number]: Tag } skills_: Dictionary of all skills id -> Tag
+     */
+    private skills_ : { [key: number]: Tag } = {};
     private keys : number[] = [];
     private connections_ : number[][] = [];
 
-
-    get skills() : Skill[] {
-        let skills: Skill[] = [];
+    /**
+     * skills getter returns array of tags 
+     */
+    get skills() : Tag[] {
+        let skills: Tag[] = [];
         
         for(let i = 0; i < this.keys.length; i++){
             skills.push(this.skills_[this.keys[i]])
@@ -66,9 +80,13 @@ export class SkillList{
         return skills;
     }
 
+    /**
+     * connections getter returns a 2d array of the connections between tags. let a connection be represented as connections[x][y]; then connections[x] is the list of all the connections that start from skills[x] and connections[x][y] is end point connection skills[y] (skills[x] -> skills[y])
+     */
     get connections() : number[][] {
         let map : { [key: number]: number } = {};
 
+        //map tag id -> tag index in skills array
         for (let i = 0; i < this.keys.length; i++) {
             map[this.keys[i]] = i;
         }
@@ -81,12 +99,19 @@ export class SkillList{
         return connectionsTmp;
     }
 
-
+    /**
+     * private constructor creates instance of SkillList
+     */
     private constructor() {
         this.skills_ = {}
         this.connections_ = []
     }
 
+    /**
+     * getInstance method returns an instance of SkillList singleton
+     * @param {() => void} listener: function that is called after database information is retrieved
+     * @returns reference to SkillList
+     */
     public static getInstance(listener: () => void = () => {}) : SkillList {
         if (!SkillList.instance) {
             SkillList.instance = new SkillList();
@@ -95,6 +120,10 @@ export class SkillList{
         return SkillList.instance;
     }
 
+    /**
+     * update method gets list of Skill and organizational tags from database
+     * @param {() => void} listener: function that is called after database information is retrieved
+     */
     public update(listener: () => void) {
         $.ajax({
             type: "POST",
@@ -124,6 +153,13 @@ export class SkillList{
         })
     }
 
+    /**
+     * updateSkill method update skill with specific id
+     * @param {number} id: id of skill tag that will be updated
+     * @param {string} colour 
+     * @param {string} symbol 
+     * @param {number} tagType 
+     */
     public updateSkill(id: number, colour: string, symbol: string, tagType: number) {
         if (!this.skills_.hasOwnProperty(id)){
             this.keys.push(id);
@@ -133,6 +169,11 @@ export class SkillList{
         
     }
 
+    /**
+     * updateConnection connection between two skill tags
+     * @param id1 
+     * @param id2
+     */
     public updateConnection(id1: number, id2: number) {
         if (!this.skills_.hasOwnProperty(id1) || !this.skills_.hasOwnProperty(id2)){
             return;
@@ -144,7 +185,10 @@ export class SkillList{
         this.connections_.push([id1, id2])
     }
 
-    public restart() {
+    /**
+     * resets a skills and connections relationship
+     */
+    public reset() {
         this.skills_ = {}
         this.connections_ = []
     }
