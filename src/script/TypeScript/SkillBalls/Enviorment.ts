@@ -1,4 +1,4 @@
-import { Skill, SkillList } from "../DataBaseHandler/Skill";
+import { Tag, SkillList } from "../DataBaseHandler/Skill";
 import { ballGenerate, randomBallPos, IEnvironmentSettings, IBallSettings } from "./BallGeneration";
 import { initializeInfoBox } from "./InfoBox";
 import { interceptChecks } from "./Intercept";
@@ -205,7 +205,7 @@ $(window).on("load", () => {
             },
             getSkills: function () {
                 let tmp = Object.assign([], SkillList.getInstance().skills);
-                return tmp.map((val:Skill) => {return val.symbol})
+                return tmp.map((val:Tag) => {return val.symbol})
             },
             getConnections: function() {
                 let tmp = Object.assign([], SkillList.getInstance().connections);
