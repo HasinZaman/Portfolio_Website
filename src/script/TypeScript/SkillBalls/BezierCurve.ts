@@ -13,7 +13,7 @@ export class BezierCurve implements Path {
     parameters : Vector[] = [];
 
     /**
-     * Constructor creates BezierCurve object
+     * @constructor Constructor creates BezierCurve object
      * @param parameters 
      */
     public constructor(parameters : Vector[])
