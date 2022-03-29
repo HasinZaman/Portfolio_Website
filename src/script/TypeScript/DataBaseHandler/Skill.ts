@@ -1,12 +1,12 @@
 /**
  * Skill is class that stores the values related to
  */
-export class Skill{
-    private id_: number;
-    private colour_: string;
-    private symbol_: string;
-    private tagType_: number;
-
+export class Tag{
+    private id_: number = 0;
+    private colour_: string = "";
+    private symbol_: string = "";
+    private tagType_: number = 0;
+    
     get id() {
         return this.id_;
     }
@@ -129,7 +129,7 @@ export class SkillList{
             this.keys.push(id);
             this.keys = this.keys.sort((a, b) => {return a - b;});
         }
-        this.skills_[id] = new Skill(id, colour, symbol, tagType);
+        this.skills_[id] = new Tag(id, colour, symbol, tagType);
         
     }
 
