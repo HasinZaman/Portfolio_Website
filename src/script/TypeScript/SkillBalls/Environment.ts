@@ -19,38 +19,25 @@ let timeDelta : number = 20;//ms
 //entities
 let entities : Path[] = []
 
-
-function start(environmentSettings : IEnvironmentSettings, ballSettings:IBallSettings) {
+/**
+ * start method initiates the ball simulation
+ * @param {IEnvironmentSettings} environmentSettings: initial settings to create the environment
+ * @param {IBallSettings} ballSettings: initial settings to create balls
+ */
+function start(environmentSettings : IEnvironmentSettings, ballSettings : IBallSettings) {
     reSize();
-    /*let environmentSettings:IEnvironmentSettings = {
-        getEnvironmentSize: function (){
-            return environmentSize;
-        },
-        getSkillBox: function() {
-            return skillBox;
-        },
-    };
-    let ballSettings:IBallSettings = {
-        getBallRadius: function () {
-            return ballSize.x / 2;
-        },
-        getSkills: function () {
-            return ["HTML", "CSS", "JS"]
-        },
-        getConnections: function() {
-            return [[0,1], [1,0], [1,2]]
-        }
-    }*/
+    
     ballGenerate(environmentSettings, ballSettings).forEach(ball => entities.push(ball));
 
     initializeInfoBox();
 
     console.log(entities);
-
-
     setTimeout(update, timeDelta);
 }
 
+/**
+ * update method updates the states of every entity in the environment. Which means the ball positions are updated, collisions are resolved and all entities with an invalid state will be removed.
+ */
 function update() : void {
     //calculate ball physics
     let ignore : number[] = [];
@@ -120,6 +107,11 @@ function update() : void {
     setTimeout(update, timeDelta);
 }
 
+/**
+ * boundaryCheck checks if a ball in within the environment
+ * @param {SkillBall} ball
+ * @returns {boolean} boolean of whether ball is in the environment
+ */
 function boundaryCheck(ball : SkillBall) : boolean {
     let bufferZone = 5;
     if(ball.p.x - ball.radius + bufferZone < 0 || environmentSize.x < ball.p.x + ball.radius - bufferZone)
@@ -135,12 +127,18 @@ function boundaryCheck(ball : SkillBall) : boolean {
     return true;
 }
 
-function render(ball : SkillBall) : void
-{
+/**
+ * render method updates the DOM of all entities in environment
+ * @param {SkillBall} ball 
+ */
+function render(ball : SkillBall) : void {
     let tmp : Vector = Vector.sub(ball.p, new Vector(ballSize.x/2, -1 * ballSize.y/2));
     ball.element.css("transform", `translate(${tmp.x}px, ${environmentSize.y - tmp.y}px) scale(${ball.scale})`);
 }
 
+/**
+ * reSize methods updates the size of environment
+ */
 function reSize() : void {
     environmentSize = new Vector(skillBox.width() as number, skillBox.height() as number);
     ballSize = new Vector(100, 100);
@@ -185,6 +183,7 @@ function reSize() : void {
     }
 }
 
+//starts simulation once page is loaded
 $(window).on("load", () => {
     $(window).on('resize', reSize);
 
