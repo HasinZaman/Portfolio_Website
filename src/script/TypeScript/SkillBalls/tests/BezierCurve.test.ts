@@ -86,7 +86,7 @@ import { Vector } from "../Vector";
     //invalid construction
     {
         test(`Invalid construction`, () => {
-            expect(() => {new BezierCurve([])}).toThrowError("parameters must have atleast size 2");
+            expect(() => {new BezierCurve([])}).toThrowError("parameters must have at least size 2");
         });
     }
 }

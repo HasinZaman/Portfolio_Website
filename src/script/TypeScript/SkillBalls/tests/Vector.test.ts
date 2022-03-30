@@ -278,7 +278,7 @@ import { Vector } from "../Vector";
     }
 }
 
-//nomalization test
+//normalization test
 {
     let testCount = 0;
     //normalize v1

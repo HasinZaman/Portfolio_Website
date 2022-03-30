@@ -7,7 +7,7 @@ import { Vector } from "../Vector";
 
 //line line intercept
 {
-    //parrel line test 1
+    //parallel line test 1
     {
         let gradient : Vector = new Vector(1, 0);
         let dist : number = 10;
@@ -20,7 +20,7 @@ import { Vector } from "../Vector";
         });
     }
 
-    //parrel line test 2
+    //parallel line test 2
     {
         let gradient : Vector = new Vector(0, 1);
         let dist : number = 10;
@@ -33,7 +33,7 @@ import { Vector } from "../Vector";
         });
     }
 
-    //parrel line test 3
+    //parallel line test 3
     {
         let gradient : Vector = new Vector(1, 1);
         let dist : number = 10;
