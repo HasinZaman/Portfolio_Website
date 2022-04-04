@@ -145,6 +145,8 @@ body {
 				background-color: black;
 
 				border: $outlineWidth white;
+
+				cursor: pointer;
 				
 				> img {
 					width: $sideLength * 0.75;
@@ -196,8 +198,19 @@ body {
 			margin-top: 10px;
 			display: flex;
 			flex-direction: row;
-			button {
+			div {
+				padding: 10px;
+				margin-left: 2px;
+				margin-right: 2px;
+				font-size: 20px;
+				padding-bottom: 10px;
+
+				background-color: rgba(0,0,0,0);
 				
+				color: white;
+				mix-blend-mode: difference;
+
+				cursor: pointer;
 			}
 		}
 		
