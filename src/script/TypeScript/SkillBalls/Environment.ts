@@ -1,4 +1,4 @@
-import { Tag, SkillList } from "../DataBaseHandler/Skill";
+import { Tag, TagList } from "../DataBaseHandler/Tag";
 import { ballGenerate, randomBallPos, IEnvironmentSettings, IBallSettings } from "./BallGeneration";
 import { interceptChecks } from "./Intercept";
 import { Line } from "./Line";
@@ -184,7 +184,7 @@ function reSize() : void {
 $(window).on("load", () => {
     $(window).on('resize', reSize);
 
-    SkillList.getInstance(() => {
+    TagList.getInstance(() => {
         let environmentSettings:IEnvironmentSettings = {
             getEnvironmentSize: function (){
                 return environmentSize;
@@ -193,18 +193,18 @@ $(window).on("load", () => {
                 return skillBox;
             },
         };
-        console.log(SkillList.getInstance().skills)
-        console.log(SkillList.getInstance().connections)
+        console.log(TagList.getInstance().skills)
+        console.log(TagList.getInstance().connections)
         let ballSettings:IBallSettings = {
             getBallRadius: function () {
                 return ballSize.x / 2;
             },
             getSkills: function () {
-                let tmp = Object.assign([], SkillList.getInstance().skills);
+                let tmp = Object.assign([], TagList.getInstance().skills);
                 return tmp.map((val:Tag) => {return val.symbol})
             },
             getConnections: function() {
-                let tmp = Object.assign([], SkillList.getInstance().connections);
+                let tmp = Object.assign([], TagList.getInstance().connections);
                 return tmp;
             }
         }
