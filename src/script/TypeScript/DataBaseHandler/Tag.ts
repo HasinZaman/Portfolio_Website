@@ -57,8 +57,8 @@ export class Tag{
 /**
  * Skill List is a singleton pattern of all Skills stored on Database
  */
-export class SkillList{
-    private static instance : SkillList;
+export class TagList{
+    private static instance : TagList;
 
     /**
      * {[key: number]: Tag } skills_: Dictionary of all skills id -> Tag
@@ -112,12 +112,12 @@ export class SkillList{
      * @param {() => void} listener: function that is called after database information is retrieved
      * @returns reference to SkillList
      */
-    public static getInstance(listener: () => void = () => {}) : SkillList {
-        if (!SkillList.instance) {
-            SkillList.instance = new SkillList();
-            SkillList.instance.update(listener);
+    public static getInstance(listener: () => void = () => {}) : TagList {
+        if (!TagList.instance) {
+            TagList.instance = new TagList();
+            TagList.instance.update(listener);
         }
-        return SkillList.instance;
+        return TagList.instance;
     }
 
     /**
@@ -140,15 +140,15 @@ export class SkillList{
             let connectionsJson = JSON.parse(dataRaw[1])["data"];
 
             for (let i = 0; i < skillJson.length; i++) {
-                SkillList.getInstance().updateSkill(skillJson[i]["id"], skillJson[i]["colour"], skillJson[i]["symbol"], skillJson[i]["tag_type"]);
+                TagList.getInstance().updateSkill(skillJson[i]["id"], skillJson[i]["colour"], skillJson[i]["symbol"], skillJson[i]["tag_type"]);
             }
 
             for (let i = 0; i < connectionsJson.length; i++) {
-                SkillList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"])
+                TagList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"])
             }
-            console.log(SkillList.instance.connections_);
-            console.log(SkillList.instance.skills_);
-            console.log(SkillList.instance.keys);
+            console.log(TagList.instance.connections_);
+            console.log(TagList.instance.skills_);
+            console.log(TagList.instance.keys);
             listener();
         })
     }
