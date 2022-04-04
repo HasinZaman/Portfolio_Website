@@ -99,15 +99,24 @@ body {
 	}
 
 	#skills {
+		display: flex;
+		flex-direction: column;
 
+		justify-content: center;
 		align-items: center;
 
+		> div{
+
+			$outlineWidth: 5px;
 
 
+			width: 75%;
 
+			margin: 30px;
 
+			$sideLength: 100px;
 
-
+			display: grid;
 
 			grid-template-columns: repeat(auto-fill, minmax($sideLength, 1fr));
 			grid-auto-columns: $sideLength;
@@ -131,6 +140,9 @@ body {
 				justify-content: center;
 				align-items: center;
 
+				z-index: 1;
+
+				background-color: black;
 
 				border: $outlineWidth white;
 				
@@ -145,8 +157,17 @@ body {
 				}
 			}
 
+			> .selected {
+				background-color: rgba(0,0,0,0);
+				border-style: solid;
+			}
+
 			> .bg {
 				position: absolute;
+
+				width: 100%;
+				height: 100%;
+
 				z-index: 0;
 
 				background-color: green;
@@ -160,10 +181,19 @@ body {
 
 				display: none;
 			}
+
+			@keyframes slideIn {
+				from {
+					transform: translatey(100%);
+				}
 				to {
 					transform: translatey(0%);
 				}
 			}
+		}
+		
+		nav {
+			margin-top: 10px;
 			display: flex;
 			flex-direction: row;
 			button {
