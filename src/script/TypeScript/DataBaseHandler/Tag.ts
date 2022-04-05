@@ -7,35 +7,41 @@ export class Tag{
     private symbol_: string = "";
     private tagType_: number = 0;
     
-    get id() {
+    public get id() {
         return this.id_;
     }
     
-    get colour() {
+    public get colour() {
         return this.colour_;
     }
 
-    set colour(value: string) {
-        if (value.length != 6) {
+    public set colour(value: string) {
+        let valueTmp = value.replace(/^\#+/g, '');
+
+        if (valueTmp.length != 6) {
             return;
         }
 
-        let chars = value.split("");
-        
-        for(let i = 0; i < chars.length; i++) {
-            if ("0123456789abcdef".indexOf(chars[i].toLowerCase()) == -1) {
-                return;
-            }
-        }
+        let validCheck = valueTmp.split("")
+            .every(
+                (char) => {
+                    console.log(`char:${char} | ${"0123456789abcdef".indexOf(char.toLocaleLowerCase())}`)
+                    return "0123456789abcdef".indexOf(char.toLocaleLowerCase()) != -1
+                }
+            )
 
-        this.colour_ = value;
+        if (validCheck){
+            this.colour_ = valueTmp;
+        }
+        
+        
     }
 
-    get symbol() {
+    public get symbol() {
         return this.symbol_;
     }
 
-    get tagType() {
+    public get tagType() {
         return this.tagType_;
     }
 
@@ -70,7 +76,7 @@ export class TagList{
     /**
      * skills getter returns array of tags 
      */
-    get skills() : Tag[] {
+    get tags() : Tag[] {
         let skills: Tag[] = [];
         
         for(let i = 0; i < this.keys.length; i++){
@@ -146,9 +152,6 @@ export class TagList{
             for (let i = 0; i < connectionsJson.length; i++) {
                 TagList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"])
             }
-            console.log(TagList.instance.connections_);
-            console.log(TagList.instance.skills_);
-            console.log(TagList.instance.keys);
             listener();
         })
     }

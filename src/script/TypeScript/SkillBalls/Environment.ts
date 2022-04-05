@@ -193,14 +193,14 @@ $(window).on("load", () => {
                 return skillBox;
             },
         };
-        console.log(TagList.getInstance().skills)
+        console.log(TagList.getInstance().tags)
         console.log(TagList.getInstance().connections)
         let ballSettings:IBallSettings = {
             getBallRadius: function () {
                 return ballSize.x / 2;
             },
             getSkills: function () {
-                let tmp = Object.assign([], TagList.getInstance().skills);
+                let tmp = Object.assign([], TagList.getInstance().tags);
                 return tmp.map((val:Tag) => {return val.symbol})
             },
             getConnections: function() {
