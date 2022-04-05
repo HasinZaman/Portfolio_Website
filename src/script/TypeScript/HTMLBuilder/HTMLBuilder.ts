@@ -140,19 +140,73 @@ export class HTMLElem{
      */
     public generate() : string
     {
-        let childrenStr : string = "";
         let attrStr : string = "";
-
-        for(let i1 : number = 0; i1 < this.children.length; i1++)
-        {
-            childrenStr += `${this.children[i1].generate()}\n`;
-        }
 
         for(let i1 : number = 0; i1 < this.attr.length; i1++)
         {
             attrStr += `${this.attr[i1].generate()} `;
         }
 
-        return `<${this.tagname} ${attrStr}>${childrenStr}</${this.tagname}>`;
+        return `<${this.tagname} ${attrStr}>${this.generateChildren()}</${this.tagname}>`;
     }
+
+    /**
+     * generateChildren method returns string representation of child content of HTMLElem
+     * @returns {string} string format of child HTMLElem
+     */
+    public generateChildren() : string {
+        let childrenStr : string = "";
+
+        for(let i1 : number = 0; i1 < this.children.length; i1++)
+        {
+            childrenStr += `${this.children[i1].generate()}\n`;
+        }
+
+        return `${childrenStr}`;
+    }
+}
+
+/**
+ * HTMLText class defines HTML text element and method to create text content in HTMLElem
+ */
+export class HTMLText extends HTMLElem {
+    public text : string;
+
+    /**
+     * @constructor creates a new instance of HTMLText
+     * @param {string} text
+     */
+     constructor(text : string){
+        super("");
+
+        this.text = text;
+    }
+
+    /**
+     * get does nothing
+     * @param {string} key: name of attr
+     * @returns {AttrVal[]} empty array
+     */
+    public get(key : string) : AttrVal[]
+    {
+        return [];
+    }
+
+     /**
+      * addChild does nothing
+      * @param {HTMLElem} child 
+      */
+    public addChild(child : HTMLElem) {
+    }
+
+
+    /**
+     * generate method returns string representation of HTMLText
+     * @returns {string} string format of HTMLText
+     */
+     public generate() : string
+     {
+         return this.text;
+     }
+
 }
