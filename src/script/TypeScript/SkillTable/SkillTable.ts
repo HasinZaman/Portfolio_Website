@@ -179,56 +179,6 @@ function rgba(col : {r: number, g : number, b: number}, opacity : number ) : {r:
     }
 }
 
-function createSkills() {
-    let target = $("#skills > div").first();
-    
-    let skillsHTML : HTMLElem = new HTMLElem("div");
-
-    let tags = 
-    TagList.getInstance()
-    .tags
-    .filter(
-        (tag)=> {
-            return tag.tagType === 0
-        }
-    );
-
-    tags.forEach(
-        (skill : Tag) => {
-            let elem : HTMLElem = new HTMLElem("div");
-            elem.get("id").push(new AttrVal(toId(skill.symbol)));
-            elem.get("class").push(new AttrVal("skill"));
-
-            let img : HTMLElem = new HTMLElem("img");
-            img.get("src").push(new AttrVal(`src\\media\\img\\icons\\${skill.symbol}_icon.svg`))
-            img.get("alt").push(new AttrVal(`${skill.symbol} icon`))
-
-            let text : HTMLElem = new HTMLElem("div");
-            text.addChild(new HTMLText(`${skill.symbol}`));
-
-            elem.addChild(img);
-            elem.addChild(text);
-
-            skillsHTML.addChild(elem);
-        }
-    );
-
-    let rowCount = Math.floor((target.width() ?? 0) / 100);
-    if((tags.length / rowCount) % 1 != 0) {
-        let fillerCount = Math.floor((1 - ((tags.length / rowCount) % 1)) * rowCount);
-
-        for(let i1 = 0; i1 < fillerCount; i1++) {
-            let elem : HTMLElem = new HTMLElem("div");
-            elem.get("class").push(new AttrVal("skill"));
-
-            skillsHTML.addChild(elem);
-        }
-    }
-    
-
-    target.html(skillsHTML.generateChildren());
-}
-
 function createOrganizationButton() {
     let target = $("#skills > nav").first();
     let htmlBuilder : HTMLElem = new HTMLElem("div");
