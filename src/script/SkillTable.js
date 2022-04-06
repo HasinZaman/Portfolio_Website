@@ -421,7 +421,6 @@ function prepareTiles() {
     if (tableDim.y % 1 != 0) {
         tableDim.y = Math.ceil(tableDim.y);
     }
-    console.log(tableDim);
     tiles = new Array(tableDim.x * tableDim.y).fill(-1);
     tags = Tag_1.TagList.getInstance().tags;
     let i2 = 0;
@@ -433,7 +432,7 @@ function prepareTiles() {
             elem.get("id").push(new HTMLBuilder_1.AttrVal(toId(skill.symbol)));
             elem.get("class").push(new HTMLBuilder_1.AttrVal("skill"));
             let img = new HTMLBuilder_1.HTMLElem("img");
-            img.get("src").push(new HTMLBuilder_1.AttrVal(`src\\media\\img\\icons\\${skill.symbol}_icon.svg`));
+            img.get("src").push(new HTMLBuilder_1.AttrVal(`src\\media\\img\\icons\\${skill.symbol.replace("#", "Sharp")}_icon.svg`));
             img.get("alt").push(new HTMLBuilder_1.AttrVal(`${skill.symbol} icon`));
             let text = new HTMLBuilder_1.HTMLElem("div");
             text.addChild(new HTMLBuilder_1.HTMLText(`${skill.symbol}`));
@@ -447,8 +446,6 @@ function prepareTiles() {
         elem.get("class").push(new HTMLBuilder_1.AttrVal("skill"));
         skillsHTML.addChild(elem);
     }
-    console.log(tiles);
-    console.log(tableDim);
     target.html(skillsHTML.generateChildren());
 }
 function updateBorder(id, width, edge) {
@@ -461,28 +458,20 @@ function previewTiles(selectedTiles) {
     for (let i1 = 0; i1 < tiles.length; i1++) {
         targetTiles[i1] = selectedTiles.lastIndexOf(tiles[i1]) != -1;
     }
-    console.log(targetTiles);
-    console.log(selectedTiles);
-    console.log(tags);
     for (let x = 0; x < tableDim.x; x++) {
         for (let y = 0; y < tableDim.y; y++) {
             let tag = tags[getTile(x, y, tableDim, tiles, -1)];
             let currentTile = getTile(x, y, tableDim, targetTiles, false);
-            //console.log(`${x},${y} -${tag} - ${currentTile}`)
             if (tag == undefined) {
-                //throw new Error(`invalid index at ${x},${y}`);
                 continue;
             }
             if (!currentTile) {
-                console.log("currentTile is false");
                 for (let i = 0; i < 4; i++) {
                     updateBorder(toId(tag.symbol), 0, i);
                 }
                 continue;
             }
-            console.log(`border - left: ${x},${y} = ${toId(tag.symbol)}\n ${currentTile} && ${getTile(x - 1, y, tableDim, targetTiles, false)}`);
             if (tag == undefined) {
-                console.log(`undefined at ${x},${y}`);
                 continue;
             }
             //left
@@ -542,39 +531,6 @@ function rgba(col, opacity) {
         g: calculate(col.g, 0),
         b: calculate(col.b, 0)
     };
-}
-function createSkills() {
-    var _a;
-    let target = $("#skills > div").first();
-    let skillsHTML = new HTMLBuilder_1.HTMLElem("div");
-    let tags = Tag_1.TagList.getInstance()
-        .tags
-        .filter((tag) => {
-        return tag.tagType === 0;
-    });
-    tags.forEach((skill) => {
-        let elem = new HTMLBuilder_1.HTMLElem("div");
-        elem.get("id").push(new HTMLBuilder_1.AttrVal(toId(skill.symbol)));
-        elem.get("class").push(new HTMLBuilder_1.AttrVal("skill"));
-        let img = new HTMLBuilder_1.HTMLElem("img");
-        img.get("src").push(new HTMLBuilder_1.AttrVal(`src\\media\\img\\icons\\${skill.symbol}_icon.svg`));
-        img.get("alt").push(new HTMLBuilder_1.AttrVal(`${skill.symbol} icon`));
-        let text = new HTMLBuilder_1.HTMLElem("div");
-        text.addChild(new HTMLBuilder_1.HTMLText(`${skill.symbol}`));
-        elem.addChild(img);
-        elem.addChild(text);
-        skillsHTML.addChild(elem);
-    });
-    let rowCount = Math.floor(((_a = target.width()) !== null && _a !== void 0 ? _a : 0) / 100);
-    if ((tags.length / rowCount) % 1 != 0) {
-        let fillerCount = Math.floor((1 - ((tags.length / rowCount) % 1)) * rowCount);
-        for (let i1 = 0; i1 < fillerCount; i1++) {
-            let elem = new HTMLBuilder_1.HTMLElem("div");
-            elem.get("class").push(new HTMLBuilder_1.AttrVal("skill"));
-            skillsHTML.addChild(elem);
-        }
-    }
-    target.html(skillsHTML.generateChildren());
 }
 function createOrganizationButton() {
     let target = $("#skills > nav").first();
