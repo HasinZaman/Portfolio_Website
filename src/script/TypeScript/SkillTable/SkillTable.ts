@@ -54,7 +54,7 @@ function prepareTiles() {
             elem.get("class").push(new AttrVal("skill"));
 
             let img : HTMLElem = new HTMLElem("img");
-            img.get("src").push(new AttrVal(`src\\media\\img\\icons\\${skill.symbol}_icon.svg`))
+            img.get("src").push(new AttrVal(`src\\media\\img\\icons\\${skill.symbol.replace("#","Sharp")}_icon.svg`))
             img.get("alt").push(new AttrVal(`${skill.symbol} icon`))
 
             let text : HTMLElem = new HTMLElem("div");
