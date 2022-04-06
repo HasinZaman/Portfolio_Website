@@ -189,7 +189,7 @@ export class HTMLText extends HTMLElem {
      */
     public get(key : string) : AttrVal[]
     {
-        return [];
+        throw new Error("Invalid get call")
     }
 
      /**
@@ -197,6 +197,7 @@ export class HTMLText extends HTMLElem {
       * @param {HTMLElem} child 
       */
     public addChild(child : HTMLElem) {
+        throw new Error("Invalid addChild call")
     }
 
 
@@ -206,7 +207,7 @@ export class HTMLText extends HTMLElem {
      */
      public generate() : string
      {
-         return this.text;
+        return this.text;
      }
 
 }
