@@ -42,14 +42,17 @@ function createSkills() {
     );
 
     let rowCount = Math.floor((target.width() ?? 0) / 100); 
-    let fillerCount = Math.floor((1 - ((tags.length / rowCount) % 1)) * rowCount);
+    if((tags.length / rowCount) % 1 != 0) {
+        let fillerCount = Math.floor((1 - ((tags.length / rowCount) % 1)) * rowCount);
 
-    for(let i1 = 0; i1 < fillerCount; i1++) {
-        let elem : HTMLElem = new HTMLElem("div");
-        elem.get("class").push(new AttrVal("skill"));
+        for(let i1 = 0; i1 < fillerCount; i1++) {
+            let elem : HTMLElem = new HTMLElem("div");
+            elem.get("class").push(new AttrVal("skill"));
 
-        skillsHTML.addChild(elem);
+            skillsHTML.addChild(elem);
+        }
     }
+    
 
     target.html(skillsHTML.generateChildren());
 }
@@ -224,6 +227,11 @@ function select(idIndex : number) {
 
 }
 
+$(window).on('resize', () => {
+    createSkills();
+    createOrganizationButton();
+    select(-1);
+})
 
 let tags = TagList.getInstance();
 tags.update(() => {
