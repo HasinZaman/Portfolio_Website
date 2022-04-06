@@ -38,8 +38,6 @@ function prepareTiles() {
         tableDim.y = Math.ceil(tableDim.y);
     }
 
-    console.log(tableDim);
-
     tiles = new Array<number>(tableDim.x * tableDim.y).fill(-1);
 
     tags = TagList.getInstance().tags;
@@ -76,9 +74,6 @@ function prepareTiles() {
         skillsHTML.addChild(elem);
     }
 
-    console.log(tiles);
-    console.log(tableDim)
-
     target.html(skillsHTML.generateChildren());
 }
 
@@ -96,33 +91,23 @@ function previewTiles(selectedTiles : number[]) {
         targetTiles[i1] = selectedTiles.lastIndexOf(tiles[i1]) != -1;
     }
 
-    console.log(targetTiles)
-    console.log(selectedTiles)
-    console.log(tags)
     for(let x = 0; x < tableDim.x; x++) {
         for (let y = 0; y < tableDim.y; y++) {
             let tag = tags[getTile(x, y, tableDim, tiles, -1)];
             let currentTile = getTile(x,y,tableDim, targetTiles, false);
 
-            //console.log(`${x},${y} -${tag} - ${currentTile}`)
-
             if(tag == undefined){
-                //throw new Error(`invalid index at ${x},${y}`);
                 continue;
             }
 
             if(!currentTile) {
-                console.log("currentTile is false");
                 for(let i = 0; i < 4; i++) {
                     updateBorder(toId(tag.symbol), 0, i);
                 }
                 continue;
             }
 
-            console.log(`border - left: ${x},${y} = ${toId(tag.symbol)}\n ${currentTile} && ${getTile(x-1, y, tableDim, targetTiles, false)}`)
-
             if(tag == undefined) {
-                console.log(`undefined at ${x},${y}`)
                 continue;
             }
 
