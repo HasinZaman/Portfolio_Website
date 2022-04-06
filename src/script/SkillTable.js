@@ -124,16 +124,12 @@ class TagList {
             }
             let skillJson = JSON.parse(dataRaw[0])["data"];
             let connectionsJson = JSON.parse(dataRaw[1])["data"];
-            console.log(dataRaw);
             for (let i = 0; i < skillJson.length; i++) {
                 TagList.getInstance().updateSkill(skillJson[i]["id"], skillJson[i]["colour"], skillJson[i]["symbol"], skillJson[i]["tag_type"]);
             }
             for (let i = 0; i < connectionsJson.length; i++) {
                 TagList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"]);
             }
-            console.log(TagList.instance.connections_);
-            console.log(TagList.instance.skills_);
-            console.log(TagList.instance.keys);
             listener();
         });
     }
@@ -326,13 +322,14 @@ class HTMLText extends HTMLElem {
      * @returns {AttrVal[]} empty array
      */
     get(key) {
-        return [];
+        throw new Error("Invalid get call");
     }
     /**
      * addChild does nothing
      * @param {HTMLElem} child
      */
     addChild(child) {
+        throw new Error("Invalid addChild call");
     }
     /**
      * generate method returns string representation of HTMLText
@@ -376,11 +373,13 @@ function createSkills() {
         skillsHTML.addChild(elem);
     });
     let rowCount = Math.floor(((_a = target.width()) !== null && _a !== void 0 ? _a : 0) / 100);
-    let fillerCount = Math.floor((1 - ((tags.length / rowCount) % 1)) * rowCount);
-    for (let i1 = 0; i1 < fillerCount; i1++) {
-        let elem = new HTMLBuilder_1.HTMLElem("div");
-        elem.get("class").push(new HTMLBuilder_1.AttrVal("skill"));
-        skillsHTML.addChild(elem);
+    if ((tags.length / rowCount) % 1 != 0) {
+        let fillerCount = Math.floor((1 - ((tags.length / rowCount) % 1)) * rowCount);
+        for (let i1 = 0; i1 < fillerCount; i1++) {
+            let elem = new HTMLBuilder_1.HTMLElem("div");
+            elem.get("class").push(new HTMLBuilder_1.AttrVal("skill"));
+            skillsHTML.addChild(elem);
+        }
     }
     target.html(skillsHTML.generateChildren());
 }
@@ -512,6 +511,11 @@ function select(idIndex) {
         }, 500 * 0.1);
     }, 500 * 0.9);
 }
+$(window).on('resize', () => {
+    createSkills();
+    createOrganizationButton();
+    select(-1);
+});
 let tags = Tag_1.TagList.getInstance();
 tags.update(() => {
     createSkills();
