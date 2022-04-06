@@ -25,7 +25,6 @@ export class Tag{
         let validCheck = valueTmp.split("")
             .every(
                 (char) => {
-                    console.log(`char:${char} | ${"0123456789abcdef".indexOf(char.toLocaleLowerCase())}`)
                     return "0123456789abcdef".indexOf(char.toLocaleLowerCase()) != -1
                 }
             )

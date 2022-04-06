@@ -36,7 +36,6 @@ class Tag {
         }
         let validCheck = valueTmp.split("")
             .every((char) => {
-            console.log(`char:${char} | ${"0123456789abcdef".indexOf(char.toLocaleLowerCase())}`);
             return "0123456789abcdef".indexOf(char.toLocaleLowerCase()) != -1;
         });
         if (validCheck) {
@@ -344,11 +343,205 @@ exports.HTMLText = HTMLText;
 },{}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Vector = void 0;
+class Vector {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+    clone() {
+        return new Vector(this.x, this.y);
+    }
+    normalize() {
+        let dist = Vector.dist(this);
+        this.x = this.x / dist;
+        this.y = this.y / dist;
+    }
+    static add(v1, v2) {
+        return new Vector(v1.x + v2.x, v1.y + v2.y);
+    }
+    static sub(v1, v2) {
+        return new Vector(v1.x - v2.x, v1.y - v2.y);
+    }
+    static mult(v, n) {
+        return new Vector(v.x * n, v.y * n);
+    }
+    static div(v, n) {
+        return new Vector(v.x / n, v.y / n);
+    }
+    static dot(v1, v2) {
+        return v1.x * v2.x + v1.y * v2.y;
+    }
+    static cross(v1, v2) {
+        return v1.x * v2.y - v2.x * v1.y;
+    }
+    static dist(v) {
+        return Math.sqrt(Vector.dot(v, v));
+    }
+    static normalize(v) {
+        let dist = Vector.dist(v);
+        return Vector.div(v, dist);
+    }
+    static projection(v, proj) {
+        let v1 = proj;
+        return Vector.mult(v1, Vector.dot(v, v1) / Vector.dot(v1, v1));
+    }
+}
+exports.Vector = Vector;
+
+},{}],4:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const Tag_1 = require("../DataBaseHandler/Tag");
 const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
+const Vector_1 = require("../SkillBalls/Vector");
+let tiles = [];
+let tableDim = new Vector_1.Vector(0, 0);
+let selected = -1;
+function getTile(x, y, dim, grid, nullVal) {
+    if (x < 0 || dim.x <= x) {
+        return nullVal;
+    }
+    if (y < 0 || dim.y <= y) {
+        return nullVal;
+    }
+    return grid[x + y * dim.x];
+}
+function prepareTiles() {
+    var _a;
+    let tags = Tag_1.TagList.getInstance()
+        .tags
+        .filter((tag) => {
+        return tag.tagType === 0;
+    });
+    let target = $("#skills > div").first();
+    let skillsHTML = new HTMLBuilder_1.HTMLElem("div");
+    tableDim.x = Math.floor(((_a = target.width()) !== null && _a !== void 0 ? _a : 0) / 100);
+    tableDim.y = tags.length / tableDim.x;
+    if (tableDim.y % 1 != 0) {
+        tableDim.y = Math.ceil(tableDim.y);
+    }
+    console.log(tableDim);
+    tiles = new Array(tableDim.x * tableDim.y).fill(-1);
+    tags = Tag_1.TagList.getInstance().tags;
+    let i2 = 0;
+    for (let i1 = 0; i1 < tags.length; i1++) {
+        if (tags[i1].tagType === 0) {
+            tiles[i2++] = i1;
+            let skill = tags[i1];
+            let elem = new HTMLBuilder_1.HTMLElem("div");
+            elem.get("id").push(new HTMLBuilder_1.AttrVal(toId(skill.symbol)));
+            elem.get("class").push(new HTMLBuilder_1.AttrVal("skill"));
+            let img = new HTMLBuilder_1.HTMLElem("img");
+            img.get("src").push(new HTMLBuilder_1.AttrVal(`src\\media\\img\\icons\\${skill.symbol}_icon.svg`));
+            img.get("alt").push(new HTMLBuilder_1.AttrVal(`${skill.symbol} icon`));
+            let text = new HTMLBuilder_1.HTMLElem("div");
+            text.addChild(new HTMLBuilder_1.HTMLText(`${skill.symbol}`));
+            elem.addChild(img);
+            elem.addChild(text);
+            skillsHTML.addChild(elem);
+        }
+    }
+    for (i2++; i2 <= tiles.length; i2++) {
+        let elem = new HTMLBuilder_1.HTMLElem("div");
+        elem.get("class").push(new HTMLBuilder_1.AttrVal("skill"));
+        skillsHTML.addChild(elem);
+    }
+    console.log(tiles);
+    console.log(tableDim);
+    target.html(skillsHTML.generateChildren());
+}
+function updateBorder(id, width, edge) {
+    let edgeMap = { 0: "bottom", 1: "right", 2: "top", 3: "left" };
+    $(`#${id}`).css(`border-${edgeMap[edge]}-width`, `${width}px`);
+}
+function previewTiles(selectedTiles) {
+    let tags = Tag_1.TagList.getInstance().tags;
+    let targetTiles = new Array(tiles.length);
+    for (let i1 = 0; i1 < tiles.length; i1++) {
+        targetTiles[i1] = selectedTiles.lastIndexOf(tiles[i1]) != -1;
+    }
+    console.log(targetTiles);
+    console.log(selectedTiles);
+    console.log(tags);
+    for (let x = 0; x < tableDim.x; x++) {
+        for (let y = 0; y < tableDim.y; y++) {
+            let tag = tags[getTile(x, y, tableDim, tiles, -1)];
+            let currentTile = getTile(x, y, tableDim, targetTiles, false);
+            //console.log(`${x},${y} -${tag} - ${currentTile}`)
+            if (tag == undefined) {
+                //throw new Error(`invalid index at ${x},${y}`);
+                continue;
+            }
+            if (!currentTile) {
+                console.log("currentTile is false");
+                for (let i = 0; i < 4; i++) {
+                    updateBorder(toId(tag.symbol), 0, i);
+                }
+                continue;
+            }
+            console.log(`border - left: ${x},${y} = ${toId(tag.symbol)}\n ${currentTile} && ${getTile(x - 1, y, tableDim, targetTiles, false)}`);
+            if (tag == undefined) {
+                console.log(`undefined at ${x},${y}`);
+                continue;
+            }
+            //left
+            if (!getTile(x - 1, y, tableDim, targetTiles, false)) {
+                updateBorder(toId(tag.symbol), 5, 3);
+            }
+            else {
+                updateBorder(toId(tag.symbol), 0, 3);
+            }
+            //right
+            if (!getTile(x + 1, y, tableDim, targetTiles, false)) {
+                updateBorder(toId(tag.symbol), 5, 1);
+            }
+            else {
+                updateBorder(toId(tag.symbol), 0, 1);
+            }
+            //top
+            if (!getTile(x, y - 1, tableDim, targetTiles, false)) {
+                updateBorder(toId(tag.symbol), 5, 2);
+            }
+            else {
+                updateBorder(toId(tag.symbol), 0, 2);
+            }
+            //bottom
+            if (!getTile(x, y + 1, tableDim, targetTiles, false)) {
+                updateBorder(toId(tag.symbol), 5, 0);
+            }
+            else {
+                updateBorder(toId(tag.symbol), 0, 0);
+            }
+        }
+    }
+}
 function toId(str) {
     return str.replace(" ", "-")
         .replace("#", "Sharp");
+}
+//https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : {
+        r: 0,
+        g: 0,
+        b: 0
+    };
+}
+function rgba(col, opacity) {
+    let calculate = (foreground, background) => {
+        return foreground * opacity + (1 - opacity) * background;
+    };
+    return {
+        r: calculate(col.r, 0),
+        g: calculate(col.g, 0),
+        b: calculate(col.b, 0)
+    };
 }
 function createSkills() {
     var _a;
@@ -433,40 +626,99 @@ function createOrganizationButton() {
         $(id).on("click", () => {
             select(i1);
         });
+        $(id).on("mouseenter", () => {
+            let tagList = Tag_1.TagList.getInstance();
+            let connection = tagList.connections;
+            let tags = tagList.tags;
+            let idToIndexMap = {};
+            for (let i1 = 0; i1 < tags.length; i1++) {
+                idToIndexMap[tags[i1].id] = i1;
+            }
+            let targetTiles = [];
+            tags
+                .filter((tag) => {
+                return tag.tagType === 0 &&
+                    connection.some((conn) => {
+                        return (conn[0] == i1 && conn[1] == idToIndexMap[tag.id]) ||
+                            (conn[0] == idToIndexMap[tag.id] && conn[1] == i1);
+                    });
+            })
+                .forEach((tag) => {
+                targetTiles.push(idToIndexMap[tag.id]);
+            });
+            previewTiles(targetTiles);
+        });
+        $(id).on("mouseleave", () => {
+            let tagList = Tag_1.TagList.getInstance();
+            let connection = tagList.connections;
+            let tags = tagList.tags;
+            let idToIndexMap = {};
+            for (let i1 = 0; i1 < tags.length; i1++) {
+                idToIndexMap[tags[i1].id] = i1;
+            }
+            let targetTiles = [];
+            tags
+                .filter((tag) => {
+                return tag.tagType === 0 &&
+                    connection.some((conn) => {
+                        return (conn[0] == selected && conn[1] == idToIndexMap[tag.id]) ||
+                            (conn[0] == idToIndexMap[tag.id] && conn[1] == selected);
+                    });
+            })
+                .forEach((tag) => {
+                targetTiles.push(idToIndexMap[tag.id]);
+            });
+            previewTiles(targetTiles);
+        });
         $(id).css("border-color", tags[i1].colour);
     }
     $(`#skills > nav > #all`).on("click", () => {
         select(-1);
     });
-}
-//https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
-function hexToRgb(hex) {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : {
-        r: 0,
-        g: 0,
-        b: 0
-    };
-}
-function rgba(col, opacity) {
-    let calculate = (foreground, background) => {
-        return foreground * opacity + (1 - opacity) * background;
-    };
-    return {
-        r: calculate(col.r, 0),
-        g: calculate(col.g, 0),
-        b: calculate(col.b, 0)
-    };
+    $(`#skills > nav > #all`).on("mouseenter", () => {
+        let tagList = Tag_1.TagList.getInstance();
+        let connection = tagList.connections;
+        let tags = tagList.tags;
+        let idToIndexMap = {};
+        for (let i1 = 0; i1 < tags.length; i1++) {
+            idToIndexMap[tags[i1].id] = i1;
+        }
+        let targetTiles = [];
+        tags
+            .forEach((tag) => {
+            targetTiles.push(idToIndexMap[tag.id]);
+        });
+        previewTiles(targetTiles);
+    });
+    $(`#skills > nav > #all`).on("mouseleave", () => {
+        let tagList = Tag_1.TagList.getInstance();
+        let connection = tagList.connections;
+        let tags = tagList.tags;
+        let idToIndexMap = {};
+        for (let i1 = 0; i1 < tags.length; i1++) {
+            idToIndexMap[tags[i1].id] = i1;
+        }
+        let targetTiles = [];
+        tags
+            .filter((tag) => {
+            return tag.tagType === 0 &&
+                connection.some((conn) => {
+                    return (conn[0] == selected && conn[1] == idToIndexMap[tag.id]) ||
+                        (conn[0] == idToIndexMap[tag.id] && conn[1] == selected);
+                });
+        })
+            .forEach((tag) => {
+            targetTiles.push(idToIndexMap[tag.id]);
+        });
+        previewTiles(targetTiles);
+    });
 }
 function deSelect() {
     $("#skills > nav .selected").removeClass("selected");
     $("#skills > div .skill").removeClass("selected");
 }
 function select(idIndex) {
+    selected = idIndex;
     deSelect();
     let tags = Tag_1.TagList.getInstance().tags;
     let connections = Tag_1.TagList.getInstance().connections;
@@ -512,15 +764,17 @@ function select(idIndex) {
     }, 500 * 0.9);
 }
 $(window).on('resize', () => {
-    createSkills();
+    //createSkills();
+    prepareTiles();
     createOrganizationButton();
     select(-1);
 });
-let tags = Tag_1.TagList.getInstance();
-tags.update(() => {
-    createSkills();
+Tag_1.TagList.getInstance()
+    .update(() => {
+    //createSkills();
+    prepareTiles();
     createOrganizationButton();
     select(-1);
 });
 
-},{"../DataBaseHandler/Tag":1,"../HTMLBuilder/HTMLBuilder":2}]},{},[3]);
+},{"../DataBaseHandler/Tag":1,"../HTMLBuilder/HTMLBuilder":2,"../SkillBalls/Vector":3}]},{},[4]);

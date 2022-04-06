@@ -1,5 +1,166 @@
 import { Tag, TagList } from "../DataBaseHandler/Tag";
 import { AttrVal, HTMLElem, HTMLText, StyleAttr } from "../HTMLBuilder/HTMLBuilder";
+import { Vector } from "../SkillBalls/Vector";
+
+let tiles : number[] = []
+let tableDim : Vector = new Vector(0, 0);
+
+let selected = -1;
+
+function getTile<T>(x : number, y : number, dim : Vector, grid : T[], nullVal : T) : T {
+    if (x < 0 || dim.x <= x) {
+        return nullVal;
+    }
+
+    if(y < 0|| dim.y <= y) {
+        return nullVal;
+    }
+
+    return grid[x + y * dim.x]
+}
+
+function prepareTiles() {
+    let tags = TagList.getInstance()
+        .tags
+        .filter(
+            (tag)=> {
+                return tag.tagType === 0
+            }
+        );
+
+    let target = $("#skills > div").first();
+
+    let skillsHTML : HTMLElem = new HTMLElem("div");
+
+    tableDim.x = Math.floor((target.width() ?? 0) / 100);
+    tableDim.y = tags.length / tableDim.x;
+    if(tableDim.y % 1 != 0) {
+        tableDim.y = Math.ceil(tableDim.y);
+    }
+
+    console.log(tableDim);
+
+    tiles = new Array<number>(tableDim.x * tableDim.y).fill(-1);
+
+    tags = TagList.getInstance().tags;
+
+    let i2 = 0
+    for(let i1 = 0; i1 < tags.length; i1++) {
+        if (tags[i1].tagType === 0) {
+            tiles[i2++] = i1;
+
+            let skill : Tag = tags[i1];
+
+            let elem : HTMLElem = new HTMLElem("div");
+            elem.get("id").push(new AttrVal(toId(skill.symbol)));
+            elem.get("class").push(new AttrVal("skill"));
+
+            let img : HTMLElem = new HTMLElem("img");
+            img.get("src").push(new AttrVal(`src\\media\\img\\icons\\${skill.symbol}_icon.svg`))
+            img.get("alt").push(new AttrVal(`${skill.symbol} icon`))
+
+            let text : HTMLElem = new HTMLElem("div");
+            text.addChild(new HTMLText(`${skill.symbol}`));
+
+            elem.addChild(img);
+            elem.addChild(text);
+
+            skillsHTML.addChild(elem);
+        }
+    }
+
+    for(i2++; i2 <= tiles.length; i2++) {
+        let elem : HTMLElem = new HTMLElem("div");
+        elem.get("class").push(new AttrVal("skill"));
+
+        skillsHTML.addChild(elem);
+    }
+
+    console.log(tiles);
+    console.log(tableDim)
+
+    target.html(skillsHTML.generateChildren());
+}
+
+function updateBorder(id : string, width: number, edge : number) {
+    let edgeMap : {[key : number] : string} = {0 : "bottom", 1 : "right", 2: "top", 3: "left"};
+
+    $(`#${id}`).css(`border-${edgeMap[edge]}-width`, `${width}px`)
+}
+
+function previewTiles(selectedTiles : number[]) {
+    let tags = TagList.getInstance().tags;
+    let targetTiles : boolean[] = new Array<boolean>(tiles.length);
+
+    for(let i1 = 0; i1 < tiles.length; i1++) {
+        targetTiles[i1] = selectedTiles.lastIndexOf(tiles[i1]) != -1;
+    }
+
+    console.log(targetTiles)
+    console.log(selectedTiles)
+    console.log(tags)
+    for(let x = 0; x < tableDim.x; x++) {
+        for (let y = 0; y < tableDim.y; y++) {
+            let tag = tags[getTile(x, y, tableDim, tiles, -1)];
+            let currentTile = getTile(x,y,tableDim, targetTiles, false);
+
+            //console.log(`${x},${y} -${tag} - ${currentTile}`)
+
+            if(tag == undefined){
+                //throw new Error(`invalid index at ${x},${y}`);
+                continue;
+            }
+
+            if(!currentTile) {
+                console.log("currentTile is false");
+                for(let i = 0; i < 4; i++) {
+                    updateBorder(toId(tag.symbol), 0, i);
+                }
+                continue;
+            }
+
+            console.log(`border - left: ${x},${y} = ${toId(tag.symbol)}\n ${currentTile} && ${getTile(x-1, y, tableDim, targetTiles, false)}`)
+
+            if(tag == undefined) {
+                console.log(`undefined at ${x},${y}`)
+                continue;
+            }
+
+
+            //left
+            if(!getTile(x-1, y, tableDim, targetTiles, false)) {
+                updateBorder(toId(tag.symbol), 5, 3)
+            }
+            else {
+                updateBorder(toId(tag.symbol), 0, 3)
+            }
+
+            //right
+            if(!getTile(x+1, y, tableDim, targetTiles, false)) {
+                updateBorder(toId(tag.symbol), 5, 1)
+            }
+            else {
+                updateBorder(toId(tag.symbol), 0, 1)
+            }
+
+            //top
+            if(!getTile(x, y-1, tableDim, targetTiles, false)) {
+                updateBorder(toId(tag.symbol), 5, 2)
+            }
+            else {
+                updateBorder(toId(tag.symbol), 0, 2)
+            }
+
+            //bottom
+            if(!getTile(x, y+1, tableDim, targetTiles, false)) {
+                updateBorder(toId(tag.symbol), 5, 0)
+            }
+            else {
+                updateBorder(toId(tag.symbol), 0, 0)
+            }
+        }
+    }
+}
 
 
 function toId(str : string) : string {
@@ -67,7 +228,7 @@ function createSkills() {
         }
     );
 
-    let rowCount = Math.floor((target.width() ?? 0) / 100); 
+    let rowCount = Math.floor((target.width() ?? 0) / 100);
     if((tags.length / rowCount) % 1 != 0) {
         let fillerCount = Math.floor((1 - ((tags.length / rowCount) % 1)) * rowCount);
 
@@ -155,10 +316,111 @@ function createOrganizationButton() {
             select(i1);
         })
 
+        $(id).on("mouseenter", () => {
+            let tagList = TagList.getInstance();
+            let connection = tagList.connections;
+            let tags = tagList.tags;
+
+            let idToIndexMap :{[key: number] : number} = {}; 
+            for(let i1 = 0; i1 < tags.length; i1++) {
+                idToIndexMap[tags[i1].id] = i1;
+            }
+
+            let targetTiles : number[] = [];
+
+            tags
+                .filter((tag) => {
+                    return tag.tagType === 0 &&
+                    connection.some((conn) => {
+                        return (conn[0] == i1 && conn[1] == idToIndexMap[tag.id]) ||
+                            (conn[0] == idToIndexMap[tag.id] && conn[1] == i1);
+                    })
+                })
+                .forEach((tag) => {
+                    targetTiles.push(idToIndexMap[tag.id]);
+                })
+            
+            previewTiles(targetTiles)
+        })
+        
+        $(id).on("mouseleave", () => {
+            let tagList = TagList.getInstance();
+            let connection = tagList.connections;
+            let tags = tagList.tags;
+
+            let idToIndexMap :{[key: number] : number} = {}; 
+            for(let i1 = 0; i1 < tags.length; i1++) {
+                idToIndexMap[tags[i1].id] = i1;
+            }
+
+            let targetTiles : number[] = [];
+
+            tags
+                .filter((tag) => {
+                    return tag.tagType === 0 &&
+                    connection.some((conn) => {
+                        return (conn[0] == selected && conn[1] == idToIndexMap[tag.id]) ||
+                            (conn[0] == idToIndexMap[tag.id] && conn[1] == selected);
+                    })
+                })
+                .forEach((tag) => {
+                    targetTiles.push(idToIndexMap[tag.id]);
+                })
+            
+            previewTiles(targetTiles)
+        })
+
         $(id).css("border-color", tags[i1].colour);
     }
     $(`#skills > nav > #all`).on("click", () => {
         select(-1);
+    })
+
+    $(`#skills > nav > #all`).on("mouseenter", () => {
+        let tagList = TagList.getInstance();
+        let connection = tagList.connections;
+        let tags = tagList.tags;
+
+        let idToIndexMap :{[key: number] : number} = {}; 
+        for(let i1 = 0; i1 < tags.length; i1++) {
+            idToIndexMap[tags[i1].id] = i1;
+        }
+
+        let targetTiles : number[] = [];
+
+        tags
+        .forEach((tag) => {
+            targetTiles.push(idToIndexMap[tag.id]);
+        })
+        
+        previewTiles(targetTiles)
+    })
+
+    $(`#skills > nav > #all`).on("mouseleave", () => {
+        let tagList = TagList.getInstance();
+        let connection = tagList.connections;
+        let tags = tagList.tags;
+
+        let idToIndexMap :{[key: number] : number} = {}; 
+        for(let i1 = 0; i1 < tags.length; i1++) {
+            idToIndexMap[tags[i1].id] = i1;
+        }
+
+        let targetTiles : number[] = [];
+
+        tags
+            .filter((tag) => {
+                return tag.tagType === 0 &&
+                connection.some((conn) => {
+                    return (conn[0] == selected && conn[1] == idToIndexMap[tag.id]) ||
+                        (conn[0] == idToIndexMap[tag.id] && conn[1] == selected);
+                })
+            })
+            .forEach((tag) => {
+                targetTiles.push(idToIndexMap[tag.id]);
+            })
+        
+        previewTiles(targetTiles)
     })
 }
 
@@ -168,6 +430,8 @@ function deSelect() {
 }
 
 function select(idIndex : number) {
+
+    selected = idIndex;
 
     deSelect();
 
@@ -179,6 +443,7 @@ function select(idIndex : number) {
     if (idIndex === -1) {
         $(`#skills > nav > #all`).addClass("selected")
         col = {r: 0, g : 0, b: 0};
+
         connections.forEach((conn) => {
             $(`#skills > div #${toId(tags[conn[0]].symbol)}`).addClass("selected")
             $(`#skills > div #${toId(tags[conn[1]].symbol)}`).addClass("selected")
@@ -228,14 +493,16 @@ function select(idIndex : number) {
 }
 
 $(window).on('resize', () => {
-    createSkills();
+    //createSkills();
+    prepareTiles();
     createOrganizationButton();
     select(-1);
 })
 
 TagList.getInstance()
     .update(() => {
-        createSkills();
+        //createSkills();
+        prepareTiles();
         createOrganizationButton();
         select(-1);
     }
