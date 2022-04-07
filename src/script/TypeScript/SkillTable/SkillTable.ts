@@ -359,32 +359,37 @@ function createOrganizationButton() {
     })
 }
 
-function deSelect() {
-    $("#skills > nav .selected").removeClass("selected")
-    $("#skills > div .skill").removeClass("selected")
-}
-
 function select(idIndex : number) {
-
     selected = idIndex;
-
-    deSelect();
+    
+    $("#skills > nav .selected").removeClass("selected");
 
     let tags = TagList.getInstance().tags;
     let connections : number[][] = TagList.getInstance().connections;
 
     let col : {r: number, g : number, b: number};
 
+    let timeStamp = new Date().getTime();
+
+    //select all
     if (idIndex === -1) {
         $(`#skills > nav > #all`).addClass("selected")
         col = {r: 0, g : 0, b: 0};
 
-        connections.forEach((conn) => {
-            $(`#skills > div #${toId(tags[conn[0]].symbol)}`).addClass("selected")
-            $(`#skills > div #${toId(tags[conn[1]].symbol)}`).addClass("selected")
-        })
+        setTimeout(() => {
+            $("#skills > div .skill").removeClass("selected");
+
+            connections.forEach((conn) => {
+                $(`#skills > div #${toId(tags[conn[0]].symbol)}`).addClass("selected");
+                $(`#skills > div #${toId(tags[conn[1]].symbol)}`).addClass("selected");
+            });
+
+        }, 500);
     }
+    //select catagories
     else {
+        $("#skills > div .skill").removeClass("selected");
+
         let id = `#skills > nav > #${toId(tags[idIndex].symbol)}`;
         
         col = rgba(hexToRgb(`#${tags[idIndex].colour}`), 0.75);
@@ -406,9 +411,8 @@ function select(idIndex : number) {
             $(`#skills > div #${toId(tags[id].symbol)}`).addClass("selected")
         });
     }
-   
+
     let newBg = new HTMLElem("div");
-    let timeStamp = new Date().getTime();
 
     newBg.get("id").push(new AttrVal(`bg-${timeStamp}`))
     newBg.get("class").push(new AttrVal("bg"))

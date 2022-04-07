@@ -669,45 +669,46 @@ function createOrganizationButton() {
         previewTiles(targetTiles);
     });
 }
-function deSelect() {
-    $("#skills > nav .selected").removeClass("selected");
-    $("#skills > div .skill").removeClass("selected");
-}
 function select(idIndex) {
     selected = idIndex;
-    deSelect();
+    $("#skills > nav .selected").removeClass("selected");
     let tags = Tag_1.TagList.getInstance().tags;
     let connections = Tag_1.TagList.getInstance().connections;
     let col;
+    let timeStamp = new Date().getTime();
+    //select all
     if (idIndex === -1) {
         $(`#skills > nav > #all`).addClass("selected");
         col = { r: 0, g: 0, b: 0 };
+    }
+    //select catagories
+    else {
+        $("#skills > div .skill").removeClass("selected");
+        let id = `#skills > nav > #${toId(tags[idIndex].symbol)}`;
+        col = rgba(hexToRgb(`#${tags[idIndex].colour}`), 0.75);
+        $(id).addClass("selected");
+        // connections
+        // .filter((conn) => {
+        //     return conn[0] == idIndex || conn[1] == idIndex
+        // })
+        // .forEach((conn) => {
+        //     let id : number;
+        //     if(conn[0] != idIndex) {
+        //         id = conn[0]
+        //     } else {
+        //         id = conn[1]
+        //     }
+        //     $(`#skills > div #${toId(tags[id].symbol)}`).addClass("selected")
+        // });
+    }
+    setTimeout(() => {
+        $("#skills > div .skill").removeClass("selected");
         connections.forEach((conn) => {
             $(`#skills > div #${toId(tags[conn[0]].symbol)}`).addClass("selected");
             $(`#skills > div #${toId(tags[conn[1]].symbol)}`).addClass("selected");
         });
-    }
-    else {
-        let id = `#skills > nav > #${toId(tags[idIndex].symbol)}`;
-        col = rgba(hexToRgb(`#${tags[idIndex].colour}`), 0.75);
-        $(id).addClass("selected");
-        connections
-            .filter((conn) => {
-            return conn[0] == idIndex || conn[1] == idIndex;
-        })
-            .forEach((conn) => {
-            let id;
-            if (conn[0] != idIndex) {
-                id = conn[0];
-            }
-            else {
-                id = conn[1];
-            }
-            $(`#skills > div #${toId(tags[id].symbol)}`).addClass("selected");
-        });
-    }
+    }, 500);
     let newBg = new HTMLBuilder_1.HTMLElem("div");
-    let timeStamp = new Date().getTime();
     newBg.get("id").push(new HTMLBuilder_1.AttrVal(`bg-${timeStamp}`));
     newBg.get("class").push(new HTMLBuilder_1.AttrVal("bg"));
     newBg.get("style").push(new HTMLBuilder_1.StyleAttr("background-color", `rgb(${col.r}, ${col.g}, ${col.b})`));
