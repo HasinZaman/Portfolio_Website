@@ -109,7 +109,6 @@ body {
 
 			$outlineWidth: 5px;
 
-
 			width: 75%;
 
 			margin: 30px;
@@ -145,14 +144,16 @@ body {
 				background-color: black;
 
 				border: solid 0 white;
-
-				cursor: pointer;
 				
 				transition: border-width ease-in-out 250ms;
 
+				* {
+					cursor: pointer;
+				}
+
 				> img {
-					width: $sideLength * 0.75;
-					height: $sideLength * 0.75;
+					width: $sideLength * 0.50;
+					height: $sideLength * 0.50;
 				}
 	
 				> div {
