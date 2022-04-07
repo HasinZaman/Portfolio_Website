@@ -680,6 +680,13 @@ function select(idIndex) {
     if (idIndex === -1) {
         $(`#skills > nav > #all`).addClass("selected");
         col = { r: 0, g: 0, b: 0 };
+        setTimeout(() => {
+            $("#skills > div .skill").removeClass("selected");
+            connections.forEach((conn) => {
+                $(`#skills > div #${toId(tags[conn[0]].symbol)}`).addClass("selected");
+                $(`#skills > div #${toId(tags[conn[1]].symbol)}`).addClass("selected");
+            });
+        }, 500);
     }
     //select catagories
     else {
@@ -687,27 +694,21 @@ function select(idIndex) {
         let id = `#skills > nav > #${toId(tags[idIndex].symbol)}`;
         col = rgba(hexToRgb(`#${tags[idIndex].colour}`), 0.75);
         $(id).addClass("selected");
-        // connections
-        // .filter((conn) => {
-        //     return conn[0] == idIndex || conn[1] == idIndex
-        // })
-        // .forEach((conn) => {
-        //     let id : number;
-        //     if(conn[0] != idIndex) {
-        //         id = conn[0]
-        //     } else {
-        //         id = conn[1]
-        //     }
-        //     $(`#skills > div #${toId(tags[id].symbol)}`).addClass("selected")
-        // });
-    }
-    setTimeout(() => {
-        $("#skills > div .skill").removeClass("selected");
-        connections.forEach((conn) => {
-            $(`#skills > div #${toId(tags[conn[0]].symbol)}`).addClass("selected");
-            $(`#skills > div #${toId(tags[conn[1]].symbol)}`).addClass("selected");
+        connections
+            .filter((conn) => {
+            return conn[0] == idIndex || conn[1] == idIndex;
+        })
+            .forEach((conn) => {
+            let id;
+            if (conn[0] != idIndex) {
+                id = conn[0];
+            }
+            else {
+                id = conn[1];
+            }
+            $(`#skills > div #${toId(tags[id].symbol)}`).addClass("selected");
         });
-    }, 500);
+    }
     let newBg = new HTMLBuilder_1.HTMLElem("div");
     newBg.get("id").push(new HTMLBuilder_1.AttrVal(`bg-${timeStamp}`));
     newBg.get("class").push(new HTMLBuilder_1.AttrVal("bg"));
