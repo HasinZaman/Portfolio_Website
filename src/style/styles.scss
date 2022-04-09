@@ -513,9 +513,66 @@ body {
 	}
 
 	#portfolio {
-	}
+		$tagPadding: 2px;
+		$tagBorderWidth: 3px;
 
-	#footer {
+		display: flex;
+		flex-direction: column;
+
+		justify-content: center;
+		align-items: center;
+
+		height: fit-content;
+
+		> * {
+			width: 75%;
+		}
+
+		#search {
+			display: flex;
+			position: relative;
+			
+			justify-content: flex-start;
+
+			flex-wrap: wrap;
+
+			padding-bottom: 5px;
+			border-bottom: solid white 2px;
+
+			* {
+				margin-left: 4px;
+			}
+
+			.searchBox{
+				position: relative;
+
+				flex-grow: 1;
+
+				input{
+					all: unset;
+					width: 100%;
+					padding: $tagPadding + $tagBorderWidth;
+				}
+
+				> div {
+					position: absolute;
+					background-color: black;
+					border: white solid 2px;
+				}
+			}
+		}
+
+		#footer {
+		
+		}
+	
+		.tag {
+			width: fit-content;
+			height: min-content;
+			border: solid white $tagBorderWidth;
+
+			padding: $tagPadding;
+		}
 	}
 }
 
