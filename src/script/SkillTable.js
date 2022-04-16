@@ -549,8 +549,13 @@ function createOrganizationButton() {
     htmlBuilder.addChild(createVal("all", "FFF"));
     let tagList = Tag_1.TagList.getInstance();
     let tags = tagList.tags;
-    let connections = tagList.connections;
+    let connections = tagList.connections
+        .filter((conn) => {
+        return (tags[conn[0]].tagType == 2) != (tags[conn[1]].tagType == 2) &&
+            (tags[conn[0]].tagType != 1 && tags[conn[1]].tagType != 1);
+    });
     let catagoriesTmp = new Array(tags.length).fill(false);
+    console.log(tags);
     for (let i1 = 0; i1 < connections.length; i1++) {
         let conn = connections[i1];
         let tag1 = tags[conn[0]];
@@ -567,9 +572,12 @@ function createOrganizationButton() {
             tmp = tag1;
             catagoriesTmp[conn[0]] = true;
         }
-        else {
+        else if (tag2.tagType == 2) {
             tmp = tag2;
             catagoriesTmp[conn[1]] = true;
+        }
+        else {
+            continue;
         }
         htmlBuilder.addChild(createVal(tmp.symbol, tmp.colour));
     }
