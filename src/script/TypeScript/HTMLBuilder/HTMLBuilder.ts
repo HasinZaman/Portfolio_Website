@@ -129,8 +129,10 @@ export class HTMLElem{
      * addChild adds an HTML child Element
      * @param {HTMLElem} child 
      */
-    public addChild(child : HTMLElem) {
+    public addChild(child : HTMLElem) : HTMLElem {
         this.children.push(child);
+
+        return this;
     }
 
 
