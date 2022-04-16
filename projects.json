@@ -1,0 +1,120 @@
+{
+    "Tag": 30,
+    "Start": [2022, 2],
+    "Update": [-1],
+    "Title": "Portfolio Website",
+    "Description": "Portfolio Website is the frontend source code used for HasinZaman.link. In which, the website is built with HTML, CSS, JS, Sass and Typescript.",
+    "link": "https://github.com/HasinZaman/Portfolio_Website"
+},
+{
+    "Tag": 31,
+    "Start": [2022, 2],
+    "Update": [-1],
+    "Title": "Portfolio Server",
+    "Description": "Portfolio Server is the server code used for HasinZaman.link. In which, the server is built on the Rust Single Thread Server framework (https://github.com/HasinZaman/SingleThreadServer) and AWS.",
+    "link":""
+},
+{
+    "Tag": 32,
+    "Start": [2022, 2],
+    "Update": [2022, 3],
+    "Title": "Single Thread Server",
+    "Description": "SingleThreadServer is a rust based server framework to create low level servers. The framework is responsible for receiving, parsing and sending HTTP requests. The user and developers are responsible for providing closures that define how to respond to an HTTP request.",
+    "link":"https://github.com/HasinZaman/SingleThreadServer"
+},
+{
+    "Tag": 33,
+    "Start": [2022, 1],
+    "Update": [2022, 1],
+    "Title": "Lindenmayer System",
+    "Description": "Lindenmayer System is a C# library used to build Lindenmayer systems. The library is able to operate on a sequence of elements using basic, stochastic, context sensitive and custom developer defined rules.",
+    "link":"https://github.com/HasinZaman/Lindenmayer-System"
+},
+{
+    "Tag": 34,
+    "Start": [2021, 11],
+    "Update": [2021, 12],
+    "Title": "JSON Parser",
+    "Description": "JSON Parser is C# library that parses JSON files into dynamic readable C# JSON object. The library is able to parse files with dictionaries, arrays and strings.",
+    "link":"https://github.com/HasinZaman/JSON-Parser"
+},
+{
+    "Tag": 35,
+    "Start": [2021, 12],
+    "Update": [2021, 12],
+    "Title": "Unity Animation Framework",
+    "Description": "Unity Animation Framework is a project to create frame based animation in the Unity3D game engine. The purpose of which is to provide a fast dynamic animation environment - with a primarily script driven environment and quick shader development times.",
+    "link":"https://github.com/HasinZaman/Unity-Animation-Framework"
+},
+{
+    "Tag": 36,
+    "Start": [2021, 11],
+    "Update": [2021, 11],
+    "Title": "Lamejam Spacetrades",
+    "Description": "Lamejam Space Trades is a submission to the Lame Jam 2021( https://itch.io/jam/lamejam-2021). In which the cryptech team spent 48 hour to develop a develop a working prototype of a trading, space trucker game.",
+    "link":"https://github.com/lamejam-cryptech/CaptureGame"
+},
+{
+    "Tag": 37,
+    "Start": [2020, 2],
+    "Update": [2021, 11],
+    "Title": "Generator Project",
+    "Description": "The Generator Project is an exercise in creating a 3d procedural world - using as few external libraries as possible. This means everything from the marching cubes, noise and texture blending algorithms were developed from external pseudocode and theory. The project has been refactored and optimized numerous times with the goals of improved performance and adhering to SOLID principles.",
+    "link":"https://github.com/HasinZaman/generatorProject"
+},
+{
+    "Tag": 38,
+    "Start": [2021, 8],
+    "Update": [2021, 8],
+    "Title": "Linux Remote Controller",
+    "Description": "Linux Remote Controller is an application that allows for the remote control of a Linux device. The application runs a server on the local web network - in which, devices on that network can connect and control media settings, keyboard, mouse and other easy to develop and plugin controller modules. This application is an iteration of PC Volume Controller(https://github.com/HasinZaman/PC-Volume-Controler)",
+    "link":"https://github.com/HasinZaman/Linux-Remote-Controller"
+},
+{
+    "Tag": 39,
+    "Start": [2020, 1],
+    "Update": [2020, 1],
+    "Title": "PC Volume Controller",
+    "Description": "PC Volume Controller is an application used to control the volume and media on a windows computer remotely. In which, the application creates a web server on the local network - in which, devices on the network can connect and change volume, mute and skip media.",
+    "link":"https://github.com/HasinZaman/PC-Volume-Controler"
+},
+{
+    "Tag": 40,
+    "Start": [2019, 10],
+    "Update": [2019, 11],
+    "Title": "Kriegsspiel",
+    "Description": "Kriegsspiel is an HTML5 board game. When hosted on a server - users are able to host and play games with other users.",
+    "link":"https://github.com/HasinZaman/kriegsspiel"
+},
+{
+    "Tag": 41,
+    "Start": [2022, 3],
+    "Update": [2022, 3],
+    "Title": "Speed Run Verification",
+    "Description": "Speed Run Verification is an application developed for the 2022 DeFi The Conventional Hackathon (https://defi-the-conventional.devpost.com/). In which, the Speed Run Verification team worked 48 hours to develop an application that saves keyboard inputs onto a block chain. The team also developed a smart contract that can be accessed for the purpose of verification and block chain updates.",
+    "link":"https://devpost.com/software/speed-run-verification?ref_content=my-projects-tab&ref_feature=my_projects"
+},
+{
+    "Tag": 42,
+    "Start": [2022, 2],
+    "Update": [2022, 4],
+    "Title": "CSI 2132 Database Final Project",
+    "Description": "Final project is Java dental application to develop SQL databases and applications.",
+    "link":"https://github.com/CSI-2132-Group/Project"
+},
+{
+    "Tag": 43,
+    "Start": [2021, 3],
+    "Update": [2021, 4],
+    "Title": "HAZO",
+    "Description": "Hazo is an application developed for Engineering Design. In which, the group worked with a client in developing an application that assisted users in the process of recycling. HAZO app archives its goals by providing a user with recycling procedures and a map to the nearest recycling location.",
+    "link":"https://github.com/orgs/HAZO-APP/repositories"
+},
+{
+    "Tag": 44,
+    "Start": [2021, 6],
+    "Update": [2021, 7],
+    "Title": "Course Manager",
+    "Description": "Course Manager is an application developed for Introduction to Software Engineering. In which, the group worked to develop an application where - students can enroll into courses, instructors can see their students and volunteer for classes - and administrators who can manage users and classes.",
+    "link":"https://github.com/SEG-Group-3/CourseManager"
+}
