@@ -86,7 +86,36 @@ export class TagList{
     }
 
     /**
-     * connections getter returns a 2d array of the connections between tags. let a connection be represented as connections[x][y]; then connections[x] is the list of all the connections that start from skills[x] and connections[x][y] is end point connection skills[y] (skills[x] -> skills[y])
+     * skills getter returns array of the index of all skill
+     */
+    public get skills() : number[] {
+        let t : Tag[] = this.tags;
+
+        let indexes : number[] = [];
+
+        for(let i1 = 0; i1 < t.length; i1++) {
+            if(t[i1].tagType == 0) {
+                indexes.push(i1);
+            }
+        }
+        return indexes;
+    }
+
+    /**
+     * projects getter returns array of the index of all project tags
+     */
+    public get projects() : number[] {
+        let t : Tag[] = this.tags;
+
+        let indexes : number[] = [];
+
+        for(let i1 = 0; i1 < t.length; i1++) {
+            if(t[i1].tagType == 1) {
+                indexes.push(i1);
+            }
+        }
+        return indexes;
+    }
 
     /**
      * connections getter returns a 2d array of the connections between tags. let a connection be represented as connections[x][y]; then connections[x] is the list of all the connections that start from tags[x] and connections[x][y] is end point connection tags[y] (tags[x] -> tags[y])
