@@ -104,40 +104,39 @@ export class ProjectList {
      * @param {() => void} listener: function that is called after database information is retrieved
      */
     public update(listener: () => void) {
-        
-        /*
-        $.ajax({
-            type: "POST",
-            url: "get_data",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data : JSON.stringify(["project"])
-        }).done(function( dataRaw ) {
-            if (dataRaw.length != 2) {
-                throw Error("Expect one value")
-            }
-            let skillJson = JSON.parse(dataRaw[0])["data"];
-            let connectionsJson = JSON.parse(dataRaw[1])["data"];
-
-            for (let i = 0; i < skillJson.length; i++) {
-                TagList.getInstance().updateSkill(skillJson[i]["id"], skillJson[i]["colour"], skillJson[i]["symbol"], skillJson[i]["tag_type"]);
-            }
-
-            for (let i = 0; i < connectionsJson.length; i++) {
-                TagList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"])
-            }
-            listener();
-        })
-        */
-
-        TagList.getInstance().update(() => {
-            this._projects = [
-                new Project(1, new Date(2014, 2), new Date(2020, 2), "short description", "https://google.com"),
-                new Project(2, new Date(2018, 10), new Date(2022, 11), "short description #2", "https://google.com")
-            ];
+        TagList.getInstance()
+        .update( () => {
+            $.ajax({
+                type: "POST",
+                url: "get_data",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data : JSON.stringify(["project"])
+            }).done(function( dataRaw ) {
+                if (dataRaw.length != 1) {
+                    throw Error("Expect one value")
+                }
+                let projectJson = JSON.parse(dataRaw[0])["data"];
+                for (let i = 0; i < projectJson.length; i++) {
+                    console.log(projectJson[i])
+                    let tmp = projectJson[i];
+                    ProjectList.getInstance()
+                        .updateProject(
+                            tmp["Tag"],
+                            new Date(tmp["Start"][0], tmp["Start"][1]),
+                            new Date(tmp["Update"][0], tmp["Update"][1]),
+                            tmp["Description"],
+                            tmp["link"]
+                        );
+                }
     
-            listener();
+                listener();
+            })
         })
+    }
+
+    public updateProject(primaryTag : number, start : Date, update : Date, desc : string, link : string) {
+        this._projects[primaryTag] = new Project(primaryTag, start, update, desc, link);
     }
 }
