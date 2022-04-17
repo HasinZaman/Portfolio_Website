@@ -9,7 +9,7 @@ class Tag {
     /**
      * constructor for Skill
      * @param {number} id: integer representation of id of object
-     * @param {string} colour: hexadecimal representation of skill
+     * @param {string} colour: hexadecimal representation of tag
      * @param {string} symbol: name of symbol string
      * @param {number} tagType: tagType represents type of tag
      */
@@ -55,34 +55,60 @@ exports.Tag = Tag;
  */
 class TagList {
     /**
-     * private constructor creates instance of SkillList
+     * private constructor creates instance of TagList
      */
     constructor() {
         /**
-         * {[key: number]: Tag } skills_: Dictionary of all skills id -> Tag
+         * {[key: number]: Tag } tags_: Dictionary of all tags id -> Tag
          */
-        this.skills_ = {};
+        this.tags_ = {};
         this.keys = [];
         this.connections_ = [];
-        this.skills_ = {};
+        this.tags_ = {};
         this.connections_ = [];
     }
     /**
-     * skills getter returns array of tags
+     * tags getter returns array of tags
      */
     get tags() {
-        let skills = [];
+        let tags = [];
         for (let i = 0; i < this.keys.length; i++) {
-            skills.push(this.skills_[this.keys[i]]);
+            tags.push(this.tags_[this.keys[i]]);
         }
-        return skills;
+        return tags;
     }
     /**
-     * connections getter returns a 2d array of the connections between tags. let a connection be represented as connections[x][y]; then connections[x] is the list of all the connections that start from skills[x] and connections[x][y] is end point connection skills[y] (skills[x] -> skills[y])
+     * skills getter returns array of the index of all skill
+     */
+    get skills() {
+        let t = this.tags;
+        let indexes = [];
+        for (let i1 = 0; i1 < t.length; i1++) {
+            if (t[i1].tagType == 0) {
+                indexes.push(i1);
+            }
+        }
+        return indexes;
+    }
+    /**
+     * projects getter returns array of the index of all project tags
+     */
+    get projects() {
+        let t = this.tags;
+        let indexes = [];
+        for (let i1 = 0; i1 < t.length; i1++) {
+            if (t[i1].tagType == 1) {
+                indexes.push(i1);
+            }
+        }
+        return indexes;
+    }
+    /**
+     * connections getter returns a 2d array of the connections between tags. let a connection be represented as connections[x][y]; then connections[x] is the list of all the connections that start from tags[x] and connections[x][y] is end point connection tags[y] (tags[x] -> tags[y])
      */
     get connections() {
         let map = {};
-        //map tag id -> tag index in skills array
+        //map tag id -> tag index in tags array
         for (let i = 0; i < this.keys.length; i++) {
             map[this.keys[i]] = i;
         }
@@ -106,6 +132,14 @@ class TagList {
         return TagList.instance;
     }
     /**
+     * getById method gets tag from
+     * @param id
+     * @returns
+     */
+    getById(id) {
+        return this.tags_[id];
+    }
+    /**
      * update method gets list of Skill and organizational tags from database
      * @param {() => void} listener: function that is called after database information is retrieved
      */
@@ -116,15 +150,15 @@ class TagList {
             headers: {
                 'Content-Type': 'application/json'
             },
-            data: JSON.stringify(["skill", "related"])
+            data: JSON.stringify(["tag", "related"])
         }).done(function (dataRaw) {
             if (dataRaw.length != 2) {
                 throw Error("Expect one value");
             }
-            let skillJson = JSON.parse(dataRaw[0])["data"];
+            let tagJson = JSON.parse(dataRaw[0])["data"];
             let connectionsJson = JSON.parse(dataRaw[1])["data"];
-            for (let i = 0; i < skillJson.length; i++) {
-                TagList.getInstance().updateSkill(skillJson[i]["id"], skillJson[i]["colour"], skillJson[i]["symbol"], skillJson[i]["tag_type"]);
+            for (let i = 0; i < tagJson.length; i++) {
+                TagList.getInstance().updateSkill(tagJson[i]["id"], tagJson[i]["colour"], tagJson[i]["symbol"], tagJson[i]["tag_type"]);
             }
             for (let i = 0; i < connectionsJson.length; i++) {
                 TagList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"]);
@@ -133,26 +167,26 @@ class TagList {
         });
     }
     /**
-     * updateSkill method update skill with specific id
-     * @param {number} id: id of skill tag that will be updated
+     * updateSkill method update tag with specific id
+     * @param {number} id: id of tag tag that will be updated
      * @param {string} colour
      * @param {string} symbol
      * @param {number} tagType
      */
     updateSkill(id, colour, symbol, tagType) {
-        if (!this.skills_.hasOwnProperty(id)) {
+        if (!this.tags_.hasOwnProperty(id)) {
             this.keys.push(id);
             this.keys = this.keys.sort((a, b) => { return a - b; });
         }
-        this.skills_[id] = new Tag(id, colour, symbol, tagType);
+        this.tags_[id] = new Tag(id, colour, symbol, tagType);
     }
     /**
-     * updateConnection connection between two skill tags
+     * updateConnection connection between two tag tags
      * @param id1
      * @param id2
      */
     updateConnection(id1, id2) {
-        if (!this.skills_.hasOwnProperty(id1) || !this.skills_.hasOwnProperty(id2)) {
+        if (!this.tags_.hasOwnProperty(id1) || !this.tags_.hasOwnProperty(id2)) {
             return;
         }
         //sort connections
@@ -160,10 +194,10 @@ class TagList {
         this.connections_.push([id1, id2]);
     }
     /**
-     * resets a skills and connections relationship
+     * resets a tags and connections relationship
      */
     reset() {
-        this.skills_ = {};
+        this.tags_ = {};
         this.connections_ = [];
     }
 }
@@ -278,6 +312,7 @@ class HTMLElem {
      */
     addChild(child) {
         this.children.push(child);
+        return this;
     }
     /**
      * generate method returns string representation of HTMLElem
