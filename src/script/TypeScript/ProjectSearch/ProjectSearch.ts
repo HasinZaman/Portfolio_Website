@@ -80,8 +80,8 @@ function generateProjects(projects : Project[]) {
 ProjectList.getInstance()
     .update(
         () => {
-            generateProjects(ProjectList.getInstance().project);
             console.log(ProjectList.getInstance().project);
+            generateProjects(ProjectList.getInstance().project);
         }
     )
 
