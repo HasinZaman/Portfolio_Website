@@ -3,11 +3,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TagList = exports.Tag = void 0;
 /**
- * Skill is class that stores the values related to Skill tags
+ * Tag is class that stores the values related to Tag tags
  */
 class Tag {
     /**
-     * constructor for Skill
+     * constructor for Tag
      * @param {number} id: integer representation of id of object
      * @param {string} colour: hexadecimal representation of tag
      * @param {string} symbol: name of symbol string
@@ -51,7 +51,7 @@ class Tag {
 }
 exports.Tag = Tag;
 /**
- * Skill List is a singleton pattern of all Skills stored on Database
+ * Tag List is a singleton pattern of all Tags stored on Database
  */
 class TagList {
     /**
@@ -120,9 +120,9 @@ class TagList {
         return connectionsTmp;
     }
     /**
-     * getInstance method returns an instance of SkillList singleton
+     * getInstance method returns an instance of TagList singleton
      * @param {() => void} listener: function that is called after database information is retrieved
-     * @returns reference to SkillList
+     * @returns reference to TagList
      */
     static getInstance(listener = () => { }) {
         if (!TagList.instance) {
@@ -140,7 +140,7 @@ class TagList {
         return this.tags_[id];
     }
     /**
-     * update method gets list of Skill and organizational tags from database
+     * update method gets list of Tag and organizational tags from database
      * @param {() => void} listener: function that is called after database information is retrieved
      */
     update(listener) {
@@ -158,7 +158,7 @@ class TagList {
             let tagJson = JSON.parse(dataRaw[0])["data"];
             let connectionsJson = JSON.parse(dataRaw[1])["data"];
             for (let i = 0; i < tagJson.length; i++) {
-                TagList.getInstance().updateSkill(tagJson[i]["id"], tagJson[i]["colour"], tagJson[i]["symbol"], tagJson[i]["tag_type"]);
+                TagList.getInstance().updateTag(tagJson[i]["id"], tagJson[i]["colour"], tagJson[i]["symbol"], tagJson[i]["tag_type"]);
             }
             for (let i = 0; i < connectionsJson.length; i++) {
                 TagList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"]);
@@ -167,13 +167,13 @@ class TagList {
         });
     }
     /**
-     * updateSkill method update tag with specific id
+     * updateTag method update tag with specific id
      * @param {number} id: id of tag tag that will be updated
      * @param {string} colour
      * @param {string} symbol
      * @param {number} tagType
      */
-    updateSkill(id, colour, symbol, tagType) {
+    updateTag(id, colour, symbol, tagType) {
         if (!this.tags_.hasOwnProperty(id)) {
             this.keys.push(id);
             this.keys = this.keys.sort((a, b) => { return a - b; });

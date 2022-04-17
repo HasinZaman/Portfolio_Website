@@ -53,8 +53,15 @@ class ProjectList {
     constructor() {
         this._projects = [];
     }
+    get keys() {
+        return Tag_1.TagList.getInstance().projects;
+    }
     get project() {
-        return this._projects;
+        let projects = [];
+        this.keys.forEach(key => {
+            projects.push(this._projects[key]);
+        });
+        return projects;
     }
     /**
      * getInstance method returns an instance of ProjectList singleton
@@ -73,38 +80,32 @@ class ProjectList {
      * @param {() => void} listener: function that is called after database information is retrieved
      */
     update(listener) {
-        /*
-        $.ajax({
-            type: "POST",
-            url: "get_data",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data : JSON.stringify(["project"])
-        }).done(function( dataRaw ) {
-            if (dataRaw.length != 2) {
-                throw Error("Expect one value")
-            }
-            let skillJson = JSON.parse(dataRaw[0])["data"];
-            let connectionsJson = JSON.parse(dataRaw[1])["data"];
-
-            for (let i = 0; i < skillJson.length; i++) {
-                TagList.getInstance().updateSkill(skillJson[i]["id"], skillJson[i]["colour"], skillJson[i]["symbol"], skillJson[i]["tag_type"]);
-            }
-
-            for (let i = 0; i < connectionsJson.length; i++) {
-                TagList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"])
-            }
-            listener();
-        })
-        */
-        Tag_1.TagList.getInstance().update(() => {
-            this._projects = [
-                new Project(1, new Date(2014, 2), new Date(2020, 2), "short description", "https://google.com"),
-                new Project(2, new Date(2018, 10), new Date(2022, 11), "short description #2", "https://google.com")
-            ];
-            listener();
+        Tag_1.TagList.getInstance()
+            .update(() => {
+            $.ajax({
+                type: "POST",
+                url: "get_data",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify(["project"])
+            }).done(function (dataRaw) {
+                if (dataRaw.length != 1) {
+                    throw Error("Expect one value");
+                }
+                let projectJson = JSON.parse(dataRaw[0])["data"];
+                for (let i = 0; i < projectJson.length; i++) {
+                    console.log(projectJson[i]);
+                    let tmp = projectJson[i];
+                    ProjectList.getInstance()
+                        .updateProject(tmp["Tag"], new Date(tmp["Start"][0], tmp["Start"][1]), new Date(tmp["Update"][0], tmp["Update"][1]), tmp["Description"], tmp["link"]);
+                }
+                listener();
+            });
         });
+    }
+    updateProject(primaryTag, start, update, desc, link) {
+        this._projects[primaryTag] = new Project(primaryTag, start, update, desc, link);
     }
 }
 exports.ProjectList = ProjectList;
@@ -114,11 +115,11 @@ exports.ProjectList = ProjectList;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TagList = exports.Tag = void 0;
 /**
- * Skill is class that stores the values related to Skill tags
+ * Tag is class that stores the values related to Tag tags
  */
 class Tag {
     /**
-     * constructor for Skill
+     * constructor for Tag
      * @param {number} id: integer representation of id of object
      * @param {string} colour: hexadecimal representation of tag
      * @param {string} symbol: name of symbol string
@@ -162,7 +163,7 @@ class Tag {
 }
 exports.Tag = Tag;
 /**
- * Skill List is a singleton pattern of all Skills stored on Database
+ * Tag List is a singleton pattern of all Tags stored on Database
  */
 class TagList {
     /**
@@ -231,9 +232,9 @@ class TagList {
         return connectionsTmp;
     }
     /**
-     * getInstance method returns an instance of SkillList singleton
+     * getInstance method returns an instance of TagList singleton
      * @param {() => void} listener: function that is called after database information is retrieved
-     * @returns reference to SkillList
+     * @returns reference to TagList
      */
     static getInstance(listener = () => { }) {
         if (!TagList.instance) {
@@ -251,7 +252,7 @@ class TagList {
         return this.tags_[id];
     }
     /**
-     * update method gets list of Skill and organizational tags from database
+     * update method gets list of Tag and organizational tags from database
      * @param {() => void} listener: function that is called after database information is retrieved
      */
     update(listener) {
@@ -269,7 +270,7 @@ class TagList {
             let tagJson = JSON.parse(dataRaw[0])["data"];
             let connectionsJson = JSON.parse(dataRaw[1])["data"];
             for (let i = 0; i < tagJson.length; i++) {
-                TagList.getInstance().updateSkill(tagJson[i]["id"], tagJson[i]["colour"], tagJson[i]["symbol"], tagJson[i]["tag_type"]);
+                TagList.getInstance().updateTag(tagJson[i]["id"], tagJson[i]["colour"], tagJson[i]["symbol"], tagJson[i]["tag_type"]);
             }
             for (let i = 0; i < connectionsJson.length; i++) {
                 TagList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"]);
@@ -278,13 +279,13 @@ class TagList {
         });
     }
     /**
-     * updateSkill method update tag with specific id
+     * updateTag method update tag with specific id
      * @param {number} id: id of tag tag that will be updated
      * @param {string} colour
      * @param {string} symbol
      * @param {number} tagType
      */
-    updateSkill(id, colour, symbol, tagType) {
+    updateTag(id, colour, symbol, tagType) {
         if (!this.tags_.hasOwnProperty(id)) {
             this.keys.push(id);
             this.keys = this.keys.sort((a, b) => { return a - b; });
@@ -549,8 +550,8 @@ function generateProjects(projects) {
 }
 Project_1.ProjectList.getInstance()
     .update(() => {
-    generateProjects(Project_1.ProjectList.getInstance().project);
     console.log(Project_1.ProjectList.getInstance().project);
+    generateProjects(Project_1.ProjectList.getInstance().project);
 });
 
 },{"../DataBaseHandler/Project":1,"../DataBaseHandler/Tag":2,"../HTMLBuilder/HTMLBuilder":3}]},{},[4]);
