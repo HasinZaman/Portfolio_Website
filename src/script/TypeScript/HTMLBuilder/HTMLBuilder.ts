@@ -198,7 +198,7 @@ export class HTMLText extends HTMLElem {
       * addChild does nothing
       * @param {HTMLElem} child 
       */
-    public addChild(child : HTMLElem) {
+    public addChild(child : HTMLElem) : HTMLElem {
         throw new Error("Invalid addChild call")
     }
 
