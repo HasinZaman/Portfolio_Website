@@ -158,6 +158,15 @@ export class TagList{
     }
 
     /**
+     * getById method gets tag from 
+     * @param id 
+     * @returns 
+     */
+    public getById(id: number) : Tag | undefined {
+        return this.tags_[id];
+    }
+
+    /**
      * update method gets list of Skill and organizational tags from database
      * @param {() => void} listener: function that is called after database information is retrieved
      */
