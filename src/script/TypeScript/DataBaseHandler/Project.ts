@@ -67,10 +67,19 @@ export class Project{
 export class ProjectList {
     private static instance : ProjectList;
 
-    private _projects : Project[];
+    private _projects : {[key:number] : Project};
+
+    private get keys() : number[] {
+        return TagList.getInstance().projects;
+    }
 
     public get project() : Project[]{
-        return this._projects;
+        let projects : Project[] = [];
+
+        this.keys.forEach(key => {
+            projects.push(this._projects[key])
+        })
+        return projects;
     }
 
     private constructor() {
