@@ -81,26 +81,24 @@ class TagList {
      * skills getter returns array of the index of all skill
      */
     get skills() {
-        let t = this.tags;
         let indexes = [];
-        for (let i1 = 0; i1 < t.length; i1++) {
-            if (t[i1].tagType == 0) {
-                indexes.push(i1);
+        this.tags.forEach((tag, index) => {
+            if (tag.tagType == 0) {
+                indexes.push(index);
             }
-        }
+        });
         return indexes;
     }
     /**
      * projects getter returns array of the index of all project tags
      */
     get projects() {
-        let t = this.tags;
         let indexes = [];
-        for (let i1 = 0; i1 < t.length; i1++) {
-            if (t[i1].tagType == 1) {
-                indexes.push(i1);
+        this.tags.forEach((tag, index) => {
+            if (tag.tagType == 1) {
+                indexes.push(index);
             }
-        }
+        });
         return indexes;
     }
     /**
