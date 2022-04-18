@@ -1,7 +1,7 @@
 {
 "Tag": 30,
 "Start": [2022, 2],
-"Update": [-1],
+"Update": [-1, -1],
 "Title": "Portfolio Website",
 "Description": "Portfolio Website is the frontend source code used for HasinZaman.link. In which, the website is built with HTML, CSS, JS, Sass and Typescript.",
 "link": "https://github.com/HasinZaman/Portfolio_Website"
@@ -9,7 +9,7 @@
 {
 "Tag": 31,
 "Start": [2022, 2],
-"Update": [-1],
+"Update": [-1, -1],
 "Title": "Portfolio Server",
 "Description": "Portfolio Server is the server code used for HasinZaman.link. In which, the server is built on the Rust Single Thread Server framework (https://github.com/HasinZaman/SingleThreadServer) and AWS.",
 "link":""
