@@ -58,9 +58,11 @@ class ProjectList {
     }
     get project() {
         let projects = [];
+        console.log(this.keys);
         this.keys.forEach(key => {
             projects.push(this._projects[key]);
         });
+        console.log(projects);
         return projects;
     }
     /**
@@ -494,9 +496,10 @@ const Project_1 = require("../DataBaseHandler/Project");
 const Tag_1 = require("../DataBaseHandler/Tag");
 const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
 function generateProjects(projects) {
-    $("#portfolio #results");
+    let target = $("#portfolio #results");
     let projectTags = {};
     let tags = Tag_1.TagList.getInstance().tags;
+    let projectsHTML = new HTMLBuilder_1.HTMLElem("");
     Tag_1.TagList.getInstance().connections
         .filter((conn) => {
         return (tags[conn[0]].tagType == 1 || tags[conn[1]].tagType == 1) && //check if one tags is project
@@ -514,11 +517,11 @@ function generateProjects(projects) {
             tagIndex = conn[0];
         }
         if (!projectTags.hasOwnProperty(projectId)) {
-            projectTags[projectId] = [];
+            projectTags[projectId] = new Set();
         }
-        console.log(Tag_1.TagList.getInstance().tags[tagIndex]);
-        projectTags[projectId].push(Tag_1.TagList.getInstance().tags[tagIndex]);
+        projectTags[projectId].add(Tag_1.TagList.getInstance().tags[tagIndex]);
     });
+    console.log(projectTags);
     projects.forEach(project => {
         let projectElem = new HTMLBuilder_1.HTMLElem("div");
         let start = new HTMLBuilder_1.HTMLElem("div");
@@ -535,22 +538,25 @@ function generateProjects(projects) {
         title.addChild(new HTMLBuilder_1.HTMLText(project.name));
         let tags = new HTMLBuilder_1.HTMLElem("div");
         tags.get("id").push(new HTMLBuilder_1.AttrVal("tags"));
-        projectTags[project.tag.id].forEach(projectTag => {
-            let tag = new HTMLBuilder_1.HTMLElem("div");
-            tag.get("class").push(new HTMLBuilder_1.AttrVal("tag"));
-            tag.addChild(new HTMLBuilder_1.HTMLText(projectTag.symbol));
-            tags.addChild(tag);
-        });
+        if (projectTags.hasOwnProperty(project.tag.id)) {
+            projectTags[project.tag.id].forEach(projectTag => {
+                let tag = new HTMLBuilder_1.HTMLElem("div");
+                tag.get("class").push(new HTMLBuilder_1.AttrVal("tag"));
+                tag.addChild(new HTMLBuilder_1.HTMLText(projectTag.symbol));
+                tags.addChild(tag);
+            });
+        }
         projectElem.addChild(start)
             .addChild(update)
             .addChild(desc)
             .addChild(title)
             .addChild(tags);
+        projectsHTML.addChild(projectElem);
     });
+    target.html(projectsHTML.generateChildren());
 }
 Project_1.ProjectList.getInstance()
     .update(() => {
-    console.log(Project_1.ProjectList.getInstance().project);
     generateProjects(Project_1.ProjectList.getInstance().project);
 });
 
