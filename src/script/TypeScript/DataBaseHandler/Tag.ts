@@ -89,15 +89,16 @@ export class TagList{
      * skills getter returns array of the index of all skill
      */
     public get skills() : number[] {
-        let t : Tag[] = this.tags;
-
         let indexes : number[] = [];
 
-        for(let i1 = 0; i1 < t.length; i1++) {
-            if(t[i1].tagType == 0) {
-                indexes.push(i1);
+        this.tags.forEach(
+            (tag, index) => {
+                if(tag.tagType == 0) {
+                    indexes.push(index);
+                }
             }
-        }
+        )
+
         return indexes;
     }
 
@@ -105,15 +106,16 @@ export class TagList{
      * projects getter returns array of the index of all project tags
      */
     public get projects() : number[] {
-        let t : Tag[] = this.tags;
-
         let indexes : number[] = [];
 
-        for(let i1 = 0; i1 < t.length; i1++) {
-            if(t[i1].tagType == 1) {
-                indexes.push(i1);
+        this.tags.forEach(
+            (tag, index) => {
+                if(tag.tagType == 1) {
+                    indexes.push(index);
+                }
             }
-        }
+        )
+
         return indexes;
     }
 
