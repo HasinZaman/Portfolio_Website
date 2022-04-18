@@ -3,11 +3,13 @@ import { Tag, TagList } from "../DataBaseHandler/Tag";
 import { AttrVal, HTMLElem, HTMLText } from "../HTMLBuilder/HTMLBuilder";
 
 function generateProjects(projects : Project[]) {
-    $("#portfolio #results")
+    let target = $("#portfolio #results")
 
-    let projectTags : {[key : number]: Tag[]}  = {}; 
+    let projectTags : {[key : number]: Set<Tag>}  = {}; 
 
     let tags = TagList.getInstance().tags;
+
+    let projectsHTML : HTMLElem = new HTMLElem("");
 
     TagList.getInstance().connections
         .filter(
@@ -30,13 +32,13 @@ function generateProjects(projects : Project[]) {
                     tagIndex = conn[0];
                 }
                 if(!projectTags.hasOwnProperty(projectId)) {
-                    projectTags[projectId] = [];
+                    projectTags[projectId] = new Set();
                 }
-                console.log(TagList.getInstance().tags[tagIndex])
-                projectTags[projectId].push(TagList.getInstance().tags[tagIndex])
+                projectTags[projectId].add(TagList.getInstance().tags[tagIndex])
             }
         )
 
+    console.log(projectTags);
     projects.forEach(project => {
         let projectElem = new HTMLElem("div")
 
@@ -59,28 +61,34 @@ function generateProjects(projects : Project[]) {
         let tags = new HTMLElem("div");
         tags.get("id").push(new AttrVal("tags"));
 
-        projectTags[project.tag.id].forEach(
-            projectTag => {
-                let tag = new HTMLElem("div");
-                tag.get("class").push(new AttrVal("tag"))
-                tag.addChild(new HTMLText(projectTag.symbol)) 
+        if(projectTags.hasOwnProperty(project.tag.id)) {
+            projectTags[project.tag.id].forEach(
+                projectTag => {
+                    let tag = new HTMLElem("div");
+                    tag.get("class").push(new AttrVal("tag"))
+                    tag.addChild(new HTMLText(projectTag.symbol)) 
+    
+                    tags.addChild(tag);
+                }
+            );
+        }
 
-                tags.addChild(tag);
-            }
-        );
+       
 
         projectElem.addChild(start)
             .addChild(update)
             .addChild(desc)
             .addChild(title)
             .addChild(tags)
+        projectsHTML.addChild(projectElem);
     });
+
+    target.html(projectsHTML.generateChildren())
 }
 
 ProjectList.getInstance()
     .update(
         () => {
-            console.log(ProjectList.getInstance().project);
             generateProjects(ProjectList.getInstance().project);
         }
     )
