@@ -21,7 +21,6 @@ export class Project{
     private _start : Date;
 
     public get start() : string {
-
         return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long' }).format(this._start);
     }
 
@@ -75,10 +74,11 @@ export class ProjectList {
 
     public get project() : Project[]{
         let projects : Project[] = [];
-
+        console.log(this.keys);
         this.keys.forEach(key => {
             projects.push(this._projects[key])
         })
+        console.log(projects);
         return projects;
     }
 
