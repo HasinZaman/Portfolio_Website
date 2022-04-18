@@ -118,19 +118,23 @@ export class ProjectList {
                     throw Error("Expect one value")
                 }
                 let projectJson = JSON.parse(dataRaw[0])["data"];
+                let tags = TagList.getInstance().tags;
                 for (let i = 0; i < projectJson.length; i++) {
-                    console.log(projectJson[i])
                     let tmp = projectJson[i];
+
                     ProjectList.getInstance()
                         .updateProject(
-                            tmp["Tag"],
+                            tags.findIndex(
+                                (tag : Tag) => {
+                                    return tag.id == tmp["Tag"]
+                                }
+                            ),
                             new Date(tmp["Start"][0], tmp["Start"][1]),
                             new Date(tmp["Update"][0], tmp["Update"][1]),
                             tmp["Description"],
                             tmp["link"]
                         );
                 }
-    
                 listener();
             })
         })
