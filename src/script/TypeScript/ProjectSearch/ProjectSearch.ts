@@ -54,9 +54,10 @@ function generateProjects(projects : Project[]) {
         desc.get("id").push(new AttrVal("desc"));
         desc.addChild(new HTMLText(project.description));
 
-        let title = new HTMLElem("div");
-        title.get("id").push(new AttrVal("title"));
-        title.addChild(new HTMLText(project.name));
+        let name = new HTMLElem("a");
+        name.get("id").push(new AttrVal("name"));
+        name.get("href").push(new AttrVal(project.link));
+        name.addChild(new HTMLText(project.name));
 
         let tags = new HTMLElem("div");
         tags.get("id").push(new AttrVal("tags"));
@@ -78,7 +79,7 @@ function generateProjects(projects : Project[]) {
         projectElem.addChild(start)
             .addChild(update)
             .addChild(desc)
-            .addChild(title)
+            .addChild(name)
             .addChild(tags)
         projectsHTML.addChild(projectElem);
     });
