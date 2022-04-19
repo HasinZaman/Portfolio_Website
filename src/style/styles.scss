@@ -562,9 +562,50 @@ body {
 			}
 		}
 
-		#footer {
-		
+		#columns {
+
 		}
+		#results > div {
+			display: grid;
+			grid-template-columns: 130px 70px 70px auto;
+			grid-template-rows: 1fr 1fr;
+
+			column-gap: 10px;
+
+			grid-template-areas:"name start update desc" "tag tag tag desc";
+		}
+		#results > div{
+			margin-top: 10px;
+			#start {
+				grid-area: start;
+				text-align: center;
+			}
+			#update {
+				grid-area: update;
+				text-align: center;
+			}
+			#desc {
+				grid-area: desc;
+			}
+			#name {
+				grid-area: name;
+			}
+			#tags {
+				grid-area: tag;
+
+				display: flex;
+				flex-direction: row;
+
+				flex-wrap: wrap;
+
+				overflow: hidden;
+
+				.tag {
+				}
+			}
+		}
+
+		
 	
 		.tag {
 			width: fit-content;
@@ -573,6 +614,10 @@ body {
 
 			padding: $tagPadding;
 		}
+	}
+
+	#footer {
+		
 	}
 }
 
