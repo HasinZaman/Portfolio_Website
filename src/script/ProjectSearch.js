@@ -33,10 +33,10 @@ class Project {
         return Tag_1.TagList.getInstance().tags[this._primaryTag];
     }
     get start() {
-        return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long' }).format(this._start);
+        return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' }).format(this._start);
     }
     get update() {
-        return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long' }).format(this._update);
+        return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' }).format(this._update);
     }
     get description() {
         return this._desc;
@@ -533,9 +533,10 @@ function generateProjects(projects) {
         let desc = new HTMLBuilder_1.HTMLElem("div");
         desc.get("id").push(new HTMLBuilder_1.AttrVal("desc"));
         desc.addChild(new HTMLBuilder_1.HTMLText(project.description));
-        let title = new HTMLBuilder_1.HTMLElem("div");
-        title.get("id").push(new HTMLBuilder_1.AttrVal("title"));
-        title.addChild(new HTMLBuilder_1.HTMLText(project.name));
+        let name = new HTMLBuilder_1.HTMLElem("a");
+        name.get("id").push(new HTMLBuilder_1.AttrVal("name"));
+        name.get("href").push(new HTMLBuilder_1.AttrVal(project.link));
+        name.addChild(new HTMLBuilder_1.HTMLText(project.name));
         let tags = new HTMLBuilder_1.HTMLElem("div");
         tags.get("id").push(new HTMLBuilder_1.AttrVal("tags"));
         if (projectTags.hasOwnProperty(project.tag.id)) {
@@ -549,7 +550,7 @@ function generateProjects(projects) {
         projectElem.addChild(start)
             .addChild(update)
             .addChild(desc)
-            .addChild(title)
+            .addChild(name)
             .addChild(tags);
         projectsHTML.addChild(projectElem);
     });
