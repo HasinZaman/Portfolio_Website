@@ -21,13 +21,13 @@ export class Project{
     private _start : Date;
 
     public get start() : string {
-        return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long' }).format(this._start);
+        return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' }).format(this._start);
     }
 
     private _update : Date;
 
     public get update() : string {
-        return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long' }).format(this._update);
+        return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' }).format(this._update);
     }
 
     private _desc : string;
