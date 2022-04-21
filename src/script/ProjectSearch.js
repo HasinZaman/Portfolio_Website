@@ -495,48 +495,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Project_1 = require("../DataBaseHandler/Project");
 const Tag_1 = require("../DataBaseHandler/Tag");
 const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
-let search = $("#portfolio #search input");
-function updateSuggestions() {
-    let searchVal = (() => {
-        let tmp = search.val();
-        if (tmp == null) {
-            return "";
-        }
-        return tmp.toString();
-    })();
-    let suggestion = $("#portfolio #search .suggestions");
-    if (searchVal.length == 0) {
-        suggestion.css("display", "none");
-    }
-    else {
-        suggestion.css("display", "block");
-    }
-    let suggestionHTML = new HTMLBuilder_1.HTMLElem("div");
-    let commonSubString = new HTMLBuilder_1.HTMLElem("b");
-    commonSubString.addChild(new HTMLBuilder_1.HTMLText(searchVal.toUpperCase()));
-    let tags = Tag_1.TagList.getInstance().tags.filter((tag) => {
-        if (searchVal.length == 0) {
-            return false;
-        }
-        if (searchVal.length > tag.symbol.length) {
-            return false;
-        }
-        return searchVal.toLowerCase() == tag.symbol.substring(0, searchVal.length).toLowerCase();
-    })
-        .sort((a, b) => {
-        return a.symbol.length - b.symbol.length;
-    });
-    if (tags.length == 0) {
-        suggestion.css("display", "none");
-    }
-    tags.forEach((tag) => {
-        let suggestion = new HTMLBuilder_1.HTMLElem("div");
-        suggestion.addChild(commonSubString);
-        suggestion.addChild(new HTMLBuilder_1.HTMLText(tag.symbol.substring(searchVal.length)));
-        suggestionHTML.addChild(suggestion);
-    });
-    $("#portfolio #search .suggestions").html(suggestionHTML.generateChildren());
-}
+const SearchBar_1 = require("./SearchBar");
 function generateProjects(projects) {
     let target = $("#portfolio #results");
     let projectTags = {};
@@ -602,6 +561,66 @@ Project_1.ProjectList.getInstance()
     .update(() => {
     generateProjects(Project_1.ProjectList.getInstance().project);
 });
-search.on("input", updateSuggestions);
+(0, SearchBar_1.main)();
 
-},{"../DataBaseHandler/Project":1,"../DataBaseHandler/Tag":2,"../HTMLBuilder/HTMLBuilder":3}]},{},[4]);
+},{"../DataBaseHandler/Project":1,"../DataBaseHandler/Tag":2,"../HTMLBuilder/HTMLBuilder":3,"./SearchBar":5}],5:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.main = void 0;
+const Tag_1 = require("../DataBaseHandler/Tag");
+const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
+let search = $("#portfolio #search input");
+function updateSuggestions() {
+    let searchVal = (() => {
+        let tmp = search.val();
+        if (tmp == null) {
+            return "";
+        }
+        return tmp.toString();
+    })();
+    let suggestionArea = $("#portfolio #search .suggestions");
+    if (searchVal.length == 0) {
+        suggestionArea.css("display", "none");
+    }
+    else {
+        suggestionArea.css("display", "block");
+    }
+    let suggestionsHTML = new HTMLBuilder_1.HTMLElem("div");
+    let commonSubString = new HTMLBuilder_1.HTMLElem("b");
+    commonSubString.addChild(new HTMLBuilder_1.HTMLText(searchVal.toUpperCase()));
+    let tags = Tag_1.TagList.getInstance().tags.filter((tag) => {
+        if (searchVal.length == 0 || searchVal.length > tag.symbol.length) {
+            return false;
+        }
+        return searchVal.toLowerCase() == tag.symbol.substring(0, searchVal.length).toLowerCase();
+    })
+        .sort((a, b) => {
+        return a.symbol.length - b.symbol.length;
+    });
+    if (tags.length == 0) {
+        suggestionArea.css("display", "none");
+    }
+    tags.forEach((tag) => {
+        let suggestionHTML = new HTMLBuilder_1.HTMLElem("div");
+        suggestionHTML.get("id").push(new HTMLBuilder_1.AttrVal(`${tag.id}`));
+        suggestionHTML.addChild(commonSubString);
+        suggestionHTML.addChild(new HTMLBuilder_1.HTMLText(tag.symbol.substring(searchVal.length)));
+        suggestionsHTML.addChild(suggestionHTML);
+    });
+    suggestionArea.html(suggestionsHTML.generateChildren());
+    tags.forEach((tag) => {
+        $(`#portfolio #search .suggestions #${tag.id}`).on("click", () => {
+            console.log(`${tag.symbol}`);
+        });
+    });
+}
+function main() {
+    search.on("input", updateSuggestions);
+    search.on("keydown", (e) => {
+        console.log(search.val());
+        console.log(e);
+    });
+}
+exports.main = main;
+
+},{"../DataBaseHandler/Tag":2,"../HTMLBuilder/HTMLBuilder":3}]},{},[4]);
