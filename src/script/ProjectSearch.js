@@ -616,6 +616,8 @@ function updateSuggestions() {
     });
 }
 function addFilter(filterStr) {
+    //check if match any tags
+    console.log(filterStr);
     throw new Error("addFilter method not implemented");
 }
 function addTagFilter(tagId) {
@@ -625,6 +627,7 @@ function addNameFilter(name) {
     throw new Error("addNameFilter method not implemented");
 }
 function deletePrevTag() {
+    $("#portfolio #search .searchBox").prev().remove();
 }
 function main() {
     search.on("input", updateSuggestions);
