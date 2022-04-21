@@ -3,14 +3,16 @@ import { AttrVal, HTMLElem, HTMLText } from "../HTMLBuilder/HTMLBuilder";
 
 let search = $("#portfolio #search input")
 
+function getSearchVal() : string {
+    let tmp = search.val();
+    if (tmp == null) {
+        return "";
+    }
+    return tmp.toString();
+}
+
 function updateSuggestions(){
-    let searchVal : string = (() : string => {
-        let tmp = search.val();
-        if (tmp == null) {
-            return "";
-        }
-        return tmp.toString();
-    })();
+    let searchVal : string = getSearchVal();
 
     let suggestionArea = $("#portfolio #search .suggestions");
 
@@ -60,10 +62,36 @@ function updateSuggestions(){
     })
 }
 
+function addFilter(filterStr : string) {
+    //check if match any tags
+    console.log(filterStr);
+    throw new Error("addFilter method not implemented");
+}
+
+function addTagFilter(tagId : number) {
+    throw new Error("addTagFilter method not implemented");
+}
+function addNameFilter(name : string) {
+    throw new Error("addNameFilter method not implemented");
+}
+
+function deletePrevTag() {
+    $("#portfolio #search .searchBox").prev().remove();
+}
+
 export function main() {
     search.on("input", updateSuggestions);
     search.on("keydown", (e) => {
-        console.log(search.val())
-        console.log(e);
+        console.log(e.key)
+
+        if(e.key == "Enter") {
+            addFilter(getSearchVal());
+        }
+        else if(e.key == "Backspace") {
+            if(getSearchVal().length === 0) {
+                deletePrevTag();
+            }
+        }
+
     });
 }

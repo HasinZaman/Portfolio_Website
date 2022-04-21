@@ -570,14 +570,15 @@ exports.main = void 0;
 const Tag_1 = require("../DataBaseHandler/Tag");
 const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
 let search = $("#portfolio #search input");
+function getSearchVal() {
+    let tmp = search.val();
+    if (tmp == null) {
+        return "";
+    }
+    return tmp.toString();
+}
 function updateSuggestions() {
-    let searchVal = (() => {
-        let tmp = search.val();
-        if (tmp == null) {
-            return "";
-        }
-        return tmp.toString();
-    })();
+    let searchVal = getSearchVal();
     let suggestionArea = $("#portfolio #search .suggestions");
     if (searchVal.length == 0) {
         suggestionArea.css("display", "none");
