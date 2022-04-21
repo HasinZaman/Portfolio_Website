@@ -2,6 +2,9 @@ import { Tag, TagList } from "../DataBaseHandler/Tag";
 import { AttrVal, HTMLElem, HTMLText } from "../HTMLBuilder/HTMLBuilder";
 
 let search = $("#portfolio #search input")
+let tagFilters : number[] = [];
+let nameFilters: string[] = [];
+
 
 function getSearchVal() : string {
     let tmp = search.val();
@@ -57,9 +60,16 @@ function updateSuggestions(){
 
     tags.forEach((tag) => {
         $(`#portfolio #search .suggestions #${tag.id}`).on("click", ()=> {
+            onSuggestionClick(tag.symbol);
             console.log(`${tag.symbol}`);
         });
     })
+}
+
+function onSuggestionClick(filterStr: string) {
+    addFilter(filterStr);
+    search.val("");
+    updateSuggestions();
 }
 
 function addFilter(filterStr : string) {
