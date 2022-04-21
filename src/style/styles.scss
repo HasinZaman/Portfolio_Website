@@ -563,8 +563,8 @@ body {
 		}
 
 		#columns {
-
 		}
+
 		#results > div {
 			display: grid;
 			grid-template-columns: 130px 70px 70px auto;
@@ -574,8 +574,10 @@ body {
 
 			grid-template-areas:"name start update desc" "tag tag tag desc";
 		}
+		
 		#results > div{
 			margin-top: 10px;
+
 			#start {
 				grid-area: start;
 				text-align: center;
@@ -605,8 +607,6 @@ body {
 			}
 		}
 
-		
-	
 		.tag {
 			width: fit-content;
 			height: min-content;
