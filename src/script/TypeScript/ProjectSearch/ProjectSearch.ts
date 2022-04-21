@@ -6,7 +6,7 @@ let search = $("#portfolio #search input")
 
 function updateSuggestions(){
     let searchVal : string = (() : string => {
-        let tmp = search.val(); 
+        let tmp = search.val();
         if (tmp == null) {
             return "";
         }
@@ -41,7 +41,7 @@ function updateSuggestions(){
     if(tags.length == 0) {
         suggestion.css("display", "none")
     }
-    
+
     tags.forEach((tag) => {
         let suggestion : HTMLElem = new HTMLElem("div");
         suggestion.addChild(commonSubString);
@@ -125,8 +125,6 @@ function generateProjects(projects : Project[]) {
                 }
             );
         }
-
-       
 
         projectElem.addChild(start)
             .addChild(update)
