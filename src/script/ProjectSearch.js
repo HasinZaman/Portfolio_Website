@@ -615,11 +615,29 @@ function updateSuggestions() {
         });
     });
 }
+function addFilter(filterStr) {
+    throw new Error("addFilter method not implemented");
+}
+function addTagFilter(tagId) {
+    throw new Error("addTagFilter method not implemented");
+}
+function addNameFilter(name) {
+    throw new Error("addNameFilter method not implemented");
+}
+function deletePrevTag() {
+}
 function main() {
     search.on("input", updateSuggestions);
     search.on("keydown", (e) => {
-        console.log(search.val());
-        console.log(e);
+        console.log(e.key);
+        if (e.key == "Enter") {
+            addFilter(getSearchVal());
+        }
+        else if (e.key == "Backspace") {
+            if (getSearchVal().length === 0) {
+                deletePrevTag();
+            }
+        }
     });
 }
 exports.main = main;
