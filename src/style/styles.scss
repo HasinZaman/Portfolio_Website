@@ -554,10 +554,23 @@ body {
 					padding: $tagPadding + $tagBorderWidth;
 				}
 
-				> div {
+				input:focus ~ .suggestions, .suggestions:hover{
+					display:block !important;
+				}
+
+				.suggestions {
+					display: none !important;
+					> div {
+						background-color: black;
+						color: white;
+
+						cursor: pointer;
+					}
+					> div:hover {
+						background-color: white;
+						color: black;
+					}
 					position: absolute;
-					background-color: black;
-					border: white solid 2px;
 				}
 			}
 		}
@@ -574,7 +587,7 @@ body {
 
 			grid-template-areas:"name start update desc" "tag tag tag desc";
 		}
-		
+
 		#results > div{
 			margin-top: 10px;
 
