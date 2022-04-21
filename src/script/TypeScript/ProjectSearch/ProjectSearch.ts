@@ -2,6 +2,58 @@ import { Project, ProjectList } from "../DataBaseHandler/Project";
 import { Tag, TagList } from "../DataBaseHandler/Tag";
 import { AttrVal, HTMLElem, HTMLText } from "../HTMLBuilder/HTMLBuilder";
 
+let search = $("#portfolio #search input")
+
+function updateSuggestions(){
+    let searchVal : string = (() : string => {
+        let tmp = search.val(); 
+        if (tmp == null) {
+            return "";
+        }
+        return tmp.toString();
+    })();
+
+    let suggestion = $("#portfolio #search .suggestions");
+
+    if(searchVal.length == 0) {
+        suggestion.css("display", "none");
+    }
+    else {
+        suggestion.css("display", "block");
+    }
+
+    let suggestionHTML : HTMLElem = new HTMLElem("div");
+    let commonSubString : HTMLElem = new HTMLElem("b");
+
+    commonSubString.addChild(new HTMLText(searchVal.toUpperCase()));
+
+    let tags = TagList.getInstance().tags.filter((tag) => {
+        if(searchVal.length == 0 && searchVal.length > tag.symbol.length) {
+            return false;
+        }
+
+        return searchVal.toLowerCase() == tag.symbol.substring(0, searchVal.length).toLowerCase();
+    })
+    .sort((a : Tag, b : Tag) : number => {
+        return a.symbol.length - b.symbol.length;
+    });
+
+    if(tags.length == 0) {
+        suggestion.css("display", "none")
+    }
+    
+    tags.forEach((tag) => {
+        let suggestion : HTMLElem = new HTMLElem("div");
+        suggestion.addChild(commonSubString);
+
+        suggestion.addChild(new HTMLText(tag.symbol.substring(searchVal.length)));
+
+        suggestionHTML.addChild(suggestion);
+    })
+
+    $("#portfolio #search .suggestions").html(suggestionHTML.generateChildren());
+}
+
 function generateProjects(projects : Project[]) {
     let target = $("#portfolio #results")
 
@@ -38,7 +90,7 @@ function generateProjects(projects : Project[]) {
             }
         )
 
-    console.log(projectTags);
+    //Create html element for each project
     projects.forEach(project => {
         let projectElem = new HTMLElem("div")
 
@@ -94,3 +146,4 @@ ProjectList.getInstance()
         }
     )
 
+search.on("input", updateSuggestions);
