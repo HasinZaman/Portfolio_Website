@@ -88,11 +88,9 @@ class ProjectList {
     }
     get project() {
         let projects = [];
-        console.log(this.keys);
         this.keys.forEach(key => {
             projects.push(this._projects[key]);
         });
-        console.log(projects);
         return projects;
     }
     /**
@@ -522,6 +520,7 @@ exports.HTMLText = HTMLText;
 },{}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateProjects = void 0;
 const Project_1 = require("../DataBaseHandler/Project");
 const Tag_1 = require("../DataBaseHandler/Tag");
 const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
@@ -585,6 +584,7 @@ function generateProjects(projects) {
     });
     target.html(projectsHTML.generateChildren());
 }
+exports.generateProjects = generateProjects;
 Project_1.ProjectList.getInstance()
     .update(() => {
     generateProjects(Project_1.ProjectList.getInstance().project);
@@ -595,8 +595,10 @@ Project_1.ProjectList.getInstance()
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = void 0;
+const Project_1 = require("../DataBaseHandler/Project");
 const Tag_1 = require("../DataBaseHandler/Tag");
 const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
+const ProjectSearch_1 = require("./ProjectSearch");
 const TagGenerator_1 = require("./TagGenerator");
 let search = $("#portfolio #search input");
 let tagFilters = new Set();
@@ -608,6 +610,51 @@ function getSearchVal() {
         return "";
     }
     return tmp.toString();
+}
+function getProjects() {
+    let tags = Tag_1.TagList.getInstance().tags;
+    return Project_1.ProjectList.getInstance().project
+        .filter((proj) => {
+        let linkedTags = Tag_1.TagList.getInstance().connections
+            .filter(conn => {
+            return tags[conn[0]].id == proj.tag.id ||
+                tags[conn[1]].id == proj.tag.id;
+        })
+            .map(conn => {
+            if (tags[conn[0]].tagType == 1) {
+                return tags[conn[1]];
+            }
+            return tags[conn[0]].id;
+        })
+            .filter((val, ind, arr) => {
+            return arr.indexOf(val) === ind;
+        });
+        return Array.from(tagFilters)
+            .map(id => {
+            return Tag_1.TagList.getInstance().getById(id);
+        })
+            .filter(tag => {
+            return tag != null;
+        })
+            .every((tag) => {
+            if (tag == null) {
+                return true;
+            }
+            return linkedTags.indexOf(tag) > -1;
+        });
+    })
+        .filter((proj) => {
+        let filters = Array.from(nameFilters).map(val => val.toLowerCase());
+        filters.push(getSearchVal().toLowerCase());
+        return filters
+            .every(name => {
+            return proj.tag.symbol.toLowerCase().includes(name);
+        }) ||
+            filters
+                .every(name => {
+                return proj.description.toLowerCase().includes(name);
+            });
+    });
 }
 function updateSuggestions() {
     let searchVal = getSearchVal();
@@ -644,6 +691,7 @@ function updateSuggestions() {
     tags.forEach((tag) => {
         $(`#portfolio #search .suggestions #${tag.id}`).on("click", () => {
             onSuggestionClick(tag.symbol);
+            (0, ProjectSearch_1.generateProjects)(getProjects());
         });
     });
 }
@@ -703,17 +751,22 @@ function main() {
             addFilter(getSearchVal());
             search.val("");
             updateSuggestions();
+            console.log(getProjects().map(proj => {
+                proj.tag;
+            }));
+            (0, ProjectSearch_1.generateProjects)(getProjects());
         }
         else if (e.key == "Backspace") {
             if (getSearchVal().length === 0) {
                 deletePrevTag();
             }
+            (0, ProjectSearch_1.generateProjects)(getProjects());
         }
     });
 }
 exports.main = main;
 
-},{"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4,"./TagGenerator":7}],7:[function(require,module,exports){
+},{"../DataBaseHandler/Project":2,"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4,"./ProjectSearch":5,"./TagGenerator":7}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTagHTML = void 0;
