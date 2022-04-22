@@ -1,10 +1,15 @@
+import { hexToRgb, rgba } from "../Colour/Colour";
+import { Project, ProjectList } from "../DataBaseHandler/Project";
 import { Tag, TagList } from "../DataBaseHandler/Tag";
-import { AttrVal, HTMLElem, HTMLText } from "../HTMLBuilder/HTMLBuilder";
+import { AttrVal, HTMLElem, HTMLText, StyleAttr } from "../HTMLBuilder/HTMLBuilder";
+import { generateProjects } from "./ProjectSearch";
+import { getTagHTML } from "./TagGenerator";
 
 let search = $("#portfolio #search input")
-let tagFilters : number[] = [];
-let nameFilters: string[] = [];
 
+let tagFilters : Set<number> = new Set<number>();
+let nameFilters: Set<string> = new Set<string>();
+let deleteStack : (() => void)[] = []; 
 
 function getSearchVal() : string {
     let tmp = search.val();
@@ -12,6 +17,25 @@ function getSearchVal() : string {
         return "";
     }
     return tmp.toString();
+}
+
+function getProjects() : Project[] {
+    let tags = TagList.getInstance().tags;
+
+    return ProjectList.getInstance().project
+        .filter((proj) => {//filter tags
+            Array.from(tagFilters)
+            .every((tagId) => {
+                TagList.getInstance().connections
+                .filter(conn => {
+                    
+                })
+            })
+            return true;
+        })
+        .filter((proj) => {//filter by names
+            return true;
+        });
 }
 
 function updateSuggestions(){
@@ -61,7 +85,6 @@ function updateSuggestions(){
     tags.forEach((tag) => {
         $(`#portfolio #search .suggestions #${tag.id}`).on("click", ()=> {
             onSuggestionClick(tag.symbol);
-            console.log(`${tag.symbol}`);
         });
     })
 }
@@ -73,29 +96,66 @@ function onSuggestionClick(filterStr: string) {
 }
 
 function addFilter(filterStr : string) {
-    //check if match any tags
-    console.log(filterStr);
-    throw new Error("addFilter method not implemented");
+    let tags = TagList.getInstance().tags
+        .filter((tag: Tag) => {//remove all projects from tag
+            return tag.tagType != 1
+        })
+        .filter((tag: Tag) => {//find matching tags
+            return tag.symbol.toLowerCase() === filterStr.toLowerCase()
+        })
+    
+    if(tags.length === 0) {
+        addNameFilter(filterStr);
+        return ;
+    }
+
+    addTagFilter(tags[0]);
 }
 
-function addTagFilter(tagId : number) {
-    throw new Error("addTagFilter method not implemented");
+function addTagFilter(tag : Tag) {
+    if(!tagFilters.has(tag.id)) {
+        console.log("add tag:"+tag.symbol);
+        tagFilters.add(tag.id);
+        addTagToSearch(tag.symbol, tag.colour);
+        deleteStack.push(()=> {
+            tagFilters.delete(tag.id);
+        })
+    }
 }
+
 function addNameFilter(name : string) {
-    throw new Error("addNameFilter method not implemented");
+    if(!nameFilters.has(name)){
+        console.log("add name:"+name);
+
+        nameFilters.add(name);
+
+        addTagToSearch(name, "FFFFFF");
+
+        deleteStack.push(()=> {
+            nameFilters.delete(name);
+        })
+    }
+}
+
+function addTagToSearch(content : string, colour : string) {
+    $("#portfolio #search .searchBox").before(getTagHTML(content, colour).generate());
 }
 
 function deletePrevTag() {
     $("#portfolio #search .searchBox").prev().remove();
+    let deleteClosure = deleteStack.pop();
+    if(deleteClosure != null) {
+        deleteClosure();
+    }
 }
 
 export function main() {
     search.on("input", updateSuggestions);
     search.on("keydown", (e) => {
-        console.log(e.key)
-
         if(e.key == "Enter") {
             addFilter(getSearchVal());
+            search.val("");
+            updateSuggestions();
         }
         else if(e.key == "Backspace") {
             if(getSearchVal().length === 0) {
