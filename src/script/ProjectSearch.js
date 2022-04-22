@@ -1,6 +1,36 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.rgba = exports.hexToRgb = void 0;
+//https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : {
+        r: 0,
+        g: 0,
+        b: 0
+    };
+}
+exports.hexToRgb = hexToRgb;
+function rgba(col, opacity) {
+    let calculate = (foreground, background) => {
+        return foreground * opacity + (1 - opacity) * background;
+    };
+    return {
+        r: calculate(col.r, 0),
+        g: calculate(col.g, 0),
+        b: calculate(col.b, 0)
+    };
+}
+exports.rgba = rgba;
+
+},{}],2:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProjectList = exports.Project = void 0;
 const Tag_1 = require("./Tag");
 /**
@@ -114,7 +144,7 @@ class ProjectList {
 }
 exports.ProjectList = ProjectList;
 
-},{"./Tag":2}],2:[function(require,module,exports){
+},{"./Tag":3}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TagList = exports.Tag = void 0;
@@ -317,7 +347,7 @@ class TagList {
 }
 exports.TagList = TagList;
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HTMLText = exports.HTMLElem = exports.StyleAttr = exports.AttrVal = void 0;
@@ -489,13 +519,14 @@ class HTMLText extends HTMLElem {
 }
 exports.HTMLText = HTMLText;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Project_1 = require("../DataBaseHandler/Project");
 const Tag_1 = require("../DataBaseHandler/Tag");
 const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
 const SearchBar_1 = require("./SearchBar");
+const TagGenerator_1 = require("./TagGenerator");
 function generateProjects(projects) {
     let target = $("#portfolio #results");
     let projectTags = {};
@@ -542,10 +573,7 @@ function generateProjects(projects) {
         tags.get("id").push(new HTMLBuilder_1.AttrVal("tags"));
         if (projectTags.hasOwnProperty(project.tag.id)) {
             projectTags[project.tag.id].forEach(projectTag => {
-                let tag = new HTMLBuilder_1.HTMLElem("div");
-                tag.get("class").push(new HTMLBuilder_1.AttrVal("tag"));
-                tag.addChild(new HTMLBuilder_1.HTMLText(projectTag.symbol));
-                tags.addChild(tag);
+                tags.addChild((0, TagGenerator_1.getTagHTML)(projectTag.symbol, projectTag.colour));
             });
         }
         projectElem.addChild(start)
@@ -563,13 +591,17 @@ Project_1.ProjectList.getInstance()
 });
 (0, SearchBar_1.main)();
 
-},{"../DataBaseHandler/Project":1,"../DataBaseHandler/Tag":2,"../HTMLBuilder/HTMLBuilder":3,"./SearchBar":5}],5:[function(require,module,exports){
+},{"../DataBaseHandler/Project":2,"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4,"./SearchBar":6,"./TagGenerator":7}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = void 0;
 const Tag_1 = require("../DataBaseHandler/Tag");
 const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
+const TagGenerator_1 = require("./TagGenerator");
 let search = $("#portfolio #search input");
+let tagFilters = new Set();
+let nameFilters = new Set();
+let deleteStack = [];
 function getSearchVal() {
     let tmp = search.val();
     if (tmp == null) {
@@ -611,30 +643,66 @@ function updateSuggestions() {
     suggestionArea.html(suggestionsHTML.generateChildren());
     tags.forEach((tag) => {
         $(`#portfolio #search .suggestions #${tag.id}`).on("click", () => {
-            console.log(`${tag.symbol}`);
+            onSuggestionClick(tag.symbol);
         });
     });
 }
-function addFilter(filterStr) {
-    //check if match any tags
-    console.log(filterStr);
-    throw new Error("addFilter method not implemented");
+function onSuggestionClick(filterStr) {
+    addFilter(filterStr);
+    search.val("");
+    updateSuggestions();
 }
-function addTagFilter(tagId) {
-    throw new Error("addTagFilter method not implemented");
+function addFilter(filterStr) {
+    let tags = Tag_1.TagList.getInstance().tags
+        .filter((tag) => {
+        return tag.tagType != 1;
+    })
+        .filter((tag) => {
+        return tag.symbol.toLowerCase() === filterStr.toLowerCase();
+    });
+    if (tags.length === 0) {
+        addNameFilter(filterStr);
+        return;
+    }
+    addTagFilter(tags[0]);
+}
+function addTagFilter(tag) {
+    if (!tagFilters.has(tag.id)) {
+        console.log("add tag:" + tag.symbol);
+        tagFilters.add(tag.id);
+        addTagToSearch(tag.symbol, tag.colour);
+        deleteStack.push(() => {
+            tagFilters.delete(tag.id);
+        });
+    }
 }
 function addNameFilter(name) {
-    throw new Error("addNameFilter method not implemented");
+    if (!nameFilters.has(name)) {
+        console.log("add name:" + name);
+        nameFilters.add(name);
+        addTagToSearch(name, "FFFFFF");
+        deleteStack.push(() => {
+            nameFilters.delete(name);
+        });
+    }
+}
+function addTagToSearch(content, colour) {
+    $("#portfolio #search .searchBox").before((0, TagGenerator_1.getTagHTML)(content, colour).generate());
 }
 function deletePrevTag() {
     $("#portfolio #search .searchBox").prev().remove();
+    let deleteClosure = deleteStack.pop();
+    if (deleteClosure != null) {
+        deleteClosure();
+    }
 }
 function main() {
     search.on("input", updateSuggestions);
     search.on("keydown", (e) => {
-        console.log(e.key);
         if (e.key == "Enter") {
             addFilter(getSearchVal());
+            search.val("");
+            updateSuggestions();
         }
         else if (e.key == "Backspace") {
             if (getSearchVal().length === 0) {
@@ -645,4 +713,22 @@ function main() {
 }
 exports.main = main;
 
-},{"../DataBaseHandler/Tag":2,"../HTMLBuilder/HTMLBuilder":3}]},{},[4]);
+},{"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4,"./TagGenerator":7}],7:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getTagHTML = void 0;
+const Colour_1 = require("../Colour/Colour");
+const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
+function getTagHTML(content, colour) {
+    let htmlElem = new HTMLBuilder_1.HTMLElem("div");
+    let col = `#${colour}`;
+    let bgCol = (0, Colour_1.rgba)((0, Colour_1.hexToRgb)(col), 0.75);
+    htmlElem.get("style").push(new HTMLBuilder_1.StyleAttr("border-color", col));
+    htmlElem.get("style").push(new HTMLBuilder_1.StyleAttr("background-color", `rgb(${bgCol.r},${bgCol.g},${bgCol.b})`));
+    htmlElem.get("class").push(new HTMLBuilder_1.AttrVal("tag"));
+    htmlElem.addChild(new HTMLBuilder_1.HTMLText(content));
+    return htmlElem;
+}
+exports.getTagHTML = getTagHTML;
+
+},{"../Colour/Colour":1,"../HTMLBuilder/HTMLBuilder":4}]},{},[5]);

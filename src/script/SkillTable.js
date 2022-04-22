@@ -1,6 +1,36 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.rgba = exports.hexToRgb = void 0;
+//https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : {
+        r: 0,
+        g: 0,
+        b: 0
+    };
+}
+exports.hexToRgb = hexToRgb;
+function rgba(col, opacity) {
+    let calculate = (foreground, background) => {
+        return foreground * opacity + (1 - opacity) * background;
+    };
+    return {
+        r: calculate(col.r, 0),
+        g: calculate(col.g, 0),
+        b: calculate(col.b, 0)
+    };
+}
+exports.rgba = rgba;
+
+},{}],2:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.TagList = exports.Tag = void 0;
 /**
  * Tag is class that stores the values related to Tag tags
@@ -201,7 +231,7 @@ class TagList {
 }
 exports.TagList = TagList;
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HTMLText = exports.HTMLElem = exports.StyleAttr = exports.AttrVal = void 0;
@@ -373,7 +403,7 @@ class HTMLText extends HTMLElem {
 }
 exports.HTMLText = HTMLText;
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Vector = void 0;
@@ -422,9 +452,10 @@ class Vector {
 }
 exports.Vector = Vector;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const Colour_1 = require("../Colour/Colour");
 const Tag_1 = require("../DataBaseHandler/Tag");
 const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
 const Vector_1 = require("../SkillBalls/Vector");
@@ -541,29 +572,6 @@ function previewTiles(selectedTiles) {
 function toId(str) {
     return str.replace(" ", "-")
         .replace("#", "Sharp");
-}
-//https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
-function hexToRgb(hex) {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : {
-        r: 0,
-        g: 0,
-        b: 0
-    };
-}
-function rgba(col, opacity) {
-    let calculate = (foreground, background) => {
-        return foreground * opacity + (1 - opacity) * background;
-    };
-    return {
-        r: calculate(col.r, 0),
-        g: calculate(col.g, 0),
-        b: calculate(col.b, 0)
-    };
 }
 function createOrganizationButton() {
     let target = $("#skills > nav").first();
@@ -733,7 +741,7 @@ function select(idIndex) {
     else {
         $("#skills > div .skill").removeClass("selected");
         let id = `#skills > nav > #${toId(tags[idIndex].symbol)}`;
-        col = rgba(hexToRgb(`#${tags[idIndex].colour}`), 0.75);
+        col = (0, Colour_1.rgba)((0, Colour_1.hexToRgb)(`#${tags[idIndex].colour}`), 0.75);
         $(id).addClass("selected");
         connections
             .filter((conn) => {
@@ -776,4 +784,4 @@ Tag_1.TagList.getInstance()
     select(-1);
 });
 
-},{"../DataBaseHandler/Tag":1,"../HTMLBuilder/HTMLBuilder":2,"../SkillBalls/Vector":3}]},{},[4]);
+},{"../Colour/Colour":1,"../DataBaseHandler/Tag":2,"../HTMLBuilder/HTMLBuilder":3,"../SkillBalls/Vector":4}]},{},[5]);
