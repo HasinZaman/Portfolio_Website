@@ -2,8 +2,9 @@ import { Project, ProjectList } from "../DataBaseHandler/Project";
 import { Tag, TagList } from "../DataBaseHandler/Tag";
 import { AttrVal, HTMLElem, HTMLText } from "../HTMLBuilder/HTMLBuilder";
 import { main } from "./SearchBar";
+import { getTagHTML } from "./TagGenerator";
 
-function generateProjects(projects : Project[]) {
+export function generateProjects(projects : Project[]) {
     let target = $("#portfolio #results")
 
     let projectTags : {[key : number]: Set<Tag>}  = {}; 
@@ -66,11 +67,7 @@ function generateProjects(projects : Project[]) {
         if(projectTags.hasOwnProperty(project.tag.id)) {
             projectTags[project.tag.id].forEach(
                 projectTag => {
-                    let tag = new HTMLElem("div");
-                    tag.get("class").push(new AttrVal("tag"))
-                    tag.addChild(new HTMLText(projectTag.symbol)) 
-    
-                    tags.addChild(tag);
+                    tags.addChild(getTagHTML(projectTag.symbol, projectTag.colour));
                 }
             );
         }
