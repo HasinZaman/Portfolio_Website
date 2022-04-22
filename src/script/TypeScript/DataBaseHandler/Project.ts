@@ -74,11 +74,9 @@ export class ProjectList {
 
     public get project() : Project[]{
         let projects : Project[] = [];
-        console.log(this.keys);
         this.keys.forEach(key => {
             projects.push(this._projects[key])
         })
-        console.log(projects);
         return projects;
     }
 
