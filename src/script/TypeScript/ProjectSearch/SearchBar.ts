@@ -1,4 +1,3 @@
-import { hexToRgb, rgba } from "../Colour/Colour";
 import { Project, ProjectList } from "../DataBaseHandler/Project";
 import { Tag, TagList } from "../DataBaseHandler/Tag";
 import { AttrVal, HTMLElem, HTMLText, StyleAttr } from "../HTMLBuilder/HTMLBuilder";
@@ -24,17 +23,48 @@ function getProjects() : Project[] {
 
     return ProjectList.getInstance().project
         .filter((proj) => {//filter tags
-            Array.from(tagFilters)
-            .every((tagId) => {
-                TagList.getInstance().connections
+
+            let linkedTags = TagList.getInstance().connections
                 .filter(conn => {
-                    
+                    return  tags[conn[0]].id == proj.tag.id ||
+                            tags[conn[1]].id == proj.tag.id;
                 })
-            })
-            return true;
+                .map(conn => {
+                    if(tags[conn[0]].tagType == 1) {
+                        return tags[conn[1]];
+                    }
+                    return tags[conn[0]].id;
+                })
+                .filter((val, ind, arr) => {
+                    return arr.indexOf(val) === ind
+                })
+                
+            return Array.from(tagFilters)
+                .map(id => {
+                    return TagList.getInstance().getById(id)
+                })
+                .filter(tag => {
+                    return tag != null
+                })
+                .every((tag) => {
+                    if(tag == null){
+                        return true
+                    }
+                    return linkedTags.indexOf(tag) > -1;
+                })
         })
-        .filter((proj) => {//filter by names
-            return true;
+        .filter((proj) => {//filter by name/desc
+            let filters = Array.from(nameFilters).map(val => val.toLowerCase());
+            filters.push(getSearchVal().toLowerCase());
+
+            return filters
+                .every(name => {
+                    return proj.tag.symbol.toLowerCase().includes(name)
+                }) ||
+                filters
+                .every(name => {
+                    return proj.description.toLowerCase().includes(name)
+                })
         });
 }
 
@@ -85,6 +115,7 @@ function updateSuggestions(){
     tags.forEach((tag) => {
         $(`#portfolio #search .suggestions #${tag.id}`).on("click", ()=> {
             onSuggestionClick(tag.symbol);
+            generateProjects(getProjects());
         });
     })
 }
@@ -156,11 +187,18 @@ export function main() {
             addFilter(getSearchVal());
             search.val("");
             updateSuggestions();
+
+            console.log(getProjects().map(proj => {
+                proj.tag
+            }))
+
+            generateProjects(getProjects());
         }
         else if(e.key == "Backspace") {
             if(getSearchVal().length === 0) {
                 deletePrevTag();
             }
+            generateProjects(getProjects());
         }
 
     });
