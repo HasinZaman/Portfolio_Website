@@ -10,6 +10,23 @@ let tagFilters : Set<number> = new Set<number>();
 let nameFilters: Set<string> = new Set<string>();
 let deleteStack : (() => void)[] = []; 
 
+export function setSearch(filters: string[]) {
+    reset();
+
+    filters.forEach(filter => {
+        addFilter(filter);
+    });
+    
+    generateProjects(getProjects());
+}
+
+function reset() {
+    deleteStack.forEach(del => {
+        deletePrevTag();
+    });
+    search.val("");
+}
+
 function getSearchVal() : string {
     let tmp = search.val();
     if (tmp == null) {
@@ -145,7 +162,6 @@ function addFilter(filterStr : string) {
 
 function addTagFilter(tag : Tag) {
     if(!tagFilters.has(tag.id)) {
-        console.log("add tag:"+tag.symbol);
         tagFilters.add(tag.id);
         addTagToSearch(tag.symbol, tag.colour);
         deleteStack.push(()=> {
@@ -156,8 +172,6 @@ function addTagFilter(tag : Tag) {
 
 function addNameFilter(name : string) {
     if(!nameFilters.has(name)){
-        console.log("add name:"+name);
-
         nameFilters.add(name);
 
         addTagToSearch(name, "FFFFFF");
@@ -183,23 +197,28 @@ function deletePrevTag() {
 export function main() {
     search.on("input", updateSuggestions);
     search.on("keydown", (e) => {
-        if(e.key == "Enter") {
-            addFilter(getSearchVal());
+        let tmpSearch = getSearchVal();
+
+        if(e.key == "Enter") {//add new tag
+            addFilter(tmpSearch);
             search.val("");
             updateSuggestions();
-
-            console.log(getProjects().map(proj => {
-                proj.tag
-            }))
-
-            generateProjects(getProjects());
         }
-        else if(e.key == "Backspace") {
-            if(getSearchVal().length === 0) {
-                deletePrevTag();
-            }
-            generateProjects(getProjects());
+        else if(e.key == "Backspace" && tmpSearch.length === 0) {//remove last tag
+            deletePrevTag();
         }
 
+        //temporarily add current search value to name filter
+        let tmpAdd : boolean = nameFilters.has(tmpSearch);
+
+        if(!tmpAdd) {
+            nameFilters.add(tmpSearch);
+        }
+
+        generateProjects(getProjects());
+        
+        if(!tmpAdd) {
+            nameFilters.delete(tmpSearch);
+        }
     });
 }

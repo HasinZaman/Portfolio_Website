@@ -1,7 +1,7 @@
 import { Project, ProjectList } from "../DataBaseHandler/Project";
 import { Tag, TagList } from "../DataBaseHandler/Tag";
 import { AttrVal, HTMLElem, HTMLText } from "../HTMLBuilder/HTMLBuilder";
-import { main } from "./SearchBar";
+import { main as searchBarMain, setSearch } from "./SearchBar";
 import { getTagHTML } from "./TagGenerator";
 
 export function generateProjects(projects : Project[]) {
@@ -67,7 +67,7 @@ export function generateProjects(projects : Project[]) {
         if(projectTags.hasOwnProperty(project.tag.id)) {
             projectTags[project.tag.id].forEach(
                 projectTag => {
-                    tags.addChild(getTagHTML(projectTag.symbol, projectTag.colour));
+                    tags.addChild(getTagHTML(projectTag.symbol, projectTag.colour, projectTag.id.toString()));
                 }
             );
         }
@@ -80,14 +80,24 @@ export function generateProjects(projects : Project[]) {
         projectsHTML.addChild(projectElem);
     });
 
-    target.html(projectsHTML.generateChildren())
+    target.html(projectsHTML.generateChildren());
+
+    TagList.getInstance().tags
+        .forEach(tag => {
+            $(`#portfolio #results #${tag.id}.tag`).on("click", () => {
+                setSearch([tag.symbol]);
+                $("#portfolio #search")[0].scrollIntoView();
+            });
+        });
 }
 
-ProjectList.getInstance()
+export function main() {
+    ProjectList.getInstance()
     .update(
         () => {
             generateProjects(ProjectList.getInstance().project);
         }
     )
 
-main();
+    searchBarMain();
+}

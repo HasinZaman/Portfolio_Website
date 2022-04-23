@@ -1,7 +1,9 @@
 import { hexToRgb, rgba } from "../Colour/Colour";
 import { Tag, TagList } from "../DataBaseHandler/Tag";
 import { AttrVal, HTMLElem, HTMLText, StyleAttr } from "../HTMLBuilder/HTMLBuilder";
+import { setSearch } from "../ProjectSearch/SearchBar";
 import { Vector } from "../SkillBalls/Vector";
+
 
 let tiles : number[] = []
 let tableDim : Vector = new Vector(0, 0);
@@ -43,7 +45,8 @@ function prepareTiles() {
 
     tags = TagList.getInstance().tags;
 
-    let i2 = 0
+    let i2 = 0;
+
     for(let i1 = 0; i1 < tags.length; i1++) {
         if (tags[i1].tagType === 0) {
             tiles[i2++] = i1;
@@ -76,6 +79,17 @@ function prepareTiles() {
     }
 
     target.html(skillsHTML.generateChildren());
+
+    for(let i1 = 0; i1 < tags.length; i1++) {
+        if (tags[i1].tagType === 0) {
+            let tag = tags[i1];
+            
+            $(`#skills div #${toId(tag.symbol)}.skill`).on("click", ()=> {
+                setSearch([tag.symbol])
+                $("#portfolio")[0].scrollIntoView();
+            })
+        }
+    }
 }
 
 function updateBorder(id : string, width: number, edge : number) {
@@ -187,7 +201,7 @@ function createOrganizationButton() {
     });
 
     let catagoriesTmp = new Array<boolean>(tags.length).fill(false);
-    console.log(tags);
+    
     for (let i1 = 0; i1 < connections.length; i1++) {
         let conn = connections[i1];
 
@@ -413,18 +427,20 @@ function select(idIndex : number) {
 
 }
 
-$(window).on('resize', () => {
-    //createSkills();
-    prepareTiles();
-    createOrganizationButton();
-    select(-1);
-})
-
-TagList.getInstance()
-    .update(() => {
+export function main() {
+    $(window).on('resize', () => {
         //createSkills();
         prepareTiles();
         createOrganizationButton();
         select(-1);
-    }
-)
+    })
+    
+    TagList.getInstance()
+        .update(() => {
+            //createSkills();
+            prepareTiles();
+            createOrganizationButton();
+            select(-1);
+        }
+    )
+}
