@@ -1,6 +1,6 @@
 import { Project, ProjectList } from "../DataBaseHandler/Project";
 import { Tag, TagList } from "../DataBaseHandler/Tag";
-import { AttrVal, HTMLElem, HTMLText, StyleAttr } from "../HTMLBuilder/HTMLBuilder";
+import { AttrVal, HTMLElem, HTMLText } from "../HTMLBuilder/HTMLBuilder";
 import { generateProjects } from "./ProjectSearch";
 import { getTagHTML } from "./TagGenerator";
 
