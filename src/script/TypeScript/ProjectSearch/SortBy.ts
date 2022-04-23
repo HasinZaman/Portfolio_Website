@@ -43,7 +43,7 @@ function select(selectedCategory : string) {
 
     $("#portfolio #columns .selected").removeClass("selected");
     $(`#portfolio #columns >#${selectedCategory}`).addClass("selected");
-    $("#portfolio #columns select.sortBy").val(selectedCategory)
+    $("#portfolio #columns select.sortBy").val(selectedCategory);
     updateProject();
 }
 
@@ -53,8 +53,8 @@ export function sort(projects : Project[]) : Project[] {
 
 export function main() {
     select("name");
-    $("#portfolio #columns #name").on("click", () => {select("name")})
-    $("#portfolio #columns #start").on("click", () => {select("start")})
-    $("#portfolio #columns #update").on("click", () => {select("update")})
-    $("#portfolio #columns select.sortBy").on("change", () => {select(getVal())})
+    $("#portfolio #columns #name").on("click", () => {select("name")});
+    $("#portfolio #columns #start").on("click", () => {select("start")});
+    $("#portfolio #columns #update").on("click", () => {select("update")});
+    $("#portfolio #columns select.sortBy").on("change", () => {select(getVal())});
 }
