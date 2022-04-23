@@ -580,12 +580,18 @@ body {
 
 		#results > div {
 			display: grid;
-			grid-template-columns: 130px 70px 70px auto;
-			grid-template-rows: 1fr 1fr;
+			grid-template-columns: auto 70px 70px;
+			grid-template-rows: 1fr 1fr fit-content;
 
 			column-gap: 10px;
+			row-gap: 8px;
 
-			grid-template-areas:"name start update desc" "tag tag tag desc";
+			grid-template-areas:
+			"name start update"
+			"tag tag tag"
+			"desc desc desc";
+
+			margin-top: 8px;
 		}
 
 		#results > div{
