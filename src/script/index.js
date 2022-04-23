@@ -794,9 +794,8 @@ exports.main = main;
 },{"../DataBaseHandler/Project":2,"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4,"./ProjectSearch":5,"./TagGenerator":7}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.tagBind = exports.getTagHTML = void 0;
+exports.getTagHTML = void 0;
 const Colour_1 = require("../Colour/Colour");
-const Tag_1 = require("../DataBaseHandler/Tag");
 const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
 function getTagHTML(content, colour, tagId = undefined) {
     let htmlElem = new HTMLBuilder_1.HTMLElem("div");
@@ -812,15 +811,8 @@ function getTagHTML(content, colour, tagId = undefined) {
     return htmlElem;
 }
 exports.getTagHTML = getTagHTML;
-function tagBind(trigger, listener) {
-    Tag_1.TagList.getInstance().tags
-        .forEach(tag => {
-        $(`#portfolio #results #${tag.id}.tag`).on(trigger, listener);
-    });
-}
-exports.tagBind = tagBind;
 
-},{"../Colour/Colour":1,"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4}],8:[function(require,module,exports){
+},{"../Colour/Colour":1,"../HTMLBuilder/HTMLBuilder":4}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Vector = void 0;
@@ -1155,7 +1147,7 @@ function select(idIndex) {
     //select all
     if (idIndex === -1) {
         $(`#skills > nav > #all`).addClass("selected");
-        col = { r: 0, g: 0, b: 0 };
+        col = { r: 0, g: 17, b: 28 };
         setTimeout(() => {
             $("#skills > div .skill").removeClass("selected");
             connections.forEach((conn) => {
