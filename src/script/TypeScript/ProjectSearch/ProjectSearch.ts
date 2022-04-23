@@ -64,7 +64,7 @@ export function generateProjects(projects : Project[]) {
         let tags = new HTMLElem("div");
         tags.get("id").push(new AttrVal("tags"));
 
-        if(projectTags.hasOwnProperty(project.tag.id)) {
+        if (projectTags.hasOwnProperty(project.tag.id)) {
             projectTags[project.tag.id].forEach(
                 projectTag => {
                     tags.addChild(getTagHTML(projectTag.symbol, projectTag.colour, projectTag.id.toString()));
@@ -77,6 +77,7 @@ export function generateProjects(projects : Project[]) {
             .addChild(desc)
             .addChild(name)
             .addChild(tags)
+
         projectsHTML.addChild(projectElem);
     });
 
