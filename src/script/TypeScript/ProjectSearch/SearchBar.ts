@@ -1,7 +1,7 @@
 import { Project, ProjectList } from "../DataBaseHandler/Project";
 import { Tag, TagList } from "../DataBaseHandler/Tag";
 import { AttrVal, HTMLElem, HTMLText } from "../HTMLBuilder/HTMLBuilder";
-import { generateProjects } from "./ProjectSearch";
+import { updateProject } from "./ProjectListGenerator";
 import { getTagHTML } from "./TagGenerator";
 
 let search = $("#portfolio #search input")
@@ -17,7 +17,7 @@ export function setSearch(filters: string[]) {
         addFilter(filter);
     });
     
-    generateProjects(getProjects());
+    updateProject();
 }
 
 function reset() {
@@ -35,7 +35,7 @@ function getSearchVal() : string {
     return tmp.toString();
 }
 
-function getProjects() : Project[] {
+export function getProjects() : Project[] {
     let tags = TagList.getInstance().tags;
 
     return ProjectList.getInstance().project
@@ -132,7 +132,7 @@ function updateSuggestions(){
     tags.forEach((tag) => {
         $(`#portfolio #search .suggestions #${tag.id}`).on("click", ()=> {
             onSuggestionClick(tag.symbol);
-            generateProjects(getProjects());
+            updateProject();
         });
     })
 }
@@ -215,7 +215,7 @@ export function main() {
             nameFilters.add(tmpSearch);
         }
 
-        generateProjects(getProjects());
+        updateProject();
         
         if(!tmpAdd) {
             nameFilters.delete(tmpSearch);

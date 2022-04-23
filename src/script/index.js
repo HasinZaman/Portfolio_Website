@@ -65,8 +65,14 @@ class Project {
     get start() {
         return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' }).format(this._start);
     }
+    get startUnix() {
+        return this._start.getTime();
+    }
     get update() {
         return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' }).format(this._update);
+    }
+    get updateUnix() {
+        return this._update.getTime();
     }
     get description() {
         return this._desc;
@@ -520,11 +526,11 @@ exports.HTMLText = HTMLText;
 },{}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.main = exports.generateProjects = void 0;
-const Project_1 = require("../DataBaseHandler/Project");
+exports.updateProject = void 0;
 const Tag_1 = require("../DataBaseHandler/Tag");
 const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
 const SearchBar_1 = require("./SearchBar");
+const SortBy_1 = require("./SortBy");
 const TagGenerator_1 = require("./TagGenerator");
 function generateProjects(projects) {
     let target = $("#portfolio #results");
@@ -591,24 +597,37 @@ function generateProjects(projects) {
         });
     });
 }
-exports.generateProjects = generateProjects;
+function updateProject() {
+    generateProjects((0, SortBy_1.sort)((0, SearchBar_1.getProjects)()));
+}
+exports.updateProject = updateProject;
+
+},{"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4,"./SearchBar":7,"./SortBy":8,"./TagGenerator":9}],6:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.main = void 0;
+const Project_1 = require("../DataBaseHandler/Project");
+const ProjectListGenerator_1 = require("./ProjectListGenerator");
+const SearchBar_1 = require("./SearchBar");
+const SortBy_1 = require("./SortBy");
 function main() {
     Project_1.ProjectList.getInstance()
         .update(() => {
-        generateProjects(Project_1.ProjectList.getInstance().project);
+        (0, ProjectListGenerator_1.updateProject)();
     });
     (0, SearchBar_1.main)();
+    (0, SortBy_1.main)();
 }
 exports.main = main;
 
-},{"../DataBaseHandler/Project":2,"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4,"./SearchBar":6,"./TagGenerator":7}],6:[function(require,module,exports){
+},{"../DataBaseHandler/Project":2,"./ProjectListGenerator":5,"./SearchBar":7,"./SortBy":8}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.main = exports.setSearch = void 0;
+exports.main = exports.getProjects = exports.setSearch = void 0;
 const Project_1 = require("../DataBaseHandler/Project");
 const Tag_1 = require("../DataBaseHandler/Tag");
 const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
-const ProjectSearch_1 = require("./ProjectSearch");
+const ProjectListGenerator_1 = require("./ProjectListGenerator");
 const TagGenerator_1 = require("./TagGenerator");
 let search = $("#portfolio #search input");
 let tagFilters = new Set();
@@ -619,7 +638,7 @@ function setSearch(filters) {
     filters.forEach(filter => {
         addFilter(filter);
     });
-    (0, ProjectSearch_1.generateProjects)(getProjects());
+    (0, ProjectListGenerator_1.updateProject)();
 }
 exports.setSearch = setSearch;
 function reset() {
@@ -680,6 +699,7 @@ function getProjects() {
             });
     });
 }
+exports.getProjects = getProjects;
 function updateSuggestions() {
     let searchVal = getSearchVal();
     let suggestionArea = $("#portfolio #search .suggestions");
@@ -715,7 +735,7 @@ function updateSuggestions() {
     tags.forEach((tag) => {
         $(`#portfolio #search .suggestions #${tag.id}`).on("click", () => {
             onSuggestionClick(tag.symbol);
-            (0, ProjectSearch_1.generateProjects)(getProjects());
+            (0, ProjectListGenerator_1.updateProject)();
         });
     });
 }
@@ -783,7 +803,7 @@ function main() {
         if (!tmpAdd) {
             nameFilters.add(tmpSearch);
         }
-        (0, ProjectSearch_1.generateProjects)(getProjects());
+        (0, ProjectListGenerator_1.updateProject)();
         if (!tmpAdd) {
             nameFilters.delete(tmpSearch);
         }
@@ -791,7 +811,67 @@ function main() {
 }
 exports.main = main;
 
-},{"../DataBaseHandler/Project":2,"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4,"./ProjectSearch":5,"./TagGenerator":7}],7:[function(require,module,exports){
+},{"../DataBaseHandler/Project":2,"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4,"./ProjectListGenerator":5,"./TagGenerator":9}],8:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.main = exports.sort = void 0;
+const ProjectListGenerator_1 = require("./ProjectListGenerator");
+let selected = 0;
+let sortAlgorithms = [
+    (projects) => {
+        return projects.sort((proj1, proj2) => {
+            return proj1.name < proj2.name ? -1 : 1;
+        });
+    },
+    (projects) => {
+        return projects.sort((proj1, proj2) => {
+            return proj2.startUnix - proj1.startUnix;
+        });
+    },
+    (projects) => {
+        return projects.sort((proj1, proj2) => {
+            return proj2.updateUnix - proj1.updateUnix;
+        });
+    }
+];
+function getVal() {
+    let tmp = $("#portfolio #columns select.sortBy").val();
+    if (tmp == null) {
+        return "";
+    }
+    return tmp.toString();
+}
+function select(selectedCategory) {
+    switch (selectedCategory) {
+        case "name":
+            selected = 0;
+            break;
+        case "start":
+            selected = 1;
+            break;
+        case "update":
+            selected = 2;
+            break;
+    }
+    $("#portfolio #columns .selected").removeClass("selected");
+    $(`#portfolio #columns >#${selectedCategory}`).addClass("selected");
+    $("#portfolio #columns select.sortBy").val(selectedCategory);
+    (0, ProjectListGenerator_1.updateProject)();
+}
+function sort(projects) {
+    return sortAlgorithms[selected](projects);
+}
+exports.sort = sort;
+function main() {
+    select("name");
+    $("#portfolio #columns #name").on("click", () => { select("name"); });
+    $("#portfolio #columns #start").on("click", () => { select("start"); });
+    $("#portfolio #columns #update").on("click", () => { select("update"); });
+    $("#portfolio #columns select.sortBy").on("change", () => { select(getVal()); });
+}
+exports.main = main;
+
+},{"./ProjectListGenerator":5}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTagHTML = void 0;
@@ -812,7 +892,7 @@ function getTagHTML(content, colour, tagId = undefined) {
 }
 exports.getTagHTML = getTagHTML;
 
-},{"../Colour/Colour":1,"../HTMLBuilder/HTMLBuilder":4}],8:[function(require,module,exports){
+},{"../Colour/Colour":1,"../HTMLBuilder/HTMLBuilder":4}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Vector = void 0;
@@ -861,7 +941,7 @@ class Vector {
 }
 exports.Vector = Vector;
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = void 0;
@@ -1206,7 +1286,7 @@ function main() {
 }
 exports.main = main;
 
-},{"../Colour/Colour":1,"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4,"../ProjectSearch/SearchBar":6,"../SkillBalls/Vector":8}],10:[function(require,module,exports){
+},{"../Colour/Colour":1,"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4,"../ProjectSearch/SearchBar":7,"../SkillBalls/Vector":10}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const ProjectSearch_1 = require("./ProjectSearch/ProjectSearch");
@@ -1214,4 +1294,4 @@ const SkillTable_1 = require("./SkillTable/SkillTable");
 (0, SkillTable_1.main)();
 (0, ProjectSearch_1.main)();
 
-},{"./ProjectSearch/ProjectSearch":5,"./SkillTable/SkillTable":9}]},{},[10]);
+},{"./ProjectSearch/ProjectSearch":6,"./SkillTable/SkillTable":11}]},{},[12]);

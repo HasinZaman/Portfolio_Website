@@ -23,11 +23,17 @@ export class Project{
     public get start() : string {
         return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' }).format(this._start);
     }
+    public get startUnix() : number {
+        return this._start.getTime();
+    }
 
     private _update : Date;
 
     public get update() : string {
         return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' }).format(this._update);
+    }
+    public get updateUnix() : number {
+        return this._update.getTime();
     }
 
     private _desc : string;

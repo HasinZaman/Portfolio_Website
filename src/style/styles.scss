@@ -586,13 +586,65 @@ body {
 			}
 		}
 
+		@media only screen and (max-width: 460px) {
+			#columns {
+				display: block !important;
+				> * {
+					display: none !important;
+				}
+				.sortBy {
+					display: inline-block !important;
+				}
+			}
+		}
 		#columns {
+			display: grid;
+			grid-template-columns: auto 100px 150px;
+			column-gap: 10px;
+			
+			*:not(.sortBy) {
+				width: fit-content;
+
+				cursor: pointer;
+
+				border-bottom: solid 2px rgba(0,0,0,0);
+			}
+			*:not(:first-child) {
+				justify-self: center;
+				align-self: center;
+			}
+			*:not(.sortBy):hover, .selected {
+				border-bottom-color: white;
+			}
+
+			.sortBy {
+				display: none;
+			}
+		}
+
+		@media only screen and (max-width: 460px) {
+			#results > div {
+				grid-template-columns: auto auto !important;
+				grid-template-rows: 1fr 1fr auto auto !important;
+
+				grid-template-areas:
+				"name name"
+				"start update"
+				"tag tag"
+				"desc desc"
+				!important;
+
+				* {
+					align-content: center;
+					align-self: center;
+				}
+			}
 		}
 
 		#results > div {
 			display: grid;
-			grid-template-columns: auto 70px 70px;
-			grid-template-rows: 1fr 1fr fit-content;
+			grid-template-columns: auto 100px 150px;
+			grid-template-rows: 1fr 1fr auto;
 
 			column-gap: 10px;
 			row-gap: 8px;
@@ -603,10 +655,11 @@ body {
 			"desc desc desc";
 
 			margin-top: 8px;
-		}
+			//margin-top: 10px;
 
-		#results > div{
-			margin-top: 10px;
+			* {
+				align-self: center;
+			}
 
 			#start {
 				grid-area: start;
@@ -620,7 +673,21 @@ body {
 				grid-area: desc;
 			}
 			#name {
+				all: unset;
+
 				grid-area: name;
+
+				width: fit-content;
+
+				font-size: 1.5em;
+
+				border-bottom: solid rgba(0,0,0,0) 2px;
+
+				cursor: pointer;
+			}
+			#name:hover {
+				font-style: bold;
+				border-bottom: solid white 2px;
 			}
 			#tags {
 				grid-area: tag;
