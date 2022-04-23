@@ -370,8 +370,8 @@ function select(idIndex : number) {
     //select all
     if (idIndex === -1) {
         $(`#skills > nav > #all`).addClass("selected")
-        col = {r: 0, g : 0, b: 0};
-
+        col = {r: 0, g : 17, b: 28};
+        
         setTimeout(() => {
             $("#skills > div .skill").removeClass("selected");
 

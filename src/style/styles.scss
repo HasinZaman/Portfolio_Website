@@ -1,7 +1,9 @@
 $col1 : rgb(173,60,92);
 $col2 : rgb(54,3,97);
 $col3 : rgb(223,124,60);
-$col4 : black;
+
+$bg1 : rgb(0, 33, 55);
+$bg2 : rgb(0, 17, 28);
 
 @function RGBtoRGBA($col, $alpha) {
 	@return rgba(red($col), green($col), blue($col), 0.75);
@@ -12,7 +14,7 @@ html{
 }
 
 body {
-	background-color: $col4;
+	background-color: $bg2;
 	display: flex;
 	flex-direction: column;
 	margin: 0;
@@ -151,7 +153,7 @@ body {
 
 				z-index: 1;
 
-				background-color: black;
+				background-color: $bg2;
 
 				border: solid 0 white;
 				
@@ -300,7 +302,7 @@ body {
 		// 		height: calc((#{$ballRadius} - #{$ballBorder}) * 2);
 		// 		border: #{$ballBorder} solid white;
 
-		// 		background-color: black;
+		// 		background-color: $bg2;
 
 		// 		display: flex;
 		// 		justify-content: center;
@@ -347,7 +349,7 @@ body {
 		// 	position: absolute;
 		// 	overflow: hidden;
 
-		// 	background-color: black;
+		// 	background-color: $bg2;
 
 		// 	translate: transform ease-in-out 2s;
 
@@ -490,7 +492,7 @@ body {
 		// 	}
 
 		// 	nav {
-		// 		background-color: black;
+		// 		background-color: $bg2;
 		// 		a {
 		// 			width: fit-content;
 		// 		}
@@ -561,14 +563,25 @@ body {
 				.suggestions {
 					display: none !important;
 					> div {
-						background-color: black;
+						background-color: $bg1;
+
+						padding: 5px 10px;
+
+						transform: translate(-10px, 0px);
+
 						color: white;
 
+						padding: 2px;
+
 						cursor: pointer;
+
+						b {
+							margin: none;
+						}
 					}
 					> div:hover {
 						background-color: white;
-						color: black;
+						color: $bg2;
 					}
 					position: absolute;
 				}
@@ -675,7 +688,7 @@ body {
 		justify-content: center;
 		align-items: center;
 		border: solid white #{$borderWidth};
-		background-color: black;
+		background-color: $bg2;
 	}
 
 	.front {
