@@ -559,7 +559,9 @@ body {
 				input:focus ~ .suggestions, .suggestions:hover{
 					display:block !important;
 				}
-
+				input:focus ~ img {
+					right: 0;
+				}
 				.suggestions {
 					display: none !important;
 					> div {
@@ -582,6 +584,20 @@ body {
 						color: $bg2;
 					}
 					position: absolute;
+				}
+
+				img {
+					z-index: -1;
+					position: absolute;
+
+					height: 28.4px;
+					width: 28.4px;
+
+					top: 0;
+
+					right: calc(100% - 28.4px);
+
+					transition: right 500ms;
 				}
 			}
 		}
