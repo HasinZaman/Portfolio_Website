@@ -1,54 +1,89 @@
-let menu: JQuery;
-let start: number = 0;
-let height: number = 0;
+import { MenuLogic, unWrap } from "./MenuLogic";
 
-let lastPos : number = 0;
+let mobileLogic : MenuLogic = new MenuLogic(
+    () => {
+        console.log("mobile")
+        let updateMenu = () => {
+            let currentPos: number = unWrap<number>($(document).scrollTop());
+            if ($("#menu").hasClass("selected")) {
+                $("body").css("overflow", "hidden");
+                
+                if(currentPos < MenuLogic.start + MenuLogic.height) {
+                    MenuLogic.menu.css("transform", `translateY(-${MenuLogic.menu.css("top")}) translateY(-30px)`);
+                }
+                else {
+                    MenuLogic.menu.css("transform", `translateY(0%)`);
+                }
+                MenuLogic.menu.css("padding-bottom", `100%`);
 
-function unWrap<T>(action :T | undefined | null) : T {
-    if (action == null) {
-        throw new Error("value is not defined");
-    }
+                $("#menu img").css("transform",`translateX(${MenuLogic.windowWidth/2}px) translateX(-50%)`);
 
-    return action;
-}
+                $("#menu img").attr("src",`src\\media\\img\\icons\\Cross_icon.svg`);
+            }
+            else {
+                $("body").css("overflow", "");
 
-function main() {
-    menu = unWrap<JQuery>($("#menu"));
-    start = unWrap<number>(
-        unWrap<JQuery>($("#header")).height()
-    ) - 10;
-    height = unWrap<number>(menu.height()) - 5;
-
-    menu.css("top", `${start + height}px`);
-    menu.next().css("margin-top", `${height}px`);
-}
-
-main()
-lastPos = start;
-$(window).on("resize", () => {
-    main();
-})
-$(document).on("ready", () => {
-    main
-})
-$(document).on("scroll", (event: JQuery.Event) => {
-    let currentPos : number = unWrap<number>($(document).scrollTop());
-    let delta : number = lastPos - currentPos;
-
-    menu.css("top", Math.max(start + height, currentPos - height));
-
-    if(currentPos > start + height) {
-        console.log("fixed menu")
-        if(delta < 0){
-            menu.css("transform", "translateY(-100%)");
+                $("#menu img").css("transform","")
+                MenuLogic.menu.css("transform", "");
+                MenuLogic.menu.css("padding-bottom", ``)
+                
+                $("#menu img").attr("src",`src\\media\\img\\icons\\Menu_icon.svg`);
+            }
         }
-        else if(delta > 0){
-            menu.css("transform", "translateY(100%) translateY(-13px)");
-        }
-    } else {
-        menu.css("top", `${start + height}px`);
-        menu.css("transform", "translateY(-100%)");
-    }
 
-    lastPos = currentPos;
-})
+        $("#menu").removeClass("selected")
+        updateMenu();
+        $("#menu img").off("touchend click")
+        $("#menu img").on("touchend click", () => {
+            $("#menu").toggleClass("selected");
+            updateMenu();
+        })
+
+        $("#menu a").off("touchend click")
+        $("#menu a").on("touchend click", event => {
+            $(unWrap($(event.target).attr("href")))[0].scrollIntoView();
+            $("#menu").removeClass("selected");
+            updateMenu();
+        })
+    },
+    (currentPos : number, delta : number) => {
+        if($("#menu").hasClass("selected")) {
+            return ;
+        }
+        if(currentPos > MenuLogic.start + MenuLogic.height) {
+            if(delta < 0) {
+                MenuLogic.menu.css("transform", "translateY(-100%)");
+            }
+            else if(delta > 0) {
+                MenuLogic.menu.css("transform", "translateY(100%) translateY(-13px)");
+            }
+        } else {
+            MenuLogic.menu.css("top", `${MenuLogic.start + MenuLogic.height}px`);
+            MenuLogic.menu.css("transform", "translateY(-100%)");
+        }
+    }
+);
+
+let desktopLogic : MenuLogic = new MenuLogic(
+    () => {
+        $("body").css("overflow", "");
+    },
+    (currentPos : number, delta : number) => {
+        if(currentPos > MenuLogic.start + MenuLogic.height) {
+            if(delta < 0) {
+                MenuLogic.menu.css("transform", "translateY(-100%)");
+            }
+            else if(delta > 0) {
+                MenuLogic.menu.css("transform", "translateY(100%) translateY(-13px)");
+            }
+        } else {
+            MenuLogic.menu.css("top", `${MenuLogic.start + MenuLogic.height}px`);
+            MenuLogic.menu.css("transform", "translateY(-100%)");
+        }
+    }
+);
+
+MenuLogic.mobileLogic = mobileLogic;
+MenuLogic.desktopLogic = desktopLogic;
+
+MenuLogic.initialize();
