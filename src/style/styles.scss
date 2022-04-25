@@ -70,6 +70,10 @@ body {
 
 	section:not(:first-child){
 		margin-top: 25px;
+
+		h1 {
+			text-align: center;
+		}
 	}
 
 	#header {
