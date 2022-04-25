@@ -785,7 +785,48 @@ body {
 	}
 
 	#footer {
-		
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+
+		padding-top: 25px;
+		padding-bottom: 25px;
+
+		margin-top: 25px;
+
+		background-color: $col2;
+
+		> a {
+			all: unset;
+			border-bottom: solid rgba(0,0,0,0) 2px;
+
+			cursor: pointer;
+		}
+
+		> a:hover {
+			border-bottom: solid white 2px;
+		}
+
+		> *, > a {
+			display: flex;
+
+			justify-content: center;
+			align-items: center;
+
+			width: fit-content;
+
+			padding-bottom: 5px;
+
+			margin-top: 15px;
+
+			> img {
+				width: 30px;
+				height: 30px;
+
+				margin-right: 10px;
+			}
+		}
 	}
 }
 
