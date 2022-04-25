@@ -68,6 +68,10 @@ body {
 		width: 100%;
 	}
 
+	section:not(:first-child){
+		margin-top: 25px;
+	}
+
 	#header {
 		position: relative;
 		height: fit-content;
