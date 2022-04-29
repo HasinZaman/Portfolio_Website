@@ -35,11 +35,11 @@ test(`reflect points of pentagon along y axis`, () => {
     //
     //  Reflecting pentagon across the y axis
     //
-    //      1            1   
-    //    /   \        /   \
-    //   5     2      2     5
-    //   |     | <=>  |     |
-    //   4_____3      3_____4
+    //      1             1   
+    //    /   \         /   \
+    //   5     2       2     5
+    //   |     |  <=>  |     |
+    //   4_____3       3_____4
     //
     // 1 => 1
     // 2 => 5
