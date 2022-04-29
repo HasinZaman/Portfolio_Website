@@ -900,6 +900,25 @@ body {
 	}
 }
 
+.cube[front="front"] {
+	transform : rotateY(0deg);
+}
+.cube[front="back"] {
+	transform : rotateY(180deg);
+}
+.cube[front="left"] {
+	transform : rotateY(90deg);
+}
+.cube[front="right"] {
+	transform : rotateY(270deg);
+}
+.cube[front="up"] {
+	transform : rotateX(-90deg);
+}
+.cube[front="down"] {
+	transform : rotateX(90deg);
+}
+
 .ball {
 	border-radius: 100%;
 	overflow: hidden;
