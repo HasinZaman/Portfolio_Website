@@ -130,5 +130,4 @@ export class Cube {
         
         this.cube = cube;
     }
-
 }
