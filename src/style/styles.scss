@@ -888,7 +888,7 @@ body {
 	}
 
 	.right {
-		transform: translateX($sideLength/2) rotateY(-90deg);
+		transform: translateX($sideLength/2) rotateY(-90deg) scaleX(-1);
 	}
 
 	.up {
