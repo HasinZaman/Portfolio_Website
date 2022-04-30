@@ -1,7 +1,10 @@
 import { AttrVal, HTMLElem } from "../HTMLBuilder/HTMLBuilder";
 import { Generator } from "./CycleGroup";
 
-interface CubeFaces {
+/**
+ * CubeFaces interface defines object of all faces relative to user perspective
+ */
+export interface CubeFaces {
     front : JQuery,
     back : JQuery,
     left : JQuery,
@@ -10,12 +13,25 @@ interface CubeFaces {
     down : JQuery,
 }
 
-class Cube {
+/**
+ * Cube class handles the creation and updating of HTML cube
+ */
+export class Cube {
     private cube : JQuery; 
 
-    private static rho = new Generator([3, 2, 0, 1, 4, 5]);//y axis rotation
-    private static phi = new Generator([4, 5, 2, 3, 1, 0]);//x axis rotation
+    /**
+     * rho handles 90 deg rotation of cube along y axis
+     */
+    private static rho = new Generator([3, 2, 0, 1, 4, 5]);
+    /**
+     * phi handles 90 deg rotation of cube along x axis
+     */
+    private static phi = new Generator([4, 5, 2, 3, 1, 0]);
 
+    /**
+     * JQuery of face div's of cube
+     * @type {CubeFaces}
+     */
     public get faces() : CubeFaces {
         let _faces : JQuery[] = [
             this.cube.find(".front"),
@@ -65,6 +81,10 @@ class Cube {
         };
     }
 
+    /**
+     * front sets front most face
+     * @param {string} val
+     */
     public set front(val : string) {
         switch(val) {
             case "front":
@@ -88,6 +108,10 @@ class Cube {
         }
     }
 
+    /**
+     * @constructor creates cube at cube
+     * @param {JQuery} cube
+     */
     constructor(cube: JQuery) {
         let cubeHTML : HTMLElem = new HTMLElem("");
 
