@@ -28,6 +28,9 @@
 		<img alt="menu icon" src="src\media\img\icons\Menu_icon.svg" class="mobile">
 	</nav>
 	<section id="aboutMe" class="content">
+		<h1>
+			About Me
+		</h1>
 		<div>
 			<div class="cube" front="0">
 				
@@ -90,12 +93,5 @@
 	<script src="src/script/Cube.js"></script>
 	<script src="src/script/index.js"></script>
 	<!-- <script src="src/script/BallSim.js"></script> -->
-	<script>
-		function rotateCube() {
-			forwardFace($(".cube"), parseInt(Math.random() * 6))
-			setTimeout(rotateCube, 5000);
-		}
-		rotateCube();
-	</script>
 </body>
 </html>
