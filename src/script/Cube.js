@@ -1,17 +1,84 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const Cube_1 = require("./Cube");
+const CubeFace_1 = require("./CubeFace");
+let cube = new Cube_1.Cube($(".cube"));
+let faceQueue = [
+    new CubeFace_1.CubeFace("Studying Computer Science & Mathematics at University of Ottawa", "uOttawa.png"),
+    new CubeFace_1.CubeFace("Second Place Winner of 2022 DeFi-Hackathon", "DeFi2020.png", () => {
+        $("#portfolio #search input").val("Speed Run Verification");
+        let e = $.Event('keydown');
+        e.key = "Enter";
+        $("#portfolio #search input").trigger(e);
+        $("#portfolio #search input")[0].scrollIntoView();
+    }),
+    //new CubeFace("3", "3"),
+    //new CubeFace("4", "4")
+];
+let faceOrderQueue = shuffle([0, 1, 2, 3, 4, 5]);
+let currentFace = 0;
+function shuffle(array) {
+    let stack = [...array];
+    let shuffled = [];
+    while (stack.length > 0) {
+        let i = Math.floor(Math.random() * stack.length);
+        shuffled.push(stack[i]);
+        stack.splice(i, 1);
+    }
+    return shuffled;
+}
+function start() {
+    //initialize cube faces
+    let faces = cube.faces;
+    [faces.front, faces.right, faces.back, faces.left].forEach((face, i1) => {
+        faceQueue[i1 % faceQueue.length].updateFace(face);
+    });
+    //currentFace = 1;
+    setTimeout(update, 4500);
+}
+function update() {
+    currentFace = (currentFace + 1) % faceQueue.length;
+    let face;
+    switch (currentFace) {
+        case 0:
+            cube.front = "front";
+            face = cube.faces.back;
+            break;
+        case 1:
+            cube.front = "right";
+            face = cube.faces.left;
+            break;
+        case 2:
+            cube.front = "back";
+            face = cube.faces.front;
+            break;
+        case 3:
+            cube.front = "left";
+            face = cube.faces.right;
+            break;
+        default:
+            throw new Error("Invalid state");
+    }
+    faceQueue[(currentFace + 1) % faceQueue.length].updateFace(face);
+    setTimeout(update, 4500);
+}
+start();
+
+},{"./Cube":2,"./CubeFace":3}],2:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Cube = void 0;
 const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
 const CycleGroup_1 = require("./CycleGroup");
-/*
-    "0": front,
-    "1": back,
-    "2": left,
-    "3": right,
-    "4": up,
-    "5": down,
-*/
+/**
+ * Cube class handles the creation and updating of HTML cube
+ */
 class Cube {
+    /**
+     * @constructor creates cube at cube
+     * @param {JQuery} cube
+     */
     constructor(cube) {
         let cubeHTML = new HTMLBuilder_1.HTMLElem("");
         ["front", "back", "left", "right", "up", "down"].forEach((faceClass) => {
@@ -24,6 +91,10 @@ class Cube {
         cube.attr("front", "front");
         this.cube = cube;
     }
+    /**
+     * JQuery of face div's of cube
+     * @type {CubeFaces}
+     */
     get faces() {
         let _faces = [
             this.cube.find(".front"),
@@ -71,6 +142,10 @@ class Cube {
             down: _faces[5],
         };
     }
+    /**
+     * front sets front most face
+     * @param {string} val
+     */
     set front(val) {
         switch (val) {
             case "front":
@@ -93,31 +168,111 @@ class Cube {
                 break;
         }
     }
+    static intToFace(val) {
+        switch (val) {
+            case 0:
+                return "front";
+            case 1:
+                return "back";
+            case 2:
+                return "left";
+            case 3:
+                return "right";
+            case 4:
+                return "up";
+            case 5:
+                return "down";
+        }
+        throw new Error("Invalid face val");
+    }
 }
-Cube.rho = new CycleGroup_1.Generator([3, 2, 0, 1, 4, 5]); //y axis rotation
-Cube.phi = new CycleGroup_1.Generator([4, 5, 2, 3, 1, 0]); //x axis rotation
-let cube = new Cube($(".cube"));
-let faces = cube.faces;
-faces.front.text("front");
-faces.back.text("back");
-faces.left.text("left");
-faces.right.text("right");
-faces.up.text("up");
-faces.down.text("down");
-cube.front = "up";
-console.log(cube.faces);
+exports.Cube = Cube;
+/**
+ * rho handles 90 deg rotation of cube along y axis
+ */
+Cube.rho = new CycleGroup_1.Generator([3, 2, 0, 1, 4, 5]);
+/**
+ * phi handles 90 deg rotation of cube along x axis
+ */
+Cube.phi = new CycleGroup_1.Generator([4, 5, 2, 3, 1, 0]);
 
-},{"../HTMLBuilder/HTMLBuilder":3,"./CycleGroup":2}],2:[function(require,module,exports){
+},{"../HTMLBuilder/HTMLBuilder":5,"./CycleGroup":4}],3:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CubeFace = void 0;
+const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
+class CubeFace {
+    constructor(message, image, onclick = undefined) {
+        this._message = "";
+        this._image = "";
+        this.onClick = undefined;
+        this.message = message;
+        this.image = image;
+        this.onClick = onclick;
+    }
+    get message() {
+        return this._message;
+    }
+    set message(val) {
+        this._message = val;
+    }
+    get image() {
+        return `${CubeFace.imgFolder}\\${this._image}`;
+    }
+    set image(val) {
+        this._image = val;
+    }
+    updateFace(face) {
+        face.html(this.getContent());
+        face.off("click");
+        face.css("cursor", "");
+        if (this.onClick != null) {
+            face.css("cursor", "pointer");
+            face.on("click", this.onClick);
+        }
+    }
+    getContent() {
+        let faceHTML = new HTMLBuilder_1.HTMLElem("");
+        let img = new HTMLBuilder_1.HTMLElem("img");
+        img.get("src").push(new HTMLBuilder_1.AttrVal(this.image));
+        faceHTML.addChild(img);
+        let messageDiv = new HTMLBuilder_1.HTMLElem("div");
+        messageDiv.addChild(new HTMLBuilder_1.HTMLText(this.message));
+        faceHTML.addChild(messageDiv);
+        return faceHTML.generateChildren();
+    }
+}
+exports.CubeFace = CubeFace;
+
+},{"../HTMLBuilder/HTMLBuilder":5}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Generator = void 0;
+/**
+ * Generator class is a mathematical representation a cyclic group that is generated by an operation
+ */
 class Generator {
+    /**
+     * @constructor creates a generator set
+     * @param {number[]} operation: array of numbers that define next position in cycle
+     */
     constructor(operation) {
-        if (!Generator.validOperation(operation)) {
+        if (!this.validOperation(operation)) {
             throw new Error("Invalid operation");
         }
         this.operation = operation;
     }
+    /**
+     * next is an isomporphic function that applies to generator operation on state parameter.
+     *
+     * Let A: T -> array index and A is an isomorphic function
+     * Let B: array index -> array index and B is the function that applies the operation on array
+     *
+     * next(state) = ABA^(-1) (state)
+     *
+     * @param {T[]} state: Array of type T with length as operation. (This is required in order for isomorphism)
+     * @returns {T[]} the next state after the generator operation is applied
+     */
     next(state) {
         if (state.length != this.operation.length) {
             throw new Error("state has an invalid size");
@@ -128,7 +283,12 @@ class Generator {
         });
         return nextState;
     }
-    static validOperation(operation) {
+    /**
+     * validOperation checks if an operation would lead to a cyclic group
+     * @param {number[]} operation
+     * @returns {boolean} of whether operation is valid
+     */
+    validOperation(operation) {
         let tmp = new Array(operation.length).fill(false);
         for (let i1 = 0; i1 < operation.length; i1++) {
             let next = operation[i1];
@@ -147,7 +307,7 @@ class Generator {
 }
 exports.Generator = Generator;
 
-},{}],3:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HTMLText = exports.HTMLElem = exports.StyleAttr = exports.AttrVal = void 0;
