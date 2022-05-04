@@ -155,20 +155,123 @@ body {
 
 	#aboutMe {
 		width: 100%;
-		height: 300px;
+		height: fit-content;
 
 		$padding: 10px;
 
-		div {
-			padding: $padding;
-			width: calc(50% - #{$padding} * 2);
-		}
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 
-		div:first-child {
+		//cube settings
+		
+		$sideLength: 40vw;
+		$borderWidth: 2px;
+		$marginPadding: 20px;
+		
+		> * {
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			//background-color: $col3;
+
+			padding: $padding;
+			width: calc(50% - #{$padding} * 2);
+
+			//https://stackoverflow.com/questions/12328259/how-do-you-strip-the-unit-from-any-number-in-sass
+			@function stripUnits($number) {
+				@return $number / ($number * 0 + 1);
+			}
+
+			//https://www.antimath.info/css/sass-sqrt-function/
+			@function sqrt($r) {
+				$x0: 1;
+				$x1: $x0;
+
+				@for $i from 1 through 10 {
+					$x1: $x0 - ($x0 * $x0 - abs($r)) / (2 * $x0);
+					$x0: $x1;
+				}
+
+				@return $x1;
+			}
+
+			//a^n
+			@function pow($a, $n) {
+				$tmp : 1;
+
+				@for $i from 1 through $n {
+					$tmp: $tmp * $a;
+				}
+
+				@return $tmp;
+			}
+		
+			.cube {
+
+				width: $sideLength !important;
+				height: $sideLength !important;
+
+				position: relative;
+				transform-style: preserve-3d;
+				transition: transform 1000ms ease-in-out;
+				padding: 0 !important;
+
+				div {
+					width: calc(#{$sideLength} - #{$borderWidth}) !important;
+					height: calc(#{$sideLength} - #{$borderWidth}) !important;
+					position: absolute;
+					padding: 0 !important;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					border: solid white #{$borderWidth};
+					background-color: $bg2;
+				}
+
+				.front {
+					transform: translateZ($sideLength/2);
+				}
+
+				.back {
+					transform: translateZ(-1 * $sideLength/2) scaleX(-1);
+				}
+
+				.left {
+					transform: translateX(-1 * $sideLength/2) rotateY(90deg) scaleX(-1);
+				}
+
+				.right {
+					transform: translateX($sideLength/2) rotateY(-90deg) scaleX(-1);
+				}
+
+				.up {
+					transform: translateY(-1 * $sideLength/2) rotateX(90deg);
+				}
+
+				.down {
+					transform: translateY($sideLength/2) rotateX(-90deg);
+				}
+			}
+
+			.cube[front="front"] {
+				transform : rotateY(0deg);
+			}
+			.cube[front="back"] {
+				transform : rotateY(180deg);
+			}
+			.cube[front="left"] {
+				transform : rotateY(90deg);
+			}
+			.cube[front="right"] {
+				transform : rotateY(270deg);
+			}
+			.cube[front="up"] {
+				transform : rotateX(-90deg);
+			}
+			.cube[front="down"] {
+				transform : rotateX(90deg);
+			}
 		}
 	}
 
@@ -850,73 +953,6 @@ body {
 	display: flex;
 
 	width: 100%;
-}
-
-.cube {
-	$sideLength: 15vw;
-	$borderWidth: 2px;
-
-	width: $sideLength !important;
-	height: $sideLength !important;
-	position: relative;
-	transform-style: preserve-3d;
-	transition: transform 1000ms ease-in-out;
-	padding: 0 !important;
-
-	div {
-		width: calc(#{$sideLength} - #{$borderWidth}) !important;
-		height: calc(#{$sideLength} - #{$borderWidth}) !important;
-		position: absolute;
-		padding: 0 !important;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		border: solid white #{$borderWidth};
-		background-color: $bg2;
-	}
-
-	.front {
-		transform: translateZ($sideLength/2);
-	}
-
-	.back {
-		transform: translateZ(-1 * $sideLength/2) scaleX(-1);
-	}
-
-	.left {
-		transform: translateX(-1 * $sideLength/2) rotateY(90deg) scaleX(-1);
-	}
-
-	.right {
-		transform: translateX($sideLength/2) rotateY(-90deg) scaleX(-1);
-	}
-
-	.up {
-		transform: translateY(-1 * $sideLength/2) rotateX(90deg);
-	}
-
-	.down {
-		transform: translateY($sideLength/2) rotateX(-90deg);
-	}
-}
-
-.cube[front="front"] {
-	transform : rotateY(0deg);
-}
-.cube[front="back"] {
-	transform : rotateY(180deg);
-}
-.cube[front="left"] {
-	transform : rotateY(90deg);
-}
-.cube[front="right"] {
-	transform : rotateY(270deg);
-}
-.cube[front="up"] {
-	transform : rotateX(-90deg);
-}
-.cube[front="down"] {
-	transform : rotateX(90deg);
 }
 
 .ball {
