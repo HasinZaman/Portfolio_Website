@@ -108,6 +108,24 @@ export class Cube {
         }
     }
 
+    public static intToFace(val : number) : string {
+        switch(val) {
+            case 0:
+                return "front";
+            case 1:
+                return "back";
+            case 2:
+                return "left";
+            case 3:
+                return "right";
+            case 4:
+                return "up";
+            case 5:
+                return "down";
+        }
+        throw new Error("Invalid face val");
+    }
+
     /**
      * @constructor creates cube at cube
      * @param {JQuery} cube
