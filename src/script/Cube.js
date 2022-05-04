@@ -6,7 +6,7 @@ const CubeFace_1 = require("./CubeFace");
 let cube = new Cube_1.Cube($(".cube"));
 let faceQueue = [
     new CubeFace_1.CubeFace("Studying Computer Science & Mathematics at University of Ottawa", "uOttawa.png"),
-    new CubeFace_1.CubeFace("Second Place Winner of 2022 DeFi-Hackathon", "DeFi2020.png", () => {
+    new CubeFace_1.CubeFace("Second Place Winner of 2022 DeFi-Hackathon", "DeFi2022.png", () => {
         $("#portfolio #search input").val("Speed Run Verification");
         let e = $.Event('keydown');
         e.key = "Enter";
@@ -236,13 +236,14 @@ class CubeFace {
         let img = new HTMLBuilder_1.HTMLElem("img");
         img.get("src").push(new HTMLBuilder_1.AttrVal(this.image));
         faceHTML.addChild(img);
-        let messageDiv = new HTMLBuilder_1.HTMLElem("div");
+        let messageDiv = new HTMLBuilder_1.HTMLElem("text");
         messageDiv.addChild(new HTMLBuilder_1.HTMLText(this.message));
         faceHTML.addChild(messageDiv);
         return faceHTML.generateChildren();
     }
 }
 exports.CubeFace = CubeFace;
+CubeFace.imgFolder = "src\\media\\img\\aboutMe";
 
 },{"../HTMLBuilder/HTMLBuilder":5}],4:[function(require,module,exports){
 "use strict";

@@ -169,7 +169,7 @@ body {
 		$sideLength: 40vw;
 		$borderWidth: 2px;
 		$marginPadding: 20px;
-		
+
 		> * {
 			display: flex;
 			justify-content: center;
@@ -216,17 +216,31 @@ body {
 				transform-style: preserve-3d;
 				transition: transform 1000ms ease-in-out;
 				padding: 0 !important;
-
+				
 				div {
 					width: calc(#{$sideLength} - #{$borderWidth}) !important;
 					height: calc(#{$sideLength} - #{$borderWidth}) !important;
 					position: absolute;
 					padding: 0 !important;
 					display: flex;
+					flex-direction: column;
 					justify-content: center;
 					align-items: center;
 					border: solid white #{$borderWidth};
 					background-color: $bg2;
+
+					img {
+						width: 50%;
+						height: auto;
+					}
+
+					text {
+						padding: 10%;
+						width: fit-content;
+						height: fit-content;
+						text-align: center;
+					}
+	
 				}
 
 				.front {

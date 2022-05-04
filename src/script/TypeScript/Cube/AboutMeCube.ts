@@ -5,7 +5,7 @@ let cube : Cube = new Cube($(".cube"));
 
 let faceQueue : CubeFace[] = [
     new CubeFace("Studying Computer Science & Mathematics at University of Ottawa", "uOttawa.png"),
-    new CubeFace("Second Place Winner of 2022 DeFi-Hackathon","DeFi2020.png", () => {
+    new CubeFace("Second Place Winner of 2022 DeFi-Hackathon","DeFi2022.png", () => {
         $("#portfolio #search input").val("Speed Run Verification")
         let e = $.Event('keydown');
         e.key = "Enter";

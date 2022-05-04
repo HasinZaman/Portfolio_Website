@@ -1,7 +1,7 @@
 import { AttrVal, HTMLElem, HTMLText } from "../HTMLBuilder/HTMLBuilder";
 
 export class CubeFace{
-    private static imgFolder : string;
+    private static imgFolder : string = "src\\media\\img\\aboutMe";
 
     private _message : string = "";
 
@@ -48,7 +48,7 @@ export class CubeFace{
 
         faceHTML.addChild(img);
 
-        let messageDiv : HTMLElem = new HTMLElem("div");
+        let messageDiv : HTMLElem = new HTMLElem("text");
         messageDiv.addChild(new HTMLText(this.message));
 
         faceHTML.addChild(messageDiv);
