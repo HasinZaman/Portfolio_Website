@@ -1,4 +1,4 @@
-import { Vector } from "./Vector";
+import { Vector } from "../Vector";
 
 /**
  * Path interface define the required methods to define a path in 2 dimensions

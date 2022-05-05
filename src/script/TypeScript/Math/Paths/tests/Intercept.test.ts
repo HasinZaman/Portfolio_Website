@@ -2,7 +2,7 @@ import { Circle } from "../Circle";
 import { Line } from "../Line";
 import { Rect } from "../Rect";
 import { rayChecks, rayCheck, interceptChecks, interceptCheck } from "../Intercept";
-import { Vector } from "../Vector";
+import { Vector } from "../../Vector";
 
 
 //line line intercept

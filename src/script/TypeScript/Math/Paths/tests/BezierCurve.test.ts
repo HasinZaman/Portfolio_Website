@@ -1,6 +1,6 @@
+import { Vector } from "../../Vector";
 import { BezierCurve } from "../BezierCurve";
 import { Line } from "../Line";
-import { Vector } from "../Vector";
 //test two point curve
 {
     let testCount = 0;

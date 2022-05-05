@@ -2,7 +2,7 @@ import { hexToRgb, rgba } from "../Colour/Colour";
 import { Tag, TagList } from "../DataBaseHandler/Tag";
 import { AttrVal, HTMLElem, HTMLText, StyleAttr } from "../HTMLBuilder/HTMLBuilder";
 import { setSearch } from "../ProjectSearch/SearchBar";
-import { Vector } from "../SkillBalls/Vector";
+import { Vector } from "../Math/Vector";
 
 
 let tiles : number[] = []

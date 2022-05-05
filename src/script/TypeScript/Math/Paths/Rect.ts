@@ -1,6 +1,6 @@
 import { Line } from "./Line";
 import { Path } from "./Path";
-import { Vector } from "./Vector";
+import { Vector } from "../Vector";
 
 /**
  * Rect class define methods and variables required for a rectangle

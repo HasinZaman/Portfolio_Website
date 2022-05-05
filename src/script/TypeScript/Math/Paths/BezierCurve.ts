@@ -1,6 +1,6 @@
 import { Line } from "./Line";
 import { Path } from "./Path";
-import { Vector } from "./Vector";
+import { Vector } from "../Vector";
 
 /**
  * BezierCurve class defines a point and methods required to make a bezier curve

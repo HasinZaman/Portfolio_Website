@@ -2,7 +2,7 @@ import { Line } from "./Line";
 import { Circle } from "./Circle";
 import { Rect } from "./Rect";
 import { Path } from "./Path";
-import { Vector } from "./Vector";
+import { Vector } from "../Vector";
 
 /**
  * Intercept class defines the variables that are can be used to derive vector position of intercepts
