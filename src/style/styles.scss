@@ -22,6 +22,8 @@ body {
 
 	overflow-x: hidden;
 
+
+
 	nav {
 		display: flex !important;
 		flex-direction: row;
@@ -78,7 +80,9 @@ body {
 
 	#header {
 		position: relative;
-		height: fit-content;
+		
+		width: 100vw;
+		height: 100vh;
 		overflow: hidden;
 		margin: none;
 
@@ -92,6 +96,48 @@ body {
 			width: 100%;
 			height: auto;
 			margin: 0;
+		}
+
+		#starSystem {
+			width: 100%;
+			height: 100%;
+
+			$ballRadius: 50px;
+			$ballBorder: 3px;
+
+			
+			.star{
+				position: absolute;
+
+				border: #{$ballBorder} solid white;
+
+				background-color: white;
+
+				transform-origin: 50% 50%;
+
+				animation-name: twinkle;
+				animation-iteration-count: infinite;;
+			}
+
+			@keyframes twinkle {
+				from {
+					transform: rotate(0 deg) scale(1);
+				}
+				50% {
+					transform: rotate(180 deg) scale(1.2);
+				}
+				to {
+					transform: rotate(360deg) scale(1);
+				}
+			  }
+		}
+		svg {
+			height: 100%;
+			width: 100%;
+			
+			line {
+				stroke: white;
+			}
 		}
 	}
 

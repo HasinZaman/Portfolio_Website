@@ -526,6 +526,55 @@ exports.HTMLText = HTMLText;
 },{}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Vector = void 0;
+class Vector {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+    clone() {
+        return new Vector(this.x, this.y);
+    }
+    normalize() {
+        let dist = Vector.dist(this);
+        this.x = this.x / dist;
+        this.y = this.y / dist;
+    }
+    static add(v1, v2) {
+        return new Vector(v1.x + v2.x, v1.y + v2.y);
+    }
+    static sub(v1, v2) {
+        return new Vector(v1.x - v2.x, v1.y - v2.y);
+    }
+    static mult(v, n) {
+        return new Vector(v.x * n, v.y * n);
+    }
+    static div(v, n) {
+        return new Vector(v.x / n, v.y / n);
+    }
+    static dot(v1, v2) {
+        return v1.x * v2.x + v1.y * v2.y;
+    }
+    static cross(v1, v2) {
+        return v1.x * v2.y - v2.x * v1.y;
+    }
+    static dist(v) {
+        return Math.sqrt(Vector.dot(v, v));
+    }
+    static normalize(v) {
+        let dist = Vector.dist(v);
+        return Vector.div(v, dist);
+    }
+    static projection(v, proj) {
+        let v1 = proj;
+        return Vector.mult(v1, Vector.dot(v, v1) / Vector.dot(v1, v1));
+    }
+}
+exports.Vector = Vector;
+
+},{}],6:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateProject = void 0;
 const Tag_1 = require("../DataBaseHandler/Tag");
 const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
@@ -602,7 +651,7 @@ function updateProject() {
 }
 exports.updateProject = updateProject;
 
-},{"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4,"./SearchBar":7,"./SortBy":8,"./TagGenerator":9}],6:[function(require,module,exports){
+},{"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4,"./SearchBar":8,"./SortBy":9,"./TagGenerator":10}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = void 0;
@@ -620,7 +669,7 @@ function main() {
 }
 exports.main = main;
 
-},{"../DataBaseHandler/Project":2,"./ProjectListGenerator":5,"./SearchBar":7,"./SortBy":8}],7:[function(require,module,exports){
+},{"../DataBaseHandler/Project":2,"./ProjectListGenerator":6,"./SearchBar":8,"./SortBy":9}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = exports.getProjects = exports.setSearch = void 0;
@@ -811,7 +860,7 @@ function main() {
 }
 exports.main = main;
 
-},{"../DataBaseHandler/Project":2,"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4,"./ProjectListGenerator":5,"./TagGenerator":9}],8:[function(require,module,exports){
+},{"../DataBaseHandler/Project":2,"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4,"./ProjectListGenerator":6,"./TagGenerator":10}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = exports.sort = void 0;
@@ -871,7 +920,7 @@ function main() {
 }
 exports.main = main;
 
-},{"./ProjectListGenerator":5}],9:[function(require,module,exports){
+},{"./ProjectListGenerator":6}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTagHTML = void 0;
@@ -892,56 +941,7 @@ function getTagHTML(content, colour, tagId = undefined) {
 }
 exports.getTagHTML = getTagHTML;
 
-},{"../Colour/Colour":1,"../HTMLBuilder/HTMLBuilder":4}],10:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Vector = void 0;
-class Vector {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-    clone() {
-        return new Vector(this.x, this.y);
-    }
-    normalize() {
-        let dist = Vector.dist(this);
-        this.x = this.x / dist;
-        this.y = this.y / dist;
-    }
-    static add(v1, v2) {
-        return new Vector(v1.x + v2.x, v1.y + v2.y);
-    }
-    static sub(v1, v2) {
-        return new Vector(v1.x - v2.x, v1.y - v2.y);
-    }
-    static mult(v, n) {
-        return new Vector(v.x * n, v.y * n);
-    }
-    static div(v, n) {
-        return new Vector(v.x / n, v.y / n);
-    }
-    static dot(v1, v2) {
-        return v1.x * v2.x + v1.y * v2.y;
-    }
-    static cross(v1, v2) {
-        return v1.x * v2.y - v2.x * v1.y;
-    }
-    static dist(v) {
-        return Math.sqrt(Vector.dot(v, v));
-    }
-    static normalize(v) {
-        let dist = Vector.dist(v);
-        return Vector.div(v, dist);
-    }
-    static projection(v, proj) {
-        let v1 = proj;
-        return Vector.mult(v1, Vector.dot(v, v1) / Vector.dot(v1, v1));
-    }
-}
-exports.Vector = Vector;
-
-},{}],11:[function(require,module,exports){
+},{"../Colour/Colour":1,"../HTMLBuilder/HTMLBuilder":4}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = void 0;
@@ -949,7 +949,7 @@ const Colour_1 = require("../Colour/Colour");
 const Tag_1 = require("../DataBaseHandler/Tag");
 const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
 const SearchBar_1 = require("../ProjectSearch/SearchBar");
-const Vector_1 = require("../SkillBalls/Vector");
+const Vector_1 = require("../Math/Vector");
 let tiles = [];
 let tableDim = new Vector_1.Vector(0, 0);
 let selected = -1;
@@ -1286,7 +1286,7 @@ function main() {
 }
 exports.main = main;
 
-},{"../Colour/Colour":1,"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4,"../ProjectSearch/SearchBar":7,"../SkillBalls/Vector":10}],12:[function(require,module,exports){
+},{"../Colour/Colour":1,"../DataBaseHandler/Tag":3,"../HTMLBuilder/HTMLBuilder":4,"../Math/Vector":5,"../ProjectSearch/SearchBar":8}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const ProjectSearch_1 = require("./ProjectSearch/ProjectSearch");
@@ -1294,4 +1294,4 @@ const SkillTable_1 = require("./SkillTable/SkillTable");
 (0, SkillTable_1.main)();
 (0, ProjectSearch_1.main)();
 
-},{"./ProjectSearch/ProjectSearch":6,"./SkillTable/SkillTable":11}]},{},[12]);
+},{"./ProjectSearch/ProjectSearch":7,"./SkillTable/SkillTable":11}]},{},[12]);
