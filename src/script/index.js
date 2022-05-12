@@ -528,35 +528,37 @@ exports.HTMLText = HTMLText;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Vector = void 0;
 class Vector {
-    constructor(x, y) {
+    constructor(x, y, z = 0) {
         this.x = x;
         this.y = y;
+        this.z = z;
     }
     clone() {
-        return new Vector(this.x, this.y);
+        return new Vector(this.x, this.y, this.z);
     }
     normalize() {
         let dist = Vector.dist(this);
         this.x = this.x / dist;
         this.y = this.y / dist;
+        this.z = this.z / dist;
     }
     static add(v1, v2) {
-        return new Vector(v1.x + v2.x, v1.y + v2.y);
+        return new Vector(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
     }
     static sub(v1, v2) {
-        return new Vector(v1.x - v2.x, v1.y - v2.y);
+        return Vector.add(v1, Vector.mult(v2, -1));
     }
     static mult(v, n) {
-        return new Vector(v.x * n, v.y * n);
+        return new Vector(v.x * n, v.y * n, v.z * n);
     }
     static div(v, n) {
-        return new Vector(v.x / n, v.y / n);
+        return new Vector(v.x / n, v.y / n, v.z / n);
     }
     static dot(v1, v2) {
-        return v1.x * v2.x + v1.y * v2.y;
+        return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
     }
     static cross(v1, v2) {
-        return v1.x * v2.y - v2.x * v1.y;
+        return new Vector(v1.y * v2.z - v2.y * v1.z, v1.z * v2.x - v2.z * v1.x, v1.x * v2.y - v2.x * v1.y);
     }
     static dist(v) {
         return Math.sqrt(Vector.dot(v, v));

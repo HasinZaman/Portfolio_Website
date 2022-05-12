@@ -1,15 +1,17 @@
 export class Vector {
     x: number;
     y: number;
+    z: number;
 
-    constructor(x: number, y: number) {
+    constructor(x: number, y: number, z: number = 0) {
         this.x = x;
         this.y = y;
+        this.z = z;
     }
 
     public clone() : Vector
     {
-        return new Vector(this.x, this.y);
+        return new Vector(this.x, this.y, this.z);
     }
 
     public normalize() : void {
@@ -17,36 +19,41 @@ export class Vector {
 
         this.x = this.x / dist;
         this.y = this.y / dist;
+        this.z = this.z / dist;
     }
 
     public static add(v1:Vector, v2:Vector) : Vector
     {
-        return new Vector(v1.x + v2.x, v1.y + v2.y);
+        return new Vector(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
     }
 
     public static sub(v1:Vector, v2:Vector) : Vector
     {
-        return new Vector(v1.x - v2.x, v1.y - v2.y);
+        return Vector.add(v1, Vector.mult(v2, -1));
     }
 
     public static mult(v:Vector, n:number) : Vector
     {
-        return new Vector(v.x * n, v.y * n);
+        return new Vector(v.x * n, v.y * n, v.z * n);
     }
     
     public static div(v:Vector, n:number) : Vector
     {
-        return new Vector(v.x / n, v.y / n);
+        return new Vector(v.x / n, v.y / n, v.z / n);
     }
     
     public static dot(v1:Vector, v2:Vector) : number
     {
-        return v1.x * v2.x + v1.y * v2.y;
+        return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
     }
 
-    public static cross(v1:Vector, v2:Vector) : number
+    public static cross(v1:Vector, v2:Vector) : Vector
     {
-        return v1.x * v2.y - v2.x * v1.y;
+        return new Vector(
+            v1.y*v2.z - v2.y*v1.z,
+            v1.z*v2.x - v2.z*v1.x,
+            v1.x*v2.y - v2.x*v1.y
+        );
     }
 
     public static dist(v : Vector) : number

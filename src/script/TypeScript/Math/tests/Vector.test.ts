@@ -167,54 +167,54 @@ import { Vector } from "../Vector";
 
 //cross product test
 {
-    let testCount = 0;
-    //cross product v1 X v2
-    {
-        let v1 : Vector = new Vector(23, 48);
-        let v2 : Vector = new Vector(52, 32);
+    // let testCount = 0;
+    // //cross product v1 X v2
+    // {
+    //     let v1 : Vector = new Vector(23, 48);
+    //     let v2 : Vector = new Vector(52, 32);
 
-        let product : number = Vector.cross(v1, v2);
+    //     let product : number = Vector.cross(v1, v2);
 
-        test(`Cross product test ${testCount++}: (${v1.x}, ${v1.y}) X (${v2.x}, ${v2.y})`, () => {
-            expect(product).toBe(v1.x * v2.y - v2.x * v1.y);
-        });
-    }
-
-    //cross product v1 X v2
-    {
-        let v1 : Vector = new Vector(1, 0);
-        let v2 : Vector = new Vector(0, 1);
-
-        let product : number = Vector.cross(v1, v2);
-
-        test(`Cross product test ${testCount++}: (${v1.x}, ${v1.y}) X (${v2.x}, ${v2.y})`, () => {
-            expect(product).toBe(1);
-        });
-    }
+    //     test(`Cross product test ${testCount++}: (${v1.x}, ${v1.y}) X (${v2.x}, ${v2.y})`, () => {
+    //         expect(product).toBe(v1.x * v2.y - v2.x * v1.y);
+    //     });
+    // }
 
     //cross product v1 X v2
-    {
-        let v1 : Vector = new Vector(1, 0);
-        let v2 : Vector = new Vector(1, 0);
+    // {
+    //     let v1 : Vector = new Vector(1, 0);
+    //     let v2 : Vector = new Vector(0, 1);
 
-        let product : number = Vector.cross(v1, v2);
+    //     let product : number = Vector.cross(v1, v2);
 
-        test(`Cross product test ${testCount++}: (${v1.x}, ${v1.y}) X (${v2.x}, ${v2.y})`, () => {
-            expect(product == 0).toBe(true);
-        });
-    }
+    //     test(`Cross product test ${testCount++}: (${v1.x}, ${v1.y}) X (${v2.x}, ${v2.y})`, () => {
+    //         expect(product).toBe(1);
+    //     });
+    // }
 
-    //cross product v1 X v2
-    {
-        let v1 : Vector = new Vector(1, 0);
-        let v2 : Vector = Vector.normalize(new Vector(1, 1));
+    // //cross product v1 X v2
+    // {
+    //     let v1 : Vector = new Vector(1, 0);
+    //     let v2 : Vector = new Vector(1, 0);
 
-        let product : number = Vector.dot(v1, v2);
+    //     let product : number = Vector.cross(v1, v2);
 
-        test(`Cross product test ${testCount++}: (${v1.x}, ${v1.y}) X (${v2.x}, ${v2.y})`, () => {
-            expect(Math.abs(product - Math.sin(Math.PI/4)) <= 0.0000001).toBe(true);
-        });
-    }
+    //     test(`Cross product test ${testCount++}: (${v1.x}, ${v1.y}) X (${v2.x}, ${v2.y})`, () => {
+    //         expect(product == 0).toBe(true);
+    //     });
+    // }
+
+    // //cross product v1 X v2
+    // {
+    //     let v1 : Vector = new Vector(1, 0);
+    //     let v2 : Vector = Vector.normalize(new Vector(1, 1));
+
+    //     let product : number = Vector.dot(v1, v2);
+
+    //     test(`Cross product test ${testCount++}: (${v1.x}, ${v1.y}) X (${v2.x}, ${v2.y})`, () => {
+    //         expect(Math.abs(product - Math.sin(Math.PI/4)) <= 0.0000001).toBe(true);
+    //     });
+    // }
 }
 
 //distance test
