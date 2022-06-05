@@ -1,7 +1,6 @@
 export class Matrix {
     private values : number[];
 
-
     private dim : number[];
     public get columnCount(): number {
         return this.dim[1];
