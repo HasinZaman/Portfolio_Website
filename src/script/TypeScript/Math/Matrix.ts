@@ -10,8 +10,35 @@ export class Matrix {
         return this.dim[0];
     };
 
-    public static mult(m1: Matrix, m2: Matrix) : Matrix {
-        if(!(m1.columnCount == m2.rowCount /*&& m1.rowCount == m2.columnCount*/)) {
+    public static add(m1: Matrix, m2: Matrix) : Matrix {
+        if(!(m1.rowCount == m2.rowCount && m1.columnCount == m2.columnCount)) {
+            throw new Error("m1 & m2 have invalid size");
+        }
+
+        let result : Matrix = new Matrix(m1.rowCount, m1.columnCount);
+
+        for(let i1 = 0; i1 < result.values.length; i1++) {
+            result.values[i1] = m1.values[i1] + m2.values[i1];
+        }
+
+        return result;
+    }
+
+    public static sub(m1: Matrix, m2: Matrix) : Matrix {
+        return this.add(m1, this.mult(m2, -1));
+    }
+
+    public static mult(v1: Matrix, v2: Matrix | number) : Matrix {
+
+        if(typeof v2 === "number") {
+            return this.scalarMult(v1, v2);
+        }
+
+        return this.matrixMult(v1, v2);
+    }
+
+    private static matrixMult(m1: Matrix, m2: Matrix) : Matrix {
+        if(!(m1.columnCount == m2.rowCount)) {
             throw new Error("m1 & m2 have invalid size");
         }
 
@@ -32,6 +59,16 @@ export class Matrix {
 
                 result.setVal(x, y, sum);
             }
+        }
+
+        return result;
+    }
+
+    private static scalarMult(m1: Matrix, s: number) : Matrix {
+        let result : Matrix = new Matrix(m1.rowCount, m1.columnCount);
+
+        for(let i1 = 0; i1 < result.values.length; i1++) {
+            result.values[i1] = m1.values[i1] * s;
         }
 
         return result;

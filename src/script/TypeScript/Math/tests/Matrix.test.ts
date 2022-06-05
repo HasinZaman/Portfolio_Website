@@ -189,3 +189,147 @@ test("Matrix Multiplication: invalid", ()=> {
 
     expect(() => {Matrix.mult(m2, m1)}).toThrowError("m1 & m2 have invalid size");
 })
+
+//scalar matrix multiplication
+test("Scalar Multiplication: 1", () => {
+    let m1 : Matrix = new Matrix(2, 2);
+
+    m1.setRow(0, [1, 0]);
+    m1.setRow(1, [0, 1]);
+
+    let actualResult : Matrix = Matrix.mult(m1, 2);
+
+    expect(actualResult.columnCount).toBe(2);
+    expect(actualResult.rowCount).toBe(2);
+
+    let expectResult : Matrix = new Matrix(2, 2);
+
+    expectResult.setRow(0, [2, 0]);
+    expectResult.setRow(1, [0, 2]);
+
+    for(let x = 0; x < 2; x++) {
+        for(let y = 0; y < 2; y++) {
+            expect(actualResult.getVal(x,y)).toBe(expectResult.getVal(x,y));
+        }
+    }
+})
+
+test("Scalar Multiplication: 2", () => {
+    let m1 : Matrix = new Matrix(3, 3);
+
+    m1.setRow(0, [1, 2, 3]);
+    m1.setRow(1, [4, 5, 6]);
+    m1.setRow(2, [7, 8, 9]);
+
+    let actualResult : Matrix = Matrix.mult(m1, 3);
+
+    expect(actualResult.columnCount).toBe(3);
+    expect(actualResult.rowCount).toBe(3);
+
+    let expectResult : Matrix = new Matrix(3, 3);
+
+    expectResult.setRow(0, [3, 6, 9]);
+    expectResult.setRow(1, [12, 15, 18]);
+    expectResult.setRow(2, [21, 24, 27]);
+
+    for(let x = 0; x < 3; x++) {
+        for(let y = 0; y < 3; y++) {
+            expect(actualResult.getVal(x,y)).toBe(expectResult.getVal(x,y));
+        }
+    }
+})
+
+
+//matrix addition
+test("Matrix Addition: 1", () => {
+    let m1 : Matrix = new Matrix(2, 2);
+
+    m1.setRow(0, [1, 0]);
+    m1.setRow(1, [0, 1]);
+
+    let m2 : Matrix = new Matrix(2, 2);
+
+    m2.setRow(0, [0, 1]);
+    m2.setRow(1, [1, 0]);
+
+    let actualResult : Matrix = Matrix.add(m1, m2);
+
+    expect(actualResult.columnCount).toBe(2);
+    expect(actualResult.rowCount).toBe(2);
+
+    let expectResult : Matrix = new Matrix(2, 2);
+
+    expectResult.setRow(0, [1, 1]);
+    expectResult.setRow(1, [1, 1]);
+
+    for(let x = 0; x < 2; x++) {
+        for(let y = 0; y < 2; y++) {
+            expect(actualResult.getVal(x,y)).toBe(expectResult.getVal(x,y));
+        }
+    }
+})
+
+test("Matrix Addition: 2", () => {
+    let m1 : Matrix = new Matrix(1, 2);
+
+    m1.setRow(0, [1, 0]);
+
+    let m2 : Matrix = new Matrix(1, 2);
+
+    m2.setRow(0, [0, 1]);
+
+    let actualResult : Matrix = Matrix.add(m1, m2);
+
+    expect(actualResult.columnCount).toBe(2);
+    expect(actualResult.rowCount).toBe(1);
+
+    let expectResult : Matrix = new Matrix(1, 2);
+
+    expectResult.setRow(0, [1, 1]);
+
+    for(let x = 0; x < 2; x++) {
+        for(let y = 0; y < 1; y++) {
+            expect(actualResult.getVal(x,y)).toBe(expectResult.getVal(x,y));
+        }
+    }
+})
+
+test("Matrix Addition: Invalid", () => {
+    let m1 : Matrix = new Matrix(1, 2);
+
+    m1.setRow(0, [1, 0]);
+
+    let m2 : Matrix = new Matrix(2, 2);
+
+    m1.setRow(0, [0, 1]);
+
+    expect(() => {Matrix.add(m2, m1)}).toThrowError("m1 & m2 have invalid size");
+})
+
+test("Matrix Subtraction: 1", () => {
+    let m1 : Matrix = new Matrix(2, 2);
+
+    m1.setRow(0, [4, 4]);
+    m1.setRow(1, [10, 12]);
+
+    let m2 : Matrix = new Matrix(2, 2);
+
+    m2.setRow(0, [0, 2]);
+    m2.setRow(1, [-3, 0]);
+
+    let actualResult : Matrix = Matrix.sub(m1, m2);
+
+    expect(actualResult.columnCount).toBe(2);
+    expect(actualResult.rowCount).toBe(2);
+
+    let expectResult : Matrix = new Matrix(2, 2);
+
+    expectResult.setRow(0, [4, 2]);
+    expectResult.setRow(1, [13, 12]);
+
+    for(let x = 0; x < 2; x++) {
+        for(let y = 0; y < 2; y++) {
+            expect(actualResult.getVal(x,y)).toBe(expectResult.getVal(x,y));
+        }
+    }
+})
