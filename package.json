@@ -8,5 +8,8 @@
   },
   "scripts": {
     "test": "jest --coverage"
+  },
+  "dependencies": {
+    "queue-typescript": "^1.0.1"
   }
 }
