@@ -73,6 +73,55 @@ export class Matrix {
         return result;
     }
 
+    public static rotationX(theta: number) : Matrix {
+        let cos = Math.cos(theta);
+        let sin = Math.sin(theta);
+
+        let m : Matrix = new Matrix(3, 3);
+
+        m.setRow(0, [1, 0, 0]);
+        m.setRow(1, [0, cos, -1 * sin]);
+        m.setRow(2, [0, sin, cos]);
+
+        return m;
+    }
+
+    public static rotationY(theta: number) : Matrix {
+        let cos = Math.cos(theta);
+        let sin = Math.sin(theta);
+
+        let m : Matrix = new Matrix(3, 3);
+
+        m.setRow(0, [cos, 0, sin]);
+        m.setRow(1, [0, 1, 0]);
+        m.setRow(2, [-1 * sin, 0, cos]);
+
+        return m;
+    }
+
+    public static rotationZ(theta: number) : Matrix {
+        let cos = Math.cos(theta);
+        let sin = Math.sin(theta);
+
+        let m : Matrix = new Matrix(3, 3);
+
+        m.setRow(0, [cos, -1 * sin, 0]);
+        m.setRow(1, [sin, cos, 0]);
+        m.setRow(2, [0, 0, 1]);
+
+        return m;
+    }
+
+    public static scale(xScale: number = 1, yScale: number = 1, zScale: number = 1) {
+        let m : Matrix = new Matrix(3, 3);
+
+        m.setRow(0, [xScale, 0, 0]);
+        m.setRow(0, [0, yScale, 0]);
+        m.setRow(0, [0, 0, zScale]);
+
+        return m;
+    }
+
     constructor(rows: number, columns: number) {
         this.dim = [rows, columns];
 
