@@ -36,3 +36,7 @@ class Face {
 
     }
 }
+
+class Pyramid {
+    private faces : Face[] = [];
+}
