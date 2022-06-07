@@ -1,3 +1,5 @@
+import { Vector } from "./Vector";
+
 export class Matrix {
     private values : number[];
 
@@ -71,6 +73,17 @@ export class Matrix {
         }
 
         return result;
+    }
+
+    public static vectorMult(m1: Matrix, v: Vector) : Vector {
+        let m2 : Matrix = new Matrix(3, 1);
+        m2.setRow(0, [v.x]);
+        m2.setRow(1, [v.y]);
+        m2.setRow(2, [v.z]);
+
+        let result: Matrix = Matrix.mult(m1, m2);
+
+        return new Vector(result.getVal(0, 0), result.getVal(0, 1), result.getVal(0, 2));
     }
 
     public static rotationX(theta: number) : Matrix {
