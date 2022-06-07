@@ -2,14 +2,14 @@ import { Queue } from "queue-typescript";
 import { Vector } from "../../Math/Vector";
 
 
-const height : number = Math.sqrt(1-0.5*0.5);
+export const equilateralTriangleHeight : number = Math.sqrt(1-0.5*0.5);
 
 function triangle(start: Vector) : Vector[] {
     let vertices : Vector[] = new Array(3);
 
     vertices[0] = new Vector(0, 0, 0);
 
-    vertices[1] = new Vector(0.5, 0, -1 * height);
+    vertices[1] = new Vector(0.5, 0, -1 * equilateralTriangleHeight);
     vertices[2] = new Vector(-0.5, 0, 0);
 
     for(let i1 = 0; i1 < vertices.length; i1++) {
