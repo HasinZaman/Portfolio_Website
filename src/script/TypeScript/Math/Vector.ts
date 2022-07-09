@@ -131,8 +131,7 @@ export class Vector {
      * @returns normalized vector of v
      */
     public static normalize(v:Vector) : Vector {
-        let dist = Vector.dist(v);
-        return Vector.div(v, dist);
+        return v.clone().normalize();
     }
 
     /**
