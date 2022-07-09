@@ -2,7 +2,7 @@ import { Vector } from "../Vector";
 import { Path } from "./Path";
 
 /**
- * Circle class define methods and variables to create circle path
+ * Circle class defines methods and variables to create circle path
  * @extends {Path}
  */
 export class Circle implements Path
