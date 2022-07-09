@@ -10,6 +10,17 @@ let tableDim : Vector = new Vector(0, 0);
 
 let selected = -1;
 
+const ALL : string = "All";
+
+/**
+ * getTile method returns Tile in grid
+ * @param {Number} x x position on grid
+ * @param {Number} y y position on grid
+ * @param {Vector} dim width and height of 2d grid 
+ * @param {T[]} grid array of tiles in grid
+ * @param {T} nullVal default null tile value 
+ * @returns {T} Tile at (x,y) in grid
+ */
 function getTile<T>(x : number, y : number, dim : Vector, grid : T[], nullVal : T) : T {
     if (x < 0 || dim.x <= x) {
         return nullVal;
@@ -22,7 +33,11 @@ function getTile<T>(x : number, y : number, dim : Vector, grid : T[], nullVal : 
     return grid[x + y * dim.x]
 }
 
+/**
+ * prepareTiles method generates HTML for all skill tiles
+ */
 function prepareTiles() {
+    //get all tags
     let tags = TagList.getInstance()
         .tags
         .filter(
@@ -47,6 +62,7 @@ function prepareTiles() {
 
     let i2 = 0;
 
+    //turn all tags => html tiles
     for(let i1 = 0; i1 < tags.length; i1++) {
         if (tags[i1].tagType === 0) {
             tiles[i2++] = i1;
@@ -71,6 +87,7 @@ function prepareTiles() {
         }
     }
 
+    //filling array with empty tiles
     for(i2++; i2 <= tiles.length; i2++) {
         let elem : HTMLElem = new HTMLElem("div");
         elem.get("class").push(new AttrVal("skill"));
@@ -80,6 +97,7 @@ function prepareTiles() {
 
     target.html(skillsHTML.generateChildren());
 
+    //added functionality to all tags
     for(let i1 = 0; i1 < tags.length; i1++) {
         if (tags[i1].tagType === 0) {
             let tag = tags[i1];
@@ -92,12 +110,22 @@ function prepareTiles() {
     }
 }
 
+/**
+ * updateBorder is a utility method that updates the borders of selected tile
+ * @param id 
+ * @param width 
+ * @param edge 
+ */
 function updateBorder(id : string, width: number, edge : number) {
     let edgeMap : {[key : number] : string} = {0 : "bottom", 1 : "right", 2: "top", 3: "left"};
 
     $(`#${id}`).css(`border-${edgeMap[edge]}-width`, `${width}px`)
 }
 
+/**
+ * previewTiles method updates of all tiles that need preview border
+ * @param {Number[]} selectedTiles Array of all tiles that need a preview border
+ */
 function previewTiles(selectedTiles : number[]) {
     let tags = TagList.getInstance().tags;
     let targetTiles : boolean[] = new Array<boolean>(tiles.length);
@@ -108,6 +136,7 @@ function previewTiles(selectedTiles : number[]) {
 
     for(let x = 0; x < tableDim.x; x++) {
         for (let y = 0; y < tableDim.y; y++) {
+
             let tag = tags[getTile(x, y, tableDim, tiles, -1)];
             let currentTile = getTile(x,y,tableDim, targetTiles, false);
 
@@ -115,6 +144,7 @@ function previewTiles(selectedTiles : number[]) {
                 continue;
             }
 
+            //update border to 0 
             if(!currentTile) {
                 for(let i = 0; i < 4; i++) {
                     updateBorder(toId(tag.symbol), 0, i);
@@ -122,12 +152,9 @@ function previewTiles(selectedTiles : number[]) {
                 continue;
             }
 
-            if(tag == undefined) {
-                continue;
-            }
+            //update borders
 
-
-            //left
+            //left border
             if(!getTile(x-1, y, tableDim, targetTiles, false)) {
                 updateBorder(toId(tag.symbol), 5, 3)
             }
@@ -135,7 +162,7 @@ function previewTiles(selectedTiles : number[]) {
                 updateBorder(toId(tag.symbol), 0, 3)
             }
 
-            //right
+            //right border
             if(!getTile(x+1, y, tableDim, targetTiles, false)) {
                 updateBorder(toId(tag.symbol), 5, 1)
             }
@@ -143,7 +170,7 @@ function previewTiles(selectedTiles : number[]) {
                 updateBorder(toId(tag.symbol), 0, 1)
             }
 
-            //top
+            //top border
             if(!getTile(x, y-1, tableDim, targetTiles, false)) {
                 updateBorder(toId(tag.symbol), 5, 2)
             }
@@ -162,12 +189,19 @@ function previewTiles(selectedTiles : number[]) {
     }
 }
 
-
+/**
+ * toId is a utility method that converts a tag name into an id
+ * @param {string} str 
+ * @returns {string} id of str
+ */
 function toId(str : string) : string {
     return str.replace(" ", "-")
         .replace("#","Sharp")
 }
 
+/**
+ * createOrganizationButton method creates html for organizational buttons that reside underneath skill tables
+ */
 function createOrganizationButton() {
     let target = $("#skills > nav").first();
     let htmlBuilder : HTMLElem = new HTMLElem("div");
@@ -183,13 +217,12 @@ function createOrganizationButton() {
 
         htmlBuilder.addChild(container)
 
-
         document.styleSheets[0].addRule(`#skills > nav > #${toId(symbol)}::after`,`background-color: #${colour};`);
 
         return htmlBuilder;
     };
 
-    htmlBuilder.addChild(createVal("All", "FFF"));
+    htmlBuilder.addChild(createVal(ALL, "FFF"));
 
     let tagList = TagList.getInstance();
 
@@ -244,7 +277,7 @@ function createOrganizationButton() {
         let id = `#skills > nav > #${toId(tags[i1].symbol)}`;
         
         $(id).on("click", () => {
-            select(i1);
+            selectOrganizationalGroup(i1);
         })
 
         $(id).on("mouseenter", () => {
@@ -303,11 +336,11 @@ function createOrganizationButton() {
 
         $(id).css("border-color", tags[i1].colour);
     }
-    $(`#skills > nav > #all`).on("click", () => {
-        select(-1);
+    $(`#skills > nav > #${ALL}`).on("click", () => {
+        selectOrganizationalGroup(-1);
     })
 
-    $(`#skills > nav > #all`).on("mouseenter", () => {
+    $(`#skills > nav > #${ALL}`).on("mouseenter", () => {
         let tagList = TagList.getInstance();
         let connection = tagList.connections;
         let tags = tagList.tags;
@@ -327,7 +360,7 @@ function createOrganizationButton() {
         previewTiles(targetTiles)
     })
 
-    $(`#skills > nav > #all`).on("mouseleave", () => {
+    $(`#skills > nav > #${ALL}`).on("mouseleave", () => {
         let tagList = TagList.getInstance();
         let connection = tagList.connections;
         let tags = tagList.tags;
@@ -355,8 +388,12 @@ function createOrganizationButton() {
     })
 }
 
-function select(idIndex : number) {
-    selected = idIndex;
+/**
+ * select method handles the preview of organizational groups
+ * @param {number} organizationalGroupIndex 
+ */
+function selectOrganizationalGroup(organizationalGroupIndex : number) {
+    selected = organizationalGroupIndex;
     
     $("#skills > nav .selected").removeClass("selected");
 
@@ -368,8 +405,8 @@ function select(idIndex : number) {
     let timeStamp = new Date().getTime();
 
     //select all
-    if (idIndex === -1) {
-        $(`#skills > nav > #all`).addClass("selected")
+    if (organizationalGroupIndex === -1) {
+        $(`#skills > nav > #${ALL}`).addClass("selected")
         col = {r: 0, g : 17, b: 28};
         
         setTimeout(() => {
@@ -386,20 +423,20 @@ function select(idIndex : number) {
     else {
         $("#skills > div .skill").removeClass("selected");
 
-        let id = `#skills > nav > #${toId(tags[idIndex].symbol)}`;
+        let id = `#skills > nav > #${toId(tags[organizationalGroupIndex].symbol)}`;
         
-        col = rgba(hexToRgb(`#${tags[idIndex].colour}`), 0.75);
+        col = rgba(hexToRgb(`#${tags[organizationalGroupIndex].colour}`), 0.75);
 
         $(id).addClass("selected")
         
         connections
         .filter((conn) => {
-            return conn[0] == idIndex || conn[1] == idIndex
+            return conn[0] == organizationalGroupIndex || conn[1] == organizationalGroupIndex
         })
         .forEach((conn) => {
             let id : number;
     
-            if(conn[0] != idIndex) {
+            if(conn[0] != organizationalGroupIndex) {
                 id = conn[0]
             } else {
                 id = conn[1]
@@ -427,12 +464,15 @@ function select(idIndex : number) {
 
 }
 
+/**
+ * main method handles the initialization of skill tables
+ */
 export function main() {
     $(window).on('resize', () => {
         //createSkills();
         prepareTiles();
         createOrganizationButton();
-        select(-1);
+        selectOrganizationalGroup(-1);
     })
     
     TagList.getInstance()
@@ -440,7 +480,7 @@ export function main() {
             //createSkills();
             prepareTiles();
             createOrganizationButton();
-            select(-1);
+            selectOrganizationalGroup(-1);
         }
     )
 }
