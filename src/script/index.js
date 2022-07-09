@@ -527,46 +527,119 @@ exports.HTMLText = HTMLText;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Vector = void 0;
+/**
+ * Vector class defines methods and variables to create 3d/2d vector
+ */
 class Vector {
+    /**
+     * @constructor creates Vector class
+     * @param {number} x
+     * @param {number} y
+     * @param {number} z
+     */
     constructor(x, y, z = 0) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
+    /**
+     * clone method creates a deep copy of Vector
+     * @returns {Vector} deep copy of Vector
+     */
     clone() {
         return new Vector(this.x, this.y, this.z);
     }
+    /**
+     * normalize method turns Vector into a vector with a magnitude of 1
+     * @returns {Vector} method returns self
+     */
     normalize() {
         let dist = Vector.dist(this);
         this.x = this.x / dist;
         this.y = this.y / dist;
         this.z = this.z / dist;
+        return this;
     }
+    /**
+     * add method returns vector with sum of two vectors
+     * V = v1 + v2
+     * @param {Vector} v1
+     * @param {Vector} v2
+     * @returns {Vector} Vector with the sum of v1 + v2
+     */
     static add(v1, v2) {
         return new Vector(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
     }
+    /**
+     * sub method returns the vector with difference of two vectors
+     * V = v1 - v2
+     * @param {Vector} v1
+     * @param {Vector} v2
+     * @returns {Vector} Vector with the difference of v1 - v2
+     */
     static sub(v1, v2) {
         return Vector.add(v1, Vector.mult(v2, -1));
     }
+    /**
+     * mult method returns the vector product of scalar multiplication
+     * V = n * v
+     * @param {Vector} v
+     * @param {number} n
+     * @returns {Vector} Vector with the product of n * v1
+     */
     static mult(v, n) {
         return new Vector(v.x * n, v.y * n, v.z * n);
     }
+    /**
+     * div method returns the vector quotient of scalar multiplication
+     * V = n^-1 * v
+     * @param {Vector} v
+     * @param {number} n
+     * @returns {Vector} Vector with the product of n^-1 * v
+     */
     static div(v, n) {
         return new Vector(v.x / n, v.y / n, v.z / n);
     }
+    /**
+     * dot method returns the dot product of two vectors
+     * @param {Vector} v1
+     * @param {Vector} v2
+     * @returns {number} dot product of v1 and v2
+     */
     static dot(v1, v2) {
         return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
     }
+    /**
+     * cross method returns the cross product of two vectors
+     * @param {Vector} v1
+     * @param {Vector} v2
+     * @returns {Vector} cross product of v1 and v2
+     */
     static cross(v1, v2) {
         return new Vector(v1.y * v2.z - v2.y * v1.z, v1.z * v2.x - v2.z * v1.x, v1.x * v2.y - v2.x * v1.y);
     }
+    /**
+     * dist method returns the magnitude of a vector
+     * @param {Vector} v
+     * @returns {number} magnitude of a vector
+     */
     static dist(v) {
         return Math.sqrt(Vector.dot(v, v));
     }
+    /**
+     * normalize method return a normalized vector without manipulating input vector
+     * @param {Vector} v
+     * @returns normalized vector of v
+     */
     static normalize(v) {
-        let dist = Vector.dist(v);
-        return Vector.div(v, dist);
+        return v.clone().normalize();
     }
+    /**
+     * projection method returns a vector projected on a target vector
+     * @param {Vector} v vector that will be projected on projection vector
+     * @param {Vector} proj vector that will be projected on
+     * @returns {Vector} projected vector
+     */
     static projection(v, proj) {
         let v1 = proj;
         return Vector.mult(v1, Vector.dot(v, v1) / Vector.dot(v1, v1));
@@ -955,6 +1028,16 @@ const Vector_1 = require("../Math/Vector");
 let tiles = [];
 let tableDim = new Vector_1.Vector(0, 0);
 let selected = -1;
+const ALL = "All";
+/**
+ * getTile method returns Tile in grid
+ * @param {Number} x x position on grid
+ * @param {Number} y y position on grid
+ * @param {Vector} dim width and height of 2d grid
+ * @param {T[]} grid array of tiles in grid
+ * @param {T} nullVal default null tile value
+ * @returns {T} Tile at (x,y) in grid
+ */
 function getTile(x, y, dim, grid, nullVal) {
     if (x < 0 || dim.x <= x) {
         return nullVal;
@@ -964,8 +1047,12 @@ function getTile(x, y, dim, grid, nullVal) {
     }
     return grid[x + y * dim.x];
 }
+/**
+ * prepareTiles method generates HTML for all skill tiles
+ */
 function prepareTiles() {
     var _a;
+    //get all tags
     let tags = Tag_1.TagList.getInstance()
         .tags
         .filter((tag) => {
@@ -981,6 +1068,7 @@ function prepareTiles() {
     tiles = new Array(tableDim.x * tableDim.y).fill(-1);
     tags = Tag_1.TagList.getInstance().tags;
     let i2 = 0;
+    //turn all tags => html tiles
     for (let i1 = 0; i1 < tags.length; i1++) {
         if (tags[i1].tagType === 0) {
             tiles[i2++] = i1;
@@ -998,12 +1086,14 @@ function prepareTiles() {
             skillsHTML.addChild(elem);
         }
     }
+    //filling array with empty tiles
     for (i2++; i2 <= tiles.length; i2++) {
         let elem = new HTMLBuilder_1.HTMLElem("div");
         elem.get("class").push(new HTMLBuilder_1.AttrVal("skill"));
         skillsHTML.addChild(elem);
     }
     target.html(skillsHTML.generateChildren());
+    //added functionality to all tags
     for (let i1 = 0; i1 < tags.length; i1++) {
         if (tags[i1].tagType === 0) {
             let tag = tags[i1];
@@ -1014,10 +1104,20 @@ function prepareTiles() {
         }
     }
 }
+/**
+ * updateBorder is a utility method that updates the borders of selected tile
+ * @param id
+ * @param width
+ * @param edge
+ */
 function updateBorder(id, width, edge) {
     let edgeMap = { 0: "bottom", 1: "right", 2: "top", 3: "left" };
     $(`#${id}`).css(`border-${edgeMap[edge]}-width`, `${width}px`);
 }
+/**
+ * previewTiles method updates of all tiles that need preview border
+ * @param {Number[]} selectedTiles Array of all tiles that need a preview border
+ */
 function previewTiles(selectedTiles) {
     let tags = Tag_1.TagList.getInstance().tags;
     let targetTiles = new Array(tiles.length);
@@ -1031,30 +1131,29 @@ function previewTiles(selectedTiles) {
             if (tag == undefined) {
                 continue;
             }
+            //update border to 0 
             if (!currentTile) {
                 for (let i = 0; i < 4; i++) {
                     updateBorder(toId(tag.symbol), 0, i);
                 }
                 continue;
             }
-            if (tag == undefined) {
-                continue;
-            }
-            //left
+            //update borders
+            //left border
             if (!getTile(x - 1, y, tableDim, targetTiles, false)) {
                 updateBorder(toId(tag.symbol), 5, 3);
             }
             else {
                 updateBorder(toId(tag.symbol), 0, 3);
             }
-            //right
+            //right border
             if (!getTile(x + 1, y, tableDim, targetTiles, false)) {
                 updateBorder(toId(tag.symbol), 5, 1);
             }
             else {
                 updateBorder(toId(tag.symbol), 0, 1);
             }
-            //top
+            //top border
             if (!getTile(x, y - 1, tableDim, targetTiles, false)) {
                 updateBorder(toId(tag.symbol), 5, 2);
             }
@@ -1071,10 +1170,18 @@ function previewTiles(selectedTiles) {
         }
     }
 }
+/**
+ * toId is a utility method that converts a tag name into an id
+ * @param {string} str
+ * @returns {string} id of str
+ */
 function toId(str) {
     return str.replace(" ", "-")
         .replace("#", "Sharp");
 }
+/**
+ * createOrganizationButton method creates html for organizational buttons that reside underneath skill tables
+ */
 function createOrganizationButton() {
     let target = $("#skills > nav").first();
     let htmlBuilder = new HTMLBuilder_1.HTMLElem("div");
@@ -1089,7 +1196,7 @@ function createOrganizationButton() {
         document.styleSheets[0].addRule(`#skills > nav > #${toId(symbol)}::after`, `background-color: #${colour};`);
         return htmlBuilder;
     };
-    htmlBuilder.addChild(createVal("all", "FFF"));
+    htmlBuilder.addChild(createVal(ALL, "FFF"));
     let tagList = Tag_1.TagList.getInstance();
     let tags = tagList.tags;
     let connections = tagList.connections
@@ -1130,7 +1237,7 @@ function createOrganizationButton() {
         }
         let id = `#skills > nav > #${toId(tags[i1].symbol)}`;
         $(id).on("click", () => {
-            select(i1);
+            selectOrganizationalGroup(i1);
         });
         $(id).on("mouseenter", () => {
             let tagList = Tag_1.TagList.getInstance();
@@ -1178,10 +1285,10 @@ function createOrganizationButton() {
         });
         $(id).css("border-color", tags[i1].colour);
     }
-    $(`#skills > nav > #all`).on("click", () => {
-        select(-1);
+    $(`#skills > nav > #${ALL}`).on("click", () => {
+        selectOrganizationalGroup(-1);
     });
-    $(`#skills > nav > #all`).on("mouseenter", () => {
+    $(`#skills > nav > #${ALL}`).on("mouseenter", () => {
         let tagList = Tag_1.TagList.getInstance();
         let connection = tagList.connections;
         let tags = tagList.tags;
@@ -1196,7 +1303,7 @@ function createOrganizationButton() {
         });
         previewTiles(targetTiles);
     });
-    $(`#skills > nav > #all`).on("mouseleave", () => {
+    $(`#skills > nav > #${ALL}`).on("mouseleave", () => {
         let tagList = Tag_1.TagList.getInstance();
         let connection = tagList.connections;
         let tags = tagList.tags;
@@ -1219,16 +1326,20 @@ function createOrganizationButton() {
         previewTiles(targetTiles);
     });
 }
-function select(idIndex) {
-    selected = idIndex;
+/**
+ * select method handles the preview of organizational groups
+ * @param {number} organizationalGroupIndex
+ */
+function selectOrganizationalGroup(organizationalGroupIndex) {
+    selected = organizationalGroupIndex;
     $("#skills > nav .selected").removeClass("selected");
     let tags = Tag_1.TagList.getInstance().tags;
     let connections = Tag_1.TagList.getInstance().connections;
     let col;
     let timeStamp = new Date().getTime();
     //select all
-    if (idIndex === -1) {
-        $(`#skills > nav > #all`).addClass("selected");
+    if (organizationalGroupIndex === -1) {
+        $(`#skills > nav > #${ALL}`).addClass("selected");
         col = { r: 0, g: 17, b: 28 };
         setTimeout(() => {
             $("#skills > div .skill").removeClass("selected");
@@ -1241,16 +1352,16 @@ function select(idIndex) {
     //select catagories
     else {
         $("#skills > div .skill").removeClass("selected");
-        let id = `#skills > nav > #${toId(tags[idIndex].symbol)}`;
-        col = (0, Colour_1.rgba)((0, Colour_1.hexToRgb)(`#${tags[idIndex].colour}`), 0.75);
+        let id = `#skills > nav > #${toId(tags[organizationalGroupIndex].symbol)}`;
+        col = (0, Colour_1.rgba)((0, Colour_1.hexToRgb)(`#${tags[organizationalGroupIndex].colour}`), 0.75);
         $(id).addClass("selected");
         connections
             .filter((conn) => {
-            return conn[0] == idIndex || conn[1] == idIndex;
+            return conn[0] == organizationalGroupIndex || conn[1] == organizationalGroupIndex;
         })
             .forEach((conn) => {
             let id;
-            if (conn[0] != idIndex) {
+            if (conn[0] != organizationalGroupIndex) {
                 id = conn[0];
             }
             else {
@@ -1276,14 +1387,14 @@ function main() {
         //createSkills();
         prepareTiles();
         createOrganizationButton();
-        select(-1);
+        selectOrganizationalGroup(-1);
     });
     Tag_1.TagList.getInstance()
         .update(() => {
         //createSkills();
         prepareTiles();
         createOrganizationButton();
-        select(-1);
+        selectOrganizationalGroup(-1);
     });
 }
 exports.main = main;
