@@ -189,7 +189,7 @@ function createOrganizationButton() {
         return htmlBuilder;
     };
 
-    htmlBuilder.addChild(createVal("all", "FFF"));
+    htmlBuilder.addChild(createVal("All", "FFF"));
 
     let tagList = TagList.getInstance();
 
