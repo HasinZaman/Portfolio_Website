@@ -5,6 +5,10 @@ import { getProjects, setSearch } from "./SearchBar";
 import { sort } from "./SortBy";
 import { getTagHTML } from "./TagGenerator";
 
+/**
+ * generateProjects method generates HTML for a set of input projects
+ * @param {Project[]} projects
+ */
 function generateProjects(projects : Project[]) {
     let target = $("#portfolio #results")
 
@@ -93,6 +97,9 @@ function generateProjects(projects : Project[]) {
         });
 }
 
+/**
+ * updateProject method updates portfolio project list
+ */
 export function updateProject() {
     generateProjects(sort(getProjects()));
 }

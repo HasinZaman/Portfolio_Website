@@ -10,9 +10,15 @@ let tagFilters : Set<number> = new Set<number>();
 let nameFilters: Set<string> = new Set<string>();
 let deleteStack : (() => void)[] = []; 
 
+/**
+ * setSearch function adds filters to search
+ * @param {string[]} filters array of strings that will be added to filter array
+ */
 export function setSearch(filters: string[]) {
+    //remove all filters
     reset();
 
+    //add filters
     filters.forEach(filter => {
         addFilter(filter);
     });
@@ -20,13 +26,21 @@ export function setSearch(filters: string[]) {
     updateProject();
 }
 
+/**
+ * reset function removes all filters
+ */
 function reset() {
     deleteStack.forEach(del => {
         deletePrevTag();
     });
+
     search.val("");
 }
 
+/**
+ * getSearchVal function gets text input value from search bar
+ * @returns {string} text input value from search bar
+ */
 function getSearchVal() : string {
     let tmp = search.val();
     if (tmp == null) {
@@ -35,6 +49,10 @@ function getSearchVal() : string {
     return tmp.toString();
 }
 
+/**
+ * getProjects function gets a array of projects that fulfills name, description and tag filters
+ * @returns {Project[]} Array project that passes filter tests
+ */
 export function getProjects() : Project[] {
     let tags = TagList.getInstance().tags;
 
@@ -85,6 +103,9 @@ export function getProjects() : Project[] {
         });
 }
 
+/**
+ * updateSuggestions function updates suggestion box based on current incomplete search value data
+ */
 function updateSuggestions(){
     let searchVal : string = getSearchVal();
 
@@ -137,13 +158,22 @@ function updateSuggestions(){
     })
 }
 
+/**
+ * onSuggestionClick function adds filter based on selected suggestion
+ * @param {string} filterStr filter search string
+ */
 function onSuggestionClick(filterStr: string) {
     addFilter(filterStr);
     search.val("");
     updateSuggestions();
 }
 
+/**
+ * addFilter function adds filter string into an array of filters
+ * @param {String} filterStr filter search string
+ */
 function addFilter(filterStr : string) {
+    //find all tags that match filter string
     let tags = TagList.getInstance().tags
         .filter((tag: Tag) => {//remove all projects from tag
             return tag.tagType != 1
@@ -152,14 +182,20 @@ function addFilter(filterStr : string) {
             return tag.symbol.toLowerCase() === filterStr.toLowerCase()
         })
     
+    //if not tags match filter then add name/desc filter
     if(tags.length === 0) {
         addNameFilter(filterStr);
         return ;
     }
 
+    //add first matching tag filter
     addTagFilter(tags[0]);
 }
 
+/**
+ * addTagFilter function adds tag as filter
+ * @param {Tag} tag 
+ */
 function addTagFilter(tag : Tag) {
     if(!tagFilters.has(tag.id)) {
         tagFilters.add(tag.id);
@@ -170,6 +206,10 @@ function addTagFilter(tag : Tag) {
     }
 }
 
+/**
+ * addNameFilter function adds string as name/description filter
+ * @param {string} name 
+ */
 function addNameFilter(name : string) {
     if(!nameFilters.has(name)){
         nameFilters.add(name);
@@ -182,18 +222,32 @@ function addNameFilter(name : string) {
     }
 }
 
+/**
+ * addTagToSearch function adds active filter to search bar
+ * @param {string} content 
+ * @param {string} colour 
+ */
 function addTagToSearch(content : string, colour : string) {
     $("#portfolio #search .searchBox").before(getTagHTML(content, colour).generate());
 }
 
+/**
+ * deletePrevTag function deletes the last filter that was added
+ */
 function deletePrevTag() {
     $("#portfolio #search .searchBox").prev().remove();
+
+    //get last filter
     let deleteClosure = deleteStack.pop();
+
     if(deleteClosure != null) {
         deleteClosure();
     }
 }
 
+/**
+ * main function handles the initialization and update of searchbar
+ */
 export function main() {
     search.on("input", updateSuggestions);
     search.on("keydown", (e) => {

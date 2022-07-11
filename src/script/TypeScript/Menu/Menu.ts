@@ -3,11 +3,15 @@ import { MenuLogic, unWrap } from "./MenuLogic";
 let mobileLogic : MenuLogic = new MenuLogic(
     () => {
         console.log("mobile")
+        
         let updateMenu = () => {
             let currentPos: number = unWrap<number>($(document).scrollTop());
+            //open menu logic
             if ($("#menu").hasClass("selected")) {
+                //stop scrolling
                 $("body").css("overflow", "hidden");
                 
+                //set menu to top of screen
                 if(currentPos < MenuLogic.start + MenuLogic.height) {
                     MenuLogic.menu.css("transform", `translateY(-${MenuLogic.menu.css("top")}) translateY(-30px)`);
                 }
@@ -16,10 +20,12 @@ let mobileLogic : MenuLogic = new MenuLogic(
                 }
                 MenuLogic.menu.css("padding-bottom", `100%`);
 
+                //set menu to full screen
                 $("#menu img").css("transform",`translateX(${MenuLogic.windowWidth/2}px) translateX(-50%)`);
 
                 $("#menu img").attr("src",`src\\media\\img\\icons\\Cross_icon.svg`);
             }
+            //closed menu logic
             else {
                 $("body").css("overflow", "");
 
@@ -32,7 +38,9 @@ let mobileLogic : MenuLogic = new MenuLogic(
         }
 
         $("#menu").removeClass("selected")
+        
         updateMenu();
+        
         $("#menu img").off("touchend click")
         $("#menu img").on("touchend click", () => {
             $("#menu").toggleClass("selected");
@@ -47,6 +55,7 @@ let mobileLogic : MenuLogic = new MenuLogic(
         })
     },
     (currentPos : number, delta : number) => {
+        //scroll logic
         if($("#menu").hasClass("selected")) {
             return ;
         }

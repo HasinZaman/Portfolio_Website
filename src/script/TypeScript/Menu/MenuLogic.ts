@@ -1,4 +1,9 @@
 
+/**
+ * unWrap function converts T | undefined | null into T
+ * @param {T | undefined | null} action 
+ * @returns {T} generic object that isn't null or undefined 
+ */
 export function unWrap<T>(action :T | undefined | null) : T {
     if (action == null) {
         throw new Error("value is not defined");
@@ -7,6 +12,9 @@ export function unWrap<T>(action :T | undefined | null) : T {
     return action;
 }
 
+/**
+ * MenuLogic Class handles the state and logic required to manage menu on different screen sizes
+ */
 export class MenuLogic {
 
     static menu: JQuery;
@@ -22,11 +30,20 @@ export class MenuLogic {
     startLogic : (currentPos : number) => void;
     scrollLogic : (currentPos : number, delta : number) => void;
 
+    /**
+     * @constructor defines closures required for the handling menu
+     * @param {(currentPos : number) => void} startLogic initialization logic 
+     * @param {(currentPos : number, delta : number) => void} scrollLogic On scroll update logic
+     */
     public constructor(startLogic: (currentPos : number) => void, scrollLogic: (currentPos : number, delta : number) => void) {
         this.startLogic = startLogic;
         this.scrollLogic = scrollLogic;
     }
 
+    /**
+     * logic method returns correct logic based on device
+     * @return {MenuLogic} menu logic object based on user device
+     */
     static get logic() : MenuLogic {
         if (window.matchMedia("(hover: none) and (pointer: coarse)").matches)
         {
@@ -35,6 +52,9 @@ export class MenuLogic {
         return MenuLogic.desktopLogic;
     }
 
+    /**
+     * main method handles the state of menu
+     */
     public static main() {
         let currentPos : number = unWrap<number>($(document).scrollTop());
         MenuLogic.menu = unWrap<JQuery>($("#menu"));
@@ -52,6 +72,9 @@ export class MenuLogic {
     }
 
 
+    /**
+     * initialize method handles the initialization of menu page load
+     */
     public static initialize() {
         MenuLogic.main()
         MenuLogic.lastPos = MenuLogic.start;

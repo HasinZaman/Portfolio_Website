@@ -1,6 +1,13 @@
 import { hexToRgb, rgba } from "../Colour/Colour";
 import { AttrVal, HTMLElem, HTMLText, StyleAttr } from "../HTMLBuilder/HTMLBuilder";
 
+/**
+ * getTagHTML function generates html tag element for project tags list & tag search filter list
+ * @param {string} content 
+ * @param {string} colour 
+ * @param {string} tagId 
+ * @returns {HTMLElem} HTML element object of tag
+ */
 export function getTagHTML(content : string, colour : string, tagId : string | undefined | null = undefined) : HTMLElem {
     let htmlElem : HTMLElem = new HTMLElem("div")
 
