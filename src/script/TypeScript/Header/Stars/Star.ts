@@ -413,25 +413,6 @@ export class Star extends Circle
 
         elem.get("style").push(new StyleAttr("width",`${this.radius*2}px`));
         elem.get("style").push(new StyleAttr("height",`${this.radius*2}px`));
-
-        let duration = 60;
-
-        elem.get("style").push(
-            new StyleAttr(
-                "animation-duration",
-                `${
-                    60*Math.random()+60
-                }s`
-            )
-        );
-        elem.get("style").push(
-            new StyleAttr(
-                "animation-delay",
-                `${
-                    60*Math.random()
-                }s`
-            )
-        );
         
         let getDir = () => {
             if(Math.random() < 0.5) {
@@ -442,13 +423,37 @@ export class Star extends Circle
             }
         }
 
-        elem.get("style").push(new StyleAttr("animation-direction", `${getDir()}`));
+        let loadInTime : number = 900*Math.random() + 100;//ms
+
+        elem.get("style")
+            .push(
+                new StyleAttr(
+                    "animation", 
+                    `loadIn ` +
+                    `${loadInTime}ms `
+                )
+            );
+
+        console.log(`twinkle ${60*Math.random()+60}s ${60*Math.random()} infinite ${getDir()}`)
 
         elem.get("class").push(new AttrVal("star"));
         elem.get("id").push(new AttrVal(`star-${this.id}`));
         //create dom
         environment.append(elem.generate());
         let tmp : JQuery = environment.find(`#star-${this.id}`);;
+
+        setTimeout(
+            () => {
+                tmp.css(
+                    "animation",
+                    `twinkle ` +
+                    `${60*Math.random()+60}s ` +
+                    `infinite ` +
+                    `${getDir()}`
+                )
+            },
+            loadInTime
+        )
 
         return tmp;
     }

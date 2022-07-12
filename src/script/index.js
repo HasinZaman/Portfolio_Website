@@ -656,6 +656,10 @@ const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
 const SearchBar_1 = require("./SearchBar");
 const SortBy_1 = require("./SortBy");
 const TagGenerator_1 = require("./TagGenerator");
+/**
+ * generateProjects method generates HTML for a set of input projects
+ * @param {Project[]} projects
+ */
 function generateProjects(projects) {
     let target = $("#portfolio #results");
     let projectTags = {};
@@ -721,6 +725,9 @@ function generateProjects(projects) {
         });
     });
 }
+/**
+ * updateProject method updates portfolio project list
+ */
 function updateProject() {
     generateProjects((0, SortBy_1.sort)((0, SearchBar_1.getProjects)()));
 }
@@ -734,6 +741,9 @@ const Project_1 = require("../DataBaseHandler/Project");
 const ProjectListGenerator_1 = require("./ProjectListGenerator");
 const SearchBar_1 = require("./SearchBar");
 const SortBy_1 = require("./SortBy");
+/**
+ * main function initializes search bar & the list of portfolio projects
+ */
 function main() {
     Project_1.ProjectList.getInstance()
         .update(() => {
@@ -757,20 +767,33 @@ let search = $("#portfolio #search input");
 let tagFilters = new Set();
 let nameFilters = new Set();
 let deleteStack = [];
+/**
+ * setSearch function adds filters to search
+ * @param {string[]} filters array of strings that will be added to filter array
+ */
 function setSearch(filters) {
+    //remove all filters
     reset();
+    //add filters
     filters.forEach(filter => {
         addFilter(filter);
     });
     (0, ProjectListGenerator_1.updateProject)();
 }
 exports.setSearch = setSearch;
+/**
+ * reset function removes all filters
+ */
 function reset() {
     deleteStack.forEach(del => {
         deletePrevTag();
     });
     search.val("");
 }
+/**
+ * getSearchVal function gets text input value from search bar
+ * @returns {string} text input value from search bar
+ */
 function getSearchVal() {
     let tmp = search.val();
     if (tmp == null) {
@@ -778,6 +801,10 @@ function getSearchVal() {
     }
     return tmp.toString();
 }
+/**
+ * getProjects function gets a array of projects that fulfills name, description and tag filters
+ * @returns {Project[]} Array project that passes filter tests
+ */
 function getProjects() {
     let tags = Tag_1.TagList.getInstance().tags;
     return Project_1.ProjectList.getInstance().project
@@ -824,6 +851,9 @@ function getProjects() {
     });
 }
 exports.getProjects = getProjects;
+/**
+ * updateSuggestions function updates suggestion box based on current incomplete search value data
+ */
 function updateSuggestions() {
     let searchVal = getSearchVal();
     let suggestionArea = $("#portfolio #search .suggestions");
@@ -863,12 +893,21 @@ function updateSuggestions() {
         });
     });
 }
+/**
+ * onSuggestionClick function adds filter based on selected suggestion
+ * @param {string} filterStr filter search string
+ */
 function onSuggestionClick(filterStr) {
     addFilter(filterStr);
     search.val("");
     updateSuggestions();
 }
+/**
+ * addFilter function adds filter string into an array of filters
+ * @param {String} filterStr filter search string
+ */
 function addFilter(filterStr) {
+    //find all tags that match filter string
     let tags = Tag_1.TagList.getInstance().tags
         .filter((tag) => {
         return tag.tagType != 1;
@@ -876,12 +915,18 @@ function addFilter(filterStr) {
         .filter((tag) => {
         return tag.symbol.toLowerCase() === filterStr.toLowerCase();
     });
+    //if not tags match filter then add name/desc filter
     if (tags.length === 0) {
         addNameFilter(filterStr);
         return;
     }
+    //add first matching tag filter
     addTagFilter(tags[0]);
 }
+/**
+ * addTagFilter function adds tag as filter
+ * @param {Tag} tag
+ */
 function addTagFilter(tag) {
     if (!tagFilters.has(tag.id)) {
         tagFilters.add(tag.id);
@@ -891,6 +936,10 @@ function addTagFilter(tag) {
         });
     }
 }
+/**
+ * addNameFilter function adds string as name/description filter
+ * @param {string} name
+ */
 function addNameFilter(name) {
     if (!nameFilters.has(name)) {
         nameFilters.add(name);
@@ -900,16 +949,28 @@ function addNameFilter(name) {
         });
     }
 }
+/**
+ * addTagToSearch function adds active filter to search bar
+ * @param {string} content
+ * @param {string} colour
+ */
 function addTagToSearch(content, colour) {
     $("#portfolio #search .searchBox").before((0, TagGenerator_1.getTagHTML)(content, colour).generate());
 }
+/**
+ * deletePrevTag function deletes the last filter that was added
+ */
 function deletePrevTag() {
     $("#portfolio #search .searchBox").prev().remove();
+    //get last filter
     let deleteClosure = deleteStack.pop();
     if (deleteClosure != null) {
         deleteClosure();
     }
 }
+/**
+ * main function handles the initialization and update of searchbar
+ */
 function main() {
     search.on("input", updateSuggestions);
     search.on("keydown", (e) => {
@@ -942,22 +1003,29 @@ exports.main = exports.sort = void 0;
 const ProjectListGenerator_1 = require("./ProjectListGenerator");
 let selected = 0;
 let sortAlgorithms = [
+    //sort by name
     (projects) => {
         return projects.sort((proj1, proj2) => {
             return proj1.name < proj2.name ? -1 : 1;
         });
     },
+    //sort by start date
     (projects) => {
         return projects.sort((proj1, proj2) => {
             return proj2.startUnix - proj1.startUnix;
         });
     },
+    //sort by last update date
     (projects) => {
         return projects.sort((proj1, proj2) => {
             return proj2.updateUnix - proj1.updateUnix;
         });
     }
 ];
+/**
+ * getVal function retrieves name of sortBy function
+ * @returns
+ */
 function getVal() {
     let tmp = $("#portfolio #columns select.sortBy").val();
     if (tmp == null) {
@@ -965,6 +1033,10 @@ function getVal() {
     }
     return tmp.toString();
 }
+/**
+ * select functions updates project order based on selected sortby function string
+ * @param {string} selectedCategory
+ */
 function select(selectedCategory) {
     switch (selectedCategory) {
         case "name":
@@ -982,10 +1054,18 @@ function select(selectedCategory) {
     $("#portfolio #columns select.sortBy").val(selectedCategory);
     (0, ProjectListGenerator_1.updateProject)();
 }
+/**
+ * sort functions sorts an array of projects based on selected sort algorithm
+ * @param {Project[]} projects
+ * @returns {Project[]} array of sorted projects
+ */
 function sort(projects) {
     return sortAlgorithms[selected](projects);
 }
 exports.sort = sort;
+/**
+ * main function initializes project order
+ */
 function main() {
     select("name");
     $("#portfolio #columns #name").on("click", () => { select("name"); });
@@ -1001,6 +1081,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTagHTML = void 0;
 const Colour_1 = require("../Colour/Colour");
 const HTMLBuilder_1 = require("../HTMLBuilder/HTMLBuilder");
+/**
+ * getTagHTML function generates html tag element for project tags list & tag search filter list
+ * @param {string} content
+ * @param {string} colour
+ * @param {string} tagId
+ * @returns {HTMLElem} HTML element object of tag
+ */
 function getTagHTML(content, colour, tagId = undefined) {
     let htmlElem = new HTMLBuilder_1.HTMLElem("div");
     let col = `#${colour}`;
@@ -1382,6 +1469,9 @@ function selectOrganizationalGroup(organizationalGroupIndex) {
         }, 500 * 0.1);
     }, 500 * 0.9);
 }
+/**
+ * main method handles the initialization of skill tables
+ */
 function main() {
     $(window).on('resize', () => {
         //createSkills();

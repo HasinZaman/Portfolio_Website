@@ -6,8 +6,11 @@ let mobileLogic = new MenuLogic_1.MenuLogic(() => {
     console.log("mobile");
     let updateMenu = () => {
         let currentPos = (0, MenuLogic_1.unWrap)($(document).scrollTop());
+        //open menu logic
         if ($("#menu").hasClass("selected")) {
+            //stop scrolling
             $("body").css("overflow", "hidden");
+            //set menu to top of screen
             if (currentPos < MenuLogic_1.MenuLogic.start + MenuLogic_1.MenuLogic.height) {
                 MenuLogic_1.MenuLogic.menu.css("transform", `translateY(-${MenuLogic_1.MenuLogic.menu.css("top")}) translateY(-30px)`);
             }
@@ -15,9 +18,11 @@ let mobileLogic = new MenuLogic_1.MenuLogic(() => {
                 MenuLogic_1.MenuLogic.menu.css("transform", `translateY(0%)`);
             }
             MenuLogic_1.MenuLogic.menu.css("padding-bottom", `100%`);
+            //set menu to full screen
             $("#menu img").css("transform", `translateX(${MenuLogic_1.MenuLogic.windowWidth / 2}px) translateX(-50%)`);
             $("#menu img").attr("src", `src\\media\\img\\icons\\Cross_icon.svg`);
         }
+        //closed menu logic
         else {
             $("body").css("overflow", "");
             $("#menu img").css("transform", "");
@@ -40,6 +45,7 @@ let mobileLogic = new MenuLogic_1.MenuLogic(() => {
         updateMenu();
     });
 }, (currentPos, delta) => {
+    //scroll logic
     if ($("#menu").hasClass("selected")) {
         return;
     }
@@ -80,6 +86,11 @@ MenuLogic_1.MenuLogic.initialize();
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MenuLogic = exports.unWrap = void 0;
+/**
+ * unWrap function converts T | undefined | null into T
+ * @param {T | undefined | null} action
+ * @returns {T} generic object that isn't null or undefined
+ */
 function unWrap(action) {
     if (action == null) {
         throw new Error("value is not defined");
@@ -87,17 +98,32 @@ function unWrap(action) {
     return action;
 }
 exports.unWrap = unWrap;
+/**
+ * MenuLogic Class handles the state and logic required to manage menu on different screen sizes
+ */
 class MenuLogic {
+    /**
+     * @constructor defines closures required for the handling menu
+     * @param {(currentPos : number) => void} startLogic initialization logic
+     * @param {(currentPos : number, delta : number) => void} scrollLogic On scroll update logic
+     */
     constructor(startLogic, scrollLogic) {
         this.startLogic = startLogic;
         this.scrollLogic = scrollLogic;
     }
+    /**
+     * logic method returns correct logic based on device
+     * @return {MenuLogic} menu logic object based on user device
+     */
     static get logic() {
         if (window.matchMedia("(hover: none) and (pointer: coarse)").matches) {
             return MenuLogic.mobileLogic;
         }
         return MenuLogic.desktopLogic;
     }
+    /**
+     * main method handles the state of menu
+     */
     static main() {
         let currentPos = unWrap($(document).scrollTop());
         MenuLogic.menu = unWrap($("#menu"));
@@ -108,6 +134,9 @@ class MenuLogic {
         MenuLogic.windowWidth = unWrap($(window).width());
         MenuLogic.logic.startLogic(currentPos);
     }
+    /**
+     * initialize method handles the initialization of menu page load
+     */
     static initialize() {
         MenuLogic.main();
         MenuLogic.lastPos = MenuLogic.start;

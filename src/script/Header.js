@@ -591,8 +591,22 @@ class Star extends Circle_1.Circle {
         elem.get("style").push(new HTMLBuilder_1.StyleAttr("width", `${this.radius * 2}px`));
         elem.get("style").push(new HTMLBuilder_1.StyleAttr("height", `${this.radius * 2}px`));
         let duration = 60;
-        elem.get("style").push(new HTMLBuilder_1.StyleAttr("animation-duration", `${60 * Math.random() + 60}s`));
-        elem.get("style").push(new HTMLBuilder_1.StyleAttr("animation-delay", `${60 * Math.random()}s`));
+        // elem.get("style").push(
+        //     new StyleAttr(
+        //         "animation-duration",
+        //         `${
+        //             60*Math.random()+60
+        //         }s`
+        //     )
+        // );
+        // elem.get("style").push(
+        //     new StyleAttr(
+        //         "animation-delay",
+        //         `${
+        //             60*Math.random()
+        //         }s`
+        //     )
+        // );
         let getDir = () => {
             if (Math.random() < 0.5) {
                 return "reverse";
@@ -601,13 +615,24 @@ class Star extends Circle_1.Circle {
                 return "normal";
             }
         };
-        elem.get("style").push(new HTMLBuilder_1.StyleAttr("animation-direction", `${getDir()}`));
+        let loadInTime = 900 * Math.random() + 100; //ms
+        elem.get("style")
+            .push(new HTMLBuilder_1.StyleAttr("animation", `loadIn ` +
+            `${loadInTime}ms `));
+        console.log(`twinkle ${60 * Math.random() + 60}s ${60 * Math.random()} infinite ${getDir()}`);
+        //elem.get("style").push(new StyleAttr("animation-direction", `${getDir()}`));
         elem.get("class").push(new HTMLBuilder_1.AttrVal("star"));
         elem.get("id").push(new HTMLBuilder_1.AttrVal(`star-${this.id}`));
         //create dom
         environment.append(elem.generate());
         let tmp = environment.find(`#star-${this.id}`);
         ;
+        setTimeout(() => {
+            tmp.css("animation", `twinkle ` +
+                `${60 * Math.random() + 60}s ` +
+                `infinite ` +
+                `${getDir()}`);
+        }, loadInTime);
         return tmp;
     }
     /**
