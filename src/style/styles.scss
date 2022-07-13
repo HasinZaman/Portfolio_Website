@@ -759,6 +759,7 @@ body {
 		justify-content: center;
 		align-items: center;
 
+		height: -moz-fit-content;
 		height: fit-content;
 
 		> * {
@@ -854,6 +855,7 @@ body {
 			column-gap: 10px;
 			
 			*:not(.sortBy) {
+				width: -moz-fit-content;
 				width: fit-content;
 
 				cursor: pointer;
@@ -928,6 +930,7 @@ body {
 
 				grid-area: name;
 
+				width: -moz-fit-content;
 				width: fit-content;
 
 				font-size: 1.5em;
@@ -957,6 +960,7 @@ body {
 		}
 
 		.tag {
+			width: -moz-fit-content;
 			width: fit-content;
 			height: min-content;
 			border: solid white $tagBorderWidth;
@@ -995,6 +999,7 @@ body {
 			justify-content: center;
 			align-items: center;
 
+			width: -moz-fit-content;
 			width: fit-content;
 
 			padding-bottom: 5px;
