@@ -10,7 +10,7 @@ function triangle(start: Vector) : Vector[] {
     vertices[0] = new Vector(0, 0, 0);
 
     vertices[1] = new Vector(0.5, 0, -1 * equilateralTriangleHeight);
-    vertices[2] = new Vector(-0.5, 0, 0);
+    vertices[2] = new Vector(-0.5, 0, -1 * equilateralTriangleHeight);
 
     for(let i1 = 0; i1 < vertices.length; i1++) {
         vertices[i1] = Vector.add(vertices[i1], start);
