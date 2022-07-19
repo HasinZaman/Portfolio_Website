@@ -144,4 +144,14 @@ export class Vector {
         let v1 : Vector = proj;
         return Vector.mult(v1, Vector.dot(v,v1)/Vector.dot(v1,v1));
     }
+
+    /**
+     * equal method returns a boolean of whether two vectors are equivalent
+     * @param {Vector} v1
+     * @param {Vector} v2
+     * @returns {boolean} boolean of whether v1 == v2
+     */
+    public static equal(v1: Vector, v2: Vector) : boolean {
+        return v1.x == v2.x && v1.y == v2.y && v1.z == v2.z;
+    }
 }

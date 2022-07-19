@@ -334,3 +334,44 @@ import { Vector } from "../Vector";
         });
     }
 }
+
+//equal test
+{
+    let testCount = 0;
+
+    {
+        let v1 = new Vector(1, 0);
+        let v2 = new Vector(23, 0);
+
+        test(`Projection test ${testCount++} :  (${v2.x}, ${v2.y}) onto (${v1.x}, ${v1.y})`, () => {
+            expect(Vector.equal(v2, v1)).toBe(false);
+        });
+    }
+
+    {
+        let v1 = new Vector(1, 0, 56);
+        let v2 = new Vector(1, 35, 15);
+
+        test(`Projection test ${testCount++} :  (${v2.x}, ${v2.y}) onto (${v1.x}, ${v1.y})`, () => {
+            expect(Vector.equal(v2, v1)).toBe(false);
+        });
+    }
+
+    {
+        let v1 = new Vector(0, 0);
+        let v2 = v1.clone();
+
+        test(`Projection test ${testCount++} :  (${v2.x}, ${v2.y}) onto (${v1.x}, ${v1.y})`, () => {
+            expect(Vector.equal(v2, v1)).toBe(true);
+        });
+    }
+
+    {
+        let v1 = new Vector(25, 18, 38);
+        let v2 = v1.clone();
+
+        test(`Projection test ${testCount++} :  (${v2.x}, ${v2.y}) onto (${v1.x}, ${v1.y})`, () => {
+            expect(Vector.equal(v2, v1)).toBe(true);
+        });
+    }
+}
