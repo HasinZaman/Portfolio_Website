@@ -47,6 +47,59 @@ test("One triangle at (25,-23,12)", () => {
     expect(Vector.equal(v[2], Vector.add(new Vector(-0.5, 0, -1 * equilateralTriangleHeight), start))).toBe(true);
 })
 
-//test("Three level fractal triangle at (0,0,0)"
+test("Three level fractal triangle at (0,0,0)", () => {
+    let start : Vector = new Vector(0,0,0)
 
-//test("Three level fractal triangle at (25,-23,12)"
+    let expected : Vector[] = [
+        new Vector(0, 0, 0), new Vector(0.5, 0, -1 * equilateralTriangleHeight), new Vector(-0.5, 0, -1 * equilateralTriangleHeight),
+        
+        new Vector(0.5, 0, -1 * equilateralTriangleHeight), new Vector(1, 0, -2 * equilateralTriangleHeight), new Vector(0, 0, -2 * equilateralTriangleHeight),
+        new Vector(-0.5, 0, -1 * equilateralTriangleHeight), new Vector(0, 0, -2 * equilateralTriangleHeight), new Vector(-1, 0, -2 * equilateralTriangleHeight),
+    ];
+
+    expected.forEach((val, i1) => {
+        expected[i1] = Vector.add(start, val);
+    })
+
+    let v : Vector[] = triangleFractal(3, start);
+
+
+    expect(v.length).toBe(expected.length);
+
+    v.forEach(
+        (vector : Vector, i) => {
+            expect(vector.x).toBeCloseTo(expected[i].x)
+            expect(vector.y).toBeCloseTo(expected[i].y)
+            expect(vector.z).toBeCloseTo(expected[i].z)
+        }
+    )
+})
+
+
+test("Three level fractal triangle at (25,-23,12)", () => {
+    let start : Vector = new Vector(25,-23,12)
+
+    let expected : Vector[] = [
+        new Vector(0, 0, 0), new Vector(0.5, 0, -1 * equilateralTriangleHeight), new Vector(-0.5, 0, -1 * equilateralTriangleHeight),
+        
+        new Vector(0.5, 0, -1 * equilateralTriangleHeight), new Vector(1, 0, -2 * equilateralTriangleHeight), new Vector(0, 0, -2 * equilateralTriangleHeight),
+        new Vector(-0.5, 0, -1 * equilateralTriangleHeight), new Vector(0, 0, -2 * equilateralTriangleHeight), new Vector(-1, 0, -2 * equilateralTriangleHeight),
+    ];
+
+    expected.forEach((val, i1) => {
+        expected[i1] = Vector.add(start, val);
+    })
+
+    let v : Vector[] = triangleFractal(3, start);
+
+
+    expect(v.length).toBe(expected.length);
+
+    v.forEach(
+        (vector : Vector, i) => {
+            expect(vector.x).toBeCloseTo(expected[i].x)
+            expect(vector.y).toBeCloseTo(expected[i].y)
+            expect(vector.z).toBeCloseTo(expected[i].z)
+        }
+    )
+})
