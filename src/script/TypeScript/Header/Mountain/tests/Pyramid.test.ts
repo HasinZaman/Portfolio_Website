@@ -35,7 +35,6 @@ test("One level pyramid at (0, 0, 0)", () => {
     expect(v.length).toBe(3 * 4); 
 
     v.forEach((actual: Vector, index: number) => {
-        console.log(actual);
         vectorCheck(actual, basePyramid[index]);
     })
 })
