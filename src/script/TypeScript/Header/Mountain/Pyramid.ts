@@ -75,4 +75,18 @@ export class Pyramid {
             this._faces[i1].scale(baseScale, baseScale, heightScale);
         }
     }
+
+    public getVertices(cameraDirection : Vector) : Vector[] {
+        let visibleVectices : Vector[] = [];
+
+        this._faces
+            .filter(
+                face => Vector.dot(face.normal, cameraDirection) <= 0
+            )
+            .forEach(
+                face => face.vertices.forEach(vertex => {visibleVectices.push(vertex)})
+            )
+
+        return visibleVectices;
+    }
 }
