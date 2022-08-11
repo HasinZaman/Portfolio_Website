@@ -51,11 +51,11 @@ class Face {
     public rotate(roll: number = 0, pitch: number = 0, yaw: number = 0){
 
         let rotationMatrix : Matrix = Matrix.mult(
-            Matrix.mult(
-                Matrix.rotationY(pitch),
-                Matrix.rotationZ(yaw)
-            ),
-            Matrix.rotationX(roll)
+            //Matrix.mult(
+                Matrix.rotationZ(yaw),
+                Matrix.rotationX(pitch)
+            //),
+            //Matrix.rotationX(roll)
         )
         this.matrixModify(rotationMatrix);
         this._normal = Matrix.vectorMult(rotationMatrix, this._normal);
@@ -66,13 +66,15 @@ export class Pyramid {
     private _faces : Face[] = [];
     private center : Vector;
 
+    private static defaultAngle : number = Math.atan2(0.5, Math.sqrt(0.5));
+
     public constructor(layers: number, heightScale: number, baseScale: number, position: Vector) {
         this.center = position.clone();
 
         for(let i1 = 0; i1 < 4; i1++) {
             this._faces.push(new Face(this.center, layers));
-            this._faces[i1].rotate(0, Math.PI/6, Math.PI/2 * i1)
-            this._faces[i1].scale(baseScale, baseScale, heightScale);
+            this._faces[i1].rotate(0, Pyramid.defaultAngle, Math.PI/2 * i1)
+            //this._faces[i1].scale(baseScale, baseScale, heightScale);
         }
     }
 
