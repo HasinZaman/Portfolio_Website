@@ -9,11 +9,7 @@ class Face {
         return this._normal.clone();
     }
 
-    private set normal(val :  Vector) {
-        this._normal = val;
-    }
-
-    _vertices: Vector[];
+    private _vertices: Vector[];
 
     public get vertices(): Vector[] {
         let tmp : Vector[] = [];
