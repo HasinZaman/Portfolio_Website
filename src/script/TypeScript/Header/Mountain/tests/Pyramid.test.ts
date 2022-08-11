@@ -16,7 +16,7 @@ let basePyramid : Vector[] = [
     vertices[0], vertices[1], vertices[3],
     vertices[0], vertices[2], vertices[1],
     vertices[0], vertices[4], vertices[2],
-    vertices[0], vertices[3], vertices[4],
+    vertices[0], vertices[3], vertices[4]
 ]
 
 function vectorCheck(expected: Vector, actual: Vector) {
@@ -42,8 +42,8 @@ test("One level pyramid at (0, 0, 0)", () => {
 
     expect(v.length).toBe(3 * 4); 
 
-
     v.forEach((actual: Vector, index: number) => {
+        console.log(actual);
         vectorCheck(actual, basePyramid[index]);
     })
 })
