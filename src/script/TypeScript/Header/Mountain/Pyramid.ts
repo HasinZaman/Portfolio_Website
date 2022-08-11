@@ -62,17 +62,17 @@ class Face {
     }
 }
 
-class Pyramid {
-    private faces : Face[] = [];
+export class Pyramid {
+    private _faces : Face[] = [];
     private center : Vector;
 
     public constructor(layers: number, heightScale: number, baseScale: number, position: Vector) {
         this.center = position.clone();
 
         for(let i1 = 0; i1 < 4; i1++) {
-            this.faces.push(new Face(this.center, layers));
-            this.faces[i1].rotate(0, Math.PI/6, Math.PI/2 * i1)
-            this.faces[i1].scale(baseScale, baseScale, heightScale);
+            this._faces.push(new Face(this.center, layers));
+            this._faces[i1].rotate(0, Math.PI/6, Math.PI/2 * i1)
+            this._faces[i1].scale(baseScale, baseScale, heightScale);
         }
     }
 }
