@@ -22,7 +22,7 @@ class Face {
     public constructor(start: Vector, levels: number){
         this._normal = new Vector(0, 1, 0);
 
-        this._vertices = triangleFractal(levels, new Vector(0,0,0));
+        this._vertices = triangleFractal(levels, start);
     }
 
     private translate(delta : Vector) : void {
