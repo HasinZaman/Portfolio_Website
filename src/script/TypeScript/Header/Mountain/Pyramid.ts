@@ -48,14 +48,11 @@ class Face {
         this.matrixModify(Matrix.scale(xScale, yScale, zScale));
     }
 
-    public rotate(roll: number = 0, pitch: number = 0, yaw: number = 0){
+    public rotate(pitch: number = 0, yaw: number = 0){
 
         let rotationMatrix : Matrix = Matrix.mult(
-            //Matrix.mult(
                 Matrix.rotationZ(yaw),
                 Matrix.rotationX(pitch)
-            //),
-            //Matrix.rotationX(roll)
         )
         this.matrixModify(rotationMatrix);
         this._normal = Matrix.vectorMult(rotationMatrix, this._normal);
@@ -73,7 +70,7 @@ export class Pyramid {
 
         for(let i1 = 0; i1 < 4; i1++) {
             this._faces.push(new Face(this.center, layers));
-            this._faces[i1].rotate(0, Pyramid.defaultAngle, Math.PI/2 * i1)
+            this._faces[i1].rotate(Pyramid.defaultAngle, Math.PI/2 * i1)
             //this._faces[i1].scale(baseScale, baseScale, heightScale);
         }
     }
