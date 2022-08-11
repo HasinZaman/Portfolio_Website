@@ -28,7 +28,7 @@ function vectorCheck(expected: Vector, actual: Vector) {
 test("One level pyramid at (0, 0, 0)", () => {
     let start : Vector = new Vector(0, 0, 0);
 
-    let pyramid : Pyramid = new Pyramid(1, 1, 1, new Vector(0, 0, 0));
+    let pyramid : Pyramid = new Pyramid(1, 1, 1, start);
 
     let v : Vector[] = pyramid.getVertices(new Vector(0, 0, -1));
 
@@ -36,5 +36,19 @@ test("One level pyramid at (0, 0, 0)", () => {
 
     v.forEach((actual: Vector, index: number) => {
         vectorCheck(actual, basePyramid[index]);
+    })
+})
+
+test("One level pyramid at (1, 5, -7)", () => {
+    let start : Vector = new Vector(1, 5, -7);
+
+    let pyramid : Pyramid = new Pyramid(1, 1, 1, start);
+
+    let v : Vector[] = pyramid.getVertices(new Vector(0, 0, -1));
+
+    expect(v.length).toBe(3 * 4); 
+
+    v.forEach((actual: Vector, index: number) => {
+        vectorCheck(actual, Vector.add(basePyramid[index], start));
     })
 })
