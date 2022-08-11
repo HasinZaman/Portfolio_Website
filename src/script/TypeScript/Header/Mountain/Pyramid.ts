@@ -52,8 +52,8 @@ class Face {
 
         let rotationMatrix : Matrix = Matrix.mult(
             Matrix.mult(
-                Matrix.rotationZ(yaw),
-                Matrix.rotationY(pitch)
+                Matrix.rotationY(pitch),
+                Matrix.rotationZ(yaw)
             ),
             Matrix.rotationX(roll)
         )
