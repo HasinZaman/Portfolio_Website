@@ -44,7 +44,6 @@ class Face {
     }
 
     public scale(xScale: number = 1, yScale: number = 1, zScale: number = 1) {
-
         this.matrixModify(Matrix.scale(xScale, yScale, zScale));
     }
 
