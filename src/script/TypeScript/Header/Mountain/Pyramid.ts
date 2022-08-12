@@ -62,7 +62,7 @@ export class Pyramid {
     private _faces : Face[] = [];
     private center : Vector;
 
-    private static defaultAngle : number = Math.atan2(0.5, Math.sqrt(0.5));
+    private static defaultAngle : number = 0.6154797086703873;
 
     public constructor(layers: number, heightScale: number, baseScale: number, position: Vector) {
         this.center = position.clone();
