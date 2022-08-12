@@ -70,7 +70,7 @@ export class Pyramid {
         for(let i1 = 0; i1 < 4; i1++) {
             this._faces.push(new Face(this.center, layers));
             this._faces[i1].rotate(Pyramid.defaultAngle, Math.PI/2 * i1)
-            //this._faces[i1].scale(baseScale, baseScale, heightScale);
+            this._faces[i1].scale(baseScale, baseScale, heightScale);
         }
     }
 
