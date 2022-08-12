@@ -25,7 +25,7 @@ function vectorCheck(expected: Vector, actual: Vector) {
     expect(expected.z).toBeCloseTo(actual.z);
 }
 
-test("One level pyramid at (0, 0, 0)", () => {
+test("One level pyramid at (0, 0, 0), with base of (1,1) and height of 1", () => {
     let start : Vector = new Vector(0, 0, 0);
 
     let pyramid : Pyramid = new Pyramid(1, 1, 1, start);
@@ -39,7 +39,7 @@ test("One level pyramid at (0, 0, 0)", () => {
     })
 })
 
-test("One level pyramid at (1, 5, -7)", () => {
+test("One level pyramid at (1, 5, -7), with base of (1,1) and height of 1", () => {
     let start : Vector = new Vector(1, 5, -7);
 
     let pyramid : Pyramid = new Pyramid(1, 1, 1, start);
