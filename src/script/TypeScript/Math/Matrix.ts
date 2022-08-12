@@ -192,8 +192,8 @@ export class Matrix {
         let m : Matrix = new Matrix(3, 3);
 
         m.setRow(0, [xScale, 0, 0]);
-        m.setRow(0, [0, yScale, 0]);
-        m.setRow(0, [0, 0, zScale]);
+        m.setRow(1, [0, yScale, 0]);
+        m.setRow(2, [0, 0, zScale]);
 
         return m;
     }
