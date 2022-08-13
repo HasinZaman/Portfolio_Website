@@ -19,6 +19,34 @@ class Face {
         return tmp;
     }
 
+    public get silhouette(): Vector[] {
+        let tmp : Vector[] = [];
+
+        tmp.push(this._vertices[0].clone());//top most vertex
+
+        tmp.push(this._vertices[this.rightMostVertexIndex()].clone());//rightmost vertex
+        
+        tmp.push(this._vertices[this._vertices.length - 1].clone());//leftmost vertex
+
+        return tmp;
+    }
+
+    private rightMostVertexIndex() : number {
+        let t : number = this._vertices.length / 3;//get number of triangles
+
+        let n : number = -1 + Math.sqrt(1 + 8 * t);
+        n /= 2;//get number of layers
+
+        let nPrev : number = n - 1;
+
+        let prevTriangles : number = nPrev * (nPrev + 1);
+        prevTriangles /= 2;//numbers of triangles in the prev layer
+
+        let index : number = prevTriangles * 3 + 1;//get index right most vertex in right most triangle on bottom layer
+
+        return index;
+    }
+
     public constructor(start: Vector, levels: number){
         this._normal = new Vector(0, 1, 0);
 
@@ -82,7 +110,10 @@ export class Pyramid {
                 face => Vector.dot(face.normal, cameraDirection) <= 0
             )
             .forEach(
-                face => face.vertices.forEach(vertex => {visibleVectices.push(vertex)})
+                face => {
+                    face.silhouette.forEach(vertex => visibleVectices.push(vertex))
+                    face.vertices.forEach(vertex => visibleVectices.push(vertex))
+                }
             )
 
         return visibleVectices;
