@@ -29,13 +29,26 @@ export function triangleFractal(levels : number, start : Vector = new Vector(0,0
 
     let triangleStart : Queue<Vector> = new Queue<Vector>();
     triangleStart.append(tmp);
+    
+    let setVertices : Map<Vector, boolean> = new Map<Vector, boolean>();
 
     for(let i1 = 0; i1 < levels; i1++) {
         let triangleVertices : Vector[] = triangle(triangleStart.dequeue());
 
         triangleVertices.forEach(vector => vertices.push(vector));
-        triangleStart.append(triangleVertices[1]);
-        triangleStart.append(triangleVertices[2]);
+
+        let left = triangleVertices[2];
+        let right = triangleVertices[1]
+
+        if(!setVertices.has(right)) {
+            setVertices.set(right, true);
+            triangleStart.append(right);
+        }
+
+        if(!setVertices.has(left)) {
+            setVertices.set(left, true);
+            triangleStart.append(left);
+        }
     }
 
     return vertices;
