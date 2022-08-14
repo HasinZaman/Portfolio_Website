@@ -32,11 +32,19 @@ test("One level pyramid at (0, 0, 0), with base of (1,1) and height of 1", () =>
 
     let v : Vector[] = pyramid.getVertices(new Vector(0, 0, -1));
 
-    expect(v.length).toBe(3 * 4); 
+    //expected : (1 for silhouette + 1 for shape)triangles * 3 vertices per triangle * 4 faces
+    expect(v.length).toBe(2 * 3 * 4);
 
-    v.forEach((actual: Vector, index: number) => {
-        vectorCheck(actual, basePyramid[index]);
-    })
+    for(let face = 0; face < 4; face++) {
+        for(let i1 = 0; i1 < 2; i1++) {
+            for(let i2 = 0; i2 < 3; i2++) {
+                let actual : Vector = v[i2 + i1 * 3 + 6 * face];
+                let expected : Vector = basePyramid[3 * face + i2].clone();
+
+                vectorCheck(actual, expected);
+            }
+        }
+    }
 })
 
 test("One level pyramid at (1, 5, -7), with base of (1,1) and height of 1", () => {
@@ -46,11 +54,19 @@ test("One level pyramid at (1, 5, -7), with base of (1,1) and height of 1", () =
 
     let v : Vector[] = pyramid.getVertices(new Vector(0, 0, -1));
 
-    expect(v.length).toBe(3 * 4); 
+    //expected : (1 for silhouette + 1 for shape)triangles * 3 vertices per triangle * 4 faces
+    expect(v.length).toBe(2 * 3 * 4);
 
-    v.forEach((actual: Vector, index: number) => {
-        vectorCheck(actual, Vector.add(basePyramid[index], start));
-    })
+    for(let face = 0; face < 4; face++) {
+        for(let i1 = 0; i1 < 2; i1++) {
+            for(let i2 = 0; i2 < 3; i2++) {
+                let actual : Vector = v[i2 + i1 * 3 + 6 * face];
+                let expected : Vector = basePyramid[3 * face + i2].clone();
+
+                vectorCheck(actual, Vector.add(expected, start));
+            }
+        }
+    }
 })
 
 test("One level pyramid at (0, 0, 0), with base of (2,2) and height of 1", () => {
@@ -60,14 +76,22 @@ test("One level pyramid at (0, 0, 0), with base of (2,2) and height of 1", () =>
 
     let v : Vector[] = pyramid.getVertices(new Vector(0, 0, -1));
 
-    expect(v.length).toBe(3 * 4); 
+    //expected : (1 for silhouette + 1 for shape)triangles * 3 vertices per triangle * 4 faces
+    expect(v.length).toBe(2 * 3 * 4);
+    
+    for(let face = 0; face < 4; face++) {
+        for(let i1 = 0; i1 < 2; i1++) {
+            for(let i2 = 0; i2 < 3; i2++) {
+                let actual : Vector = v[i2 + i1 * 3 + 6 * face];
+                let expected : Vector = basePyramid[3 * face + i2].clone();
 
-    v.forEach((actual: Vector, index: number) => {
-        let expected : Vector = basePyramid[index].clone();
-        expected.x *= 2;
-        expected.y *= 2;
-        vectorCheck(actual, expected);
-    })
+                expected.x *= 2;
+                expected.y *= 2;
+
+                vectorCheck(actual, expected);
+            }
+        }
+    }
 })
 
 test("One level pyramid at (0, 0, 0), with base of (2,2) and height of 2", () => {
@@ -77,11 +101,19 @@ test("One level pyramid at (0, 0, 0), with base of (2,2) and height of 2", () =>
 
     let v : Vector[] = pyramid.getVertices(new Vector(0, 0, -1));
 
-    expect(v.length).toBe(3 * 4); 
+    //expected : (1 for silhouette + 1 for shape)triangles * 3 vertices per triangle * 4 faces
+    expect(v.length).toBe(2 * 3 * 4);
 
-    v.forEach((actual: Vector, index: number) => {
-        vectorCheck(actual, Vector.mult(basePyramid[index], 2));
-    })
+    for(let face = 0; face < 4; face++) {
+        for(let i1 = 0; i1 < 2; i1++) {
+            for(let i2 = 0; i2 < 3; i2++) {
+                let actual : Vector = v[i2 + i1 * 3 + 6 * face];
+                let expected : Vector = basePyramid[3 * face + i2].clone();
+
+                vectorCheck(actual, Vector.mult(expected, 2));
+            }
+        }
+    }
 })
 
 test("One level pyramid at (0, 0, 0), with base of (3,3) and height of 27", () => {
@@ -91,15 +123,23 @@ test("One level pyramid at (0, 0, 0), with base of (3,3) and height of 27", () =
 
     let v : Vector[] = pyramid.getVertices(new Vector(0, 0, -1));
 
-    expect(v.length).toBe(3 * 4); 
+    //expected : (1 for silhouette + 1 for shape)triangles * 3 vertices per triangle * 4 faces
+    expect(v.length).toBe(2 * 3 * 4);
 
-    v.forEach((actual: Vector, index: number) => {
-        let expected : Vector = basePyramid[index].clone();
-        expected.x *= 3;
-        expected.y *= 3;
-        expected.z *= 27;
-        vectorCheck(actual, expected);
-    })
+    for(let face = 0; face < 4; face++) {
+        for(let i1 = 0; i1 < 2; i1++) {
+            for(let i2 = 0; i2 < 3; i2++) {
+                let actual : Vector = v[i2 + i1 * 3 + 6 * face];
+                let expected : Vector = basePyramid[3 * face + i2].clone();
+                
+                expected.x *= 3;
+                expected.y *= 3;
+                expected.z *= 27;
+                
+                vectorCheck(actual, expected);
+            }
+        }
+    }
 })
 
 test("One level pyramid at (2, 7, 7), with base of (2,2) and height of 2", () => {
@@ -109,10 +149,17 @@ test("One level pyramid at (2, 7, 7), with base of (2,2) and height of 2", () =>
 
     let v : Vector[] = pyramid.getVertices(new Vector(0, 0, -1));
 
-    expect(v.length).toBe(3 * 4); 
+    //expected : (1 for silhouette + 1 for shape)triangles * 3 vertices per triangle * 4 faces
+    expect(v.length).toBe(2 * 3 * 4);
 
-    v.forEach((actual: Vector, index: number) => {
-        let expected : Vector = Vector.add(Vector.mult(basePyramid[index], 2), start)
-        vectorCheck(actual, expected);
-    })
+    for(let face = 0; face < 4; face++) {
+        for(let i1 = 0; i1 < 2; i1++) {
+            for(let i2 = 0; i2 < 3; i2++) {
+                let actual : Vector = v[i2 + i1 * 3 + 6 * face];
+                let expected : Vector = basePyramid[3 * face + i2].clone();
+                
+                vectorCheck(actual, Vector.add(Vector.mult(expected, 2), start));
+            }
+        }
+    }
 })
