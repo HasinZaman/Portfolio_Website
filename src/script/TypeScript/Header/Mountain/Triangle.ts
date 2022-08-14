@@ -32,7 +32,7 @@ export function triangleFractal(levels : number, start : Vector = new Vector(0,0
     
     let setVertices : Map<Vector, boolean> = new Map<Vector, boolean>();
 
-    for(let i1 = 0; i1 < levels; i1++) {
+    for(let i1 = 0; i1 < (levels * (levels + 1))/2; i1++) {
         let triangleVertices : Vector[] = triangle(triangleStart.dequeue());
 
         triangleVertices.forEach(vector => vertices.push(vector));
