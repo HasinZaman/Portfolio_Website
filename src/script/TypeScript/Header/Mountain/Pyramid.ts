@@ -94,11 +94,17 @@ export class Pyramid {
 
     public constructor(layers: number, heightScale: number, baseScale: number, position: Vector) {
         this.center = position.clone();
+    public constructor(layers: number, height: number, base: number, start: Vector) {
+        this.center = start.clone();
+        
+        let defaultHeight : number = layers * Math.sqrt(0.5);
+        let defaultBase : number = trianglesInFractal(layers) - trianglesInFractal(layers - 1);
 
         for(let i1 = 0; i1 < 4; i1++) {
             this._faces.push(new Face(this.center, layers));
             this._faces[i1].rotate(Pyramid.defaultAngle, Math.PI/2 * i1)
-            this._faces[i1].scale(baseScale, baseScale, heightScale);
+
+            this._faces[i1].scale(base / defaultBase, base / defaultBase, height/ defaultHeight);
         }
     }
 

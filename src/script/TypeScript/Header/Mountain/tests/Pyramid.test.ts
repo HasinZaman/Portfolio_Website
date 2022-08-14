@@ -1,15 +1,12 @@
 import { Vector } from "../../../Math/Vector"
 import { Pyramid } from "../Pyramid"
 
-
-let height = -1 * Math.sqrt(0.5);
-
 let vertices : Vector[] = [
     new Vector(0,       0,      0),
-    new Vector(0.5,     0.5,    height),
-    new Vector(-0.5,    0.5,    height),
-    new Vector(0.5,     -0.5,   height),
-    new Vector(-0.5,    -0.5,   height)
+    new Vector(0.5,     0.5,    -1),
+    new Vector(-0.5,    0.5,    -1),
+    new Vector(0.5,     -0.5,   -1),
+    new Vector(-0.5,    -0.5,   -1)
 ]
 
 let basePyramid : Vector[] = [
@@ -30,7 +27,7 @@ test("One level pyramid at (0, 0, 0), with base of (1,1) and height of 1", () =>
 
     let pyramid : Pyramid = new Pyramid(1, 1, 1, start);
 
-    let v : Vector[] = pyramid.getVertices(new Vector(0, 0, -1));
+    let v : Vector[] = pyramid.getTriangles(new Vector(0, 0, -1));
 
     //expected : (1 for silhouette + 1 for shape)triangles * 3 vertices per triangle * 4 faces
     expect(v.length).toBe(2 * 3 * 4);
@@ -52,7 +49,7 @@ test("One level pyramid at (1, 5, -7), with base of (1,1) and height of 1", () =
 
     let pyramid : Pyramid = new Pyramid(1, 1, 1, start);
 
-    let v : Vector[] = pyramid.getVertices(new Vector(0, 0, -1));
+    let v : Vector[] = pyramid.getTriangles(new Vector(0, 0, -1));
 
     //expected : (1 for silhouette + 1 for shape)triangles * 3 vertices per triangle * 4 faces
     expect(v.length).toBe(2 * 3 * 4);
@@ -74,7 +71,7 @@ test("One level pyramid at (0, 0, 0), with base of (2,2) and height of 1", () =>
 
     let pyramid : Pyramid = new Pyramid(1, 1, 2, start);
 
-    let v : Vector[] = pyramid.getVertices(new Vector(0, 0, -1));
+    let v : Vector[] = pyramid.getTriangles(new Vector(0, 0, -1));
 
     //expected : (1 for silhouette + 1 for shape)triangles * 3 vertices per triangle * 4 faces
     expect(v.length).toBe(2 * 3 * 4);
@@ -99,7 +96,7 @@ test("One level pyramid at (0, 0, 0), with base of (2,2) and height of 2", () =>
 
     let pyramid : Pyramid = new Pyramid(1, 2, 2, start);
 
-    let v : Vector[] = pyramid.getVertices(new Vector(0, 0, -1));
+    let v : Vector[] = pyramid.getTriangles(new Vector(0, 0, -1));
 
     //expected : (1 for silhouette + 1 for shape)triangles * 3 vertices per triangle * 4 faces
     expect(v.length).toBe(2 * 3 * 4);
@@ -121,7 +118,7 @@ test("One level pyramid at (0, 0, 0), with base of (3,3) and height of 27", () =
 
     let pyramid : Pyramid = new Pyramid(1, 27, 3, start);
 
-    let v : Vector[] = pyramid.getVertices(new Vector(0, 0, -1));
+    let v : Vector[] = pyramid.getTriangles(new Vector(0, 0, -1));
 
     //expected : (1 for silhouette + 1 for shape)triangles * 3 vertices per triangle * 4 faces
     expect(v.length).toBe(2 * 3 * 4);
@@ -147,7 +144,7 @@ test("One level pyramid at (2, 7, 7), with base of (2,2) and height of 2", () =>
 
     let pyramid : Pyramid = new Pyramid(1, 2, 2, start);
 
-    let v : Vector[] = pyramid.getVertices(new Vector(0, 0, -1));
+    let v : Vector[] = pyramid.getTriangles(new Vector(0, 0, -1));
 
     //expected : (1 for silhouette + 1 for shape)triangles * 3 vertices per triangle * 4 faces
     expect(v.length).toBe(2 * 3 * 4);
@@ -169,7 +166,7 @@ test("Two level Pyramid at (0, 0, 0), with default settings", () => {
 
     let pyramid : Pyramid = new Pyramid(2, 1, 1, start);
 
-    let v : Vector[] = pyramid.getVertices(new Vector(0, 0, -1));
+    let v : Vector[] = pyramid.getTriangles(new Vector(0, 0, -1));
 
     //expected : (1 for silhouette + 3 for shape)triangles * 3 vertices per triangle * 4 faces
     expect(v.length).toBe(4 * 3 * 4);
@@ -179,7 +176,7 @@ test("Two level Pyramid at (0, 0, 0), with default settings", () => {
             let actual : Vector = v[i1 + (4) * 3 * face];
             let expected : Vector = basePyramid[3 * face + i1].clone();
 
-            vectorCheck(actual, Vector.mult(expected, 2));
+            vectorCheck(actual, expected);
         }
     }
 })
