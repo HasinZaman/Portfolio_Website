@@ -47,7 +47,7 @@ test("One triangle at (25,-23,12)", () => {
     expect(Vector.equal(v[2], Vector.add(new Vector(-0.5, 0, -1 * equilateralTriangleHeight), start))).toBe(true);
 })
 
-test("Three level fractal triangle at (0,0,0)", () => {
+test("Two level fractal triangle at (0,0,0)", () => {
     let start : Vector = new Vector(0,0,0)
 
     let expected : Vector[] = [
@@ -61,7 +61,7 @@ test("Three level fractal triangle at (0,0,0)", () => {
         expected[i1] = Vector.add(start, val);
     })
 
-    let v : Vector[] = triangleFractal(3, start);
+    let v : Vector[] = triangleFractal(2, start);
 
 
     expect(v.length).toBe(expected.length);
@@ -76,7 +76,7 @@ test("Three level fractal triangle at (0,0,0)", () => {
 })
 
 
-test("Three level fractal triangle at (25,-23,12)", () => {
+test("Two level fractal triangle at (25,-23,12)", () => {
     let start : Vector = new Vector(25,-23,12)
 
     let expected : Vector[] = [
@@ -90,7 +90,7 @@ test("Three level fractal triangle at (25,-23,12)", () => {
         expected[i1] = Vector.add(start, val);
     })
 
-    let v : Vector[] = triangleFractal(3, start);
+    let v : Vector[] = triangleFractal(2, start);
 
 
     expect(v.length).toBe(expected.length);
