@@ -163,3 +163,23 @@ test("One level pyramid at (2, 7, 7), with base of (2,2) and height of 2", () =>
         }
     }
 })
+
+test("Two level Pyramid at (0, 0, 0), with default settings", () => {
+    let start : Vector = new Vector(0, 0, 0);
+
+    let pyramid : Pyramid = new Pyramid(2, 1, 1, start);
+
+    let v : Vector[] = pyramid.getVertices(new Vector(0, 0, -1));
+
+    //expected : (1 for silhouette + 3 for shape)triangles * 3 vertices per triangle * 4 faces
+    expect(v.length).toBe(4 * 3 * 4);
+
+    for(let face = 0; face < 4; face++) {//checking silhouette vertices
+        for(let i1 = 0; i1 < 3; i1++) {
+            let actual : Vector = v[i1 + (4) * 3 * face];
+            let expected : Vector = basePyramid[3 * face + i1].clone();
+
+            vectorCheck(actual, Vector.mult(expected, 2));
+        }
+    }
+})
