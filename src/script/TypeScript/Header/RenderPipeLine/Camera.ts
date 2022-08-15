@@ -1,4 +1,5 @@
 import { Matrix } from "../../Math/Matrix";
+import { Quaternion } from "../../Math/Quaternion";
 import { Vector } from "../../Math/Vector";
 
 export class camera {
@@ -11,17 +12,10 @@ export class camera {
         this._pos.setColumn(0, [newPos.x, newPos.y, newPos.z, 1]);
     }
 
-    private _rot: Matrix = new Matrix(4, 1);//quaternion rotation of forward direction
-    
-    public get eulerRot(): Vector {
-        throw new Error("Method not implemented");
-    }
-    public set eulerRot(newRot : Vector) {
-        throw new Error("Method not implemented");
-    }
-    
-    public get quaternionRot(): Matrix {
-        throw new Error("Method not implemented");
+    private _rot: Quaternion = new Quaternion();//quaternion rotation of forward direction [w, x, y, z]
+
+    public get rot(): Quaternion {
+        return this._rot.clone() as Quaternion;
     }
     public set quaternionRot(newRot : Matrix) {
         throw new Error("Method not implemented");
