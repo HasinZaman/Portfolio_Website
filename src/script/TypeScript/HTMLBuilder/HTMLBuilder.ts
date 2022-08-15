@@ -96,6 +96,7 @@ export class HTMLElem{
     private tagname : string;
     private attr : KeyValuePair[];
     private children : HTMLElem[];
+    public endTag : boolean = true;
 
     /**
      * @constructor creates a new instance of HTMLElem
@@ -149,7 +150,11 @@ export class HTMLElem{
             attrStr += `${this.attr[i1].generate()} `;
         }
 
-        return `<${this.tagname} ${attrStr}>${this.generateChildren()}</${this.tagname}>`;
+        if(this.endTag) {
+            return `<${this.tagname} ${attrStr}>${this.generateChildren()}</${this.tagname}>`;
+        }
+
+        return `<${this.tagname} ${attrStr}>`;
     }
 
     /**
