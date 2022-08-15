@@ -1,3 +1,4 @@
+import { HTMLElem } from "../../HTMLBuilder/HTMLBuilder";
 import { Matrix } from "../../Math/Matrix";
 import { Vector } from "../../Math/Vector";
 import { Renderable } from "../RenderPipeLine/Renderable";
@@ -214,5 +215,9 @@ export class Pyramid implements Renderable {
             )
 
         return visibleVectices;
+    }
+
+    public draw(tmp: Vector[]): HTMLElem {
+        throw new Error("Method not implemented")
     }
 }
