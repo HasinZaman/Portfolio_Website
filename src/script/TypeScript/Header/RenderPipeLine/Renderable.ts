@@ -7,5 +7,5 @@ export interface Renderable {
     /**
      * getTriangles method returns an array of triangles that would be visible
      */
-    getTriangles : (dir: Vector, pos: Vector) => Vector[]
+    getTriangles : (cameraDir: Vector, cameraPos: Vector) => Vector[]
 }
