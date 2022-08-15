@@ -194,17 +194,22 @@ export class Pyramid implements Renderable {
      * @param {Vector} cameraDirection direction vector of camera
      * @returns {Vector[]} array of Vectors that define triangles required to be drawn from specific camera orientation. The array can be partitioned in n equally sized partitions of visible faces. Each face partition is formatted in the following format: [v0, v1, v2, v3, v4, v5, ..., vn-2, vn-1, vn]; where (v0, v1, v2) are the triangles required to draw the silhouette for face & (v3, v4, v5)...(vn-2, vn-1, vn) are the triangles required to draw each level
      */
-    public getTriangles(cameraDirection : Vector) : Vector[] {
+    public getTriangles(cameraDir: Vector, cameraPos: Vector) : Vector[] {
         let visibleVectices : Vector[] = [];
 
         this._faces
             .filter(
-                face => Vector.dot(face.normal, cameraDirection) <= 0
+                face => Vector.dot(face.normal, cameraDir) <= 0
             )
             .forEach(
                 face => {
-                    face.silhouette.forEach(vertex => visibleVectices.push(vertex))
-                    face.vertices.forEach(vertex => visibleVectices.push(vertex))
+                    let silhouette : Vector[] = face.silhouette;
+
+                    if(silhouette.some(v => Vector.dot(Vector.sub(v, cameraPos), cameraDir) > 0)) {
+                        face.silhouette.forEach(vertex => visibleVectices.push(vertex))
+
+                        face.vertices.forEach(vertex => visibleVectices.push(vertex))
+                    }
                 }
             )
 
