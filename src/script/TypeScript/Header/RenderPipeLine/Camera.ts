@@ -2,7 +2,7 @@ import { Matrix } from "../../Math/Matrix";
 import { Quaternion } from "../../Math/Quaternion";
 import { Vector } from "../../Math/Vector";
 
-export class camera {
+export class Camera {
     private _pos: Matrix = new Matrix(4, 1);//vector (x,y,z,1)
 
     public get pos(): Vector {
