@@ -17,15 +17,16 @@ export class camera {
     public get rot(): Quaternion {
         return this._rot.clone() as Quaternion;
     }
-    public set quaternionRot(newRot : Matrix) {
-        throw new Error("Method not implemented");
+
+    public set rot(q : Quaternion) {
+        this._rot = q;
     }
 
     public get forwardVector() : Vector {
-        throw new Error("Method not implemented");
+        return Matrix.vectorMult(this._rot.rotMatrix, new Vector(1, 0, 0));
     }
     public get normalVector(): Vector {
-        throw new Error("Method not implemented");
+        return Matrix.vectorMult(this._rot.rotMatrix, new Vector(0, 0, 1));
     }
 
     public constructor() {
