@@ -1,5 +1,6 @@
 import { Matrix } from "../../Math/Matrix";
 import { Vector } from "../../Math/Vector";
+import { Renderable } from "../RenderPipeLine/Renderable";
 import { triangleFractal, trianglesInFractal } from "./Triangle";
 
 /**
@@ -132,7 +133,7 @@ class Face {
 /**
  * Pyramid class defines the management and state of vertices of a pyramid. This class is used in the generation of mountains on the header
  */
-export class Pyramid {
+export class Pyramid implements Renderable {
     private _faces : Face[] = [];
     private center : Vector;
 
