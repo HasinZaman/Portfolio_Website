@@ -321,4 +321,16 @@ export class Matrix {
 
         return tmp;
     }
+
+    /**
+     * clone method creates a deep copy of matrix
+     * @returns {Matrix} Deep copy of Matrix
+     */
+    public clone(): Matrix {
+        let tmp : Matrix = new Matrix(this.rowCount, this.columnCount);
+
+        this.values.forEach((val, i) => tmp.values[i] = val);
+
+        return tmp;
+    }
 }
