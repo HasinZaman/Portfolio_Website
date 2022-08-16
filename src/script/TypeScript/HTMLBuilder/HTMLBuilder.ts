@@ -55,7 +55,7 @@ export class StyleAttr {
 export class HTMLElem{
 
     private tagname : string;
-    private attr : Map<String, AttrVal[]> = new Map<String, AttrVal[]>()
+    private attr : Map<String, AttrVal[]> = new Map<String, AttrVal[]>();
     private children : HTMLElem[];
     public endTag : boolean = true;
 
