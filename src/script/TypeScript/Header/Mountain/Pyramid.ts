@@ -223,37 +223,34 @@ export class Pyramid implements Renderable {
      * @param {Map<Vector, Vector>} screenPos is a map that converts a vertex in 3D into Vertex in 2D screen space
      * @returns 
      */
-    public draw(triangles: Vector[], screenPos: Map<Vector, Vector>): HTMLElem[] {
-        let instructions : HTMLElem[] = [];
+    public draw(t0: Vector, t1: Vector, t2: Vector, screenPos: Map<Vector, Vector>): HTMLElem {
+        let triangle: Vector[] = [t0, t1, t2];
 
-        for(let i1 = 0; i1 < triangles.length; i1+=3) {
-            let instruction: HTMLElem = new HTMLElem("polygon");
-            instruction.endTag = false;
+        let instruction: HTMLElem = new HTMLElem("polygon");
+        instruction.endTag = false;
 
-            let points: AttrVal[] = instruction.get("points");
+        let points: AttrVal[] = instruction.get("points");
 
-            for(let i2 = 0; i2 < 3; i2++) {
-                let tmp: Vector | undefined = screenPos.get(triangles[i1 + i2]);
-                let p: Vector;
-                if(tmp !== undefined) {
-                    p = tmp;
-                }
-                else {
-                    throw new Error("Vector does not have valid ScreenPos");
-                }
-                 
-                points.push(new AttrVal(`${p.x},${p.y} `))
+        for(let i1 = 0; i1 < 3; i1++) {
+            let tmp: Vector | undefined = screenPos.get(triangle[i1]);
+            let p: Vector;
+
+            if(tmp !== undefined) {
+                p = tmp;
             }
-
-            instruction.get("fill")
-                .push(new AttrVal("#000000"));
-
-            //stroke data
-            //instruction.get("stroke")
-
-            instructions.push(instruction);
+            else {
+                throw new Error("Vector does not have valid ScreenPos");
+            }
+                
+            points.push(new AttrVal(`${p.x},${p.y} `))
         }
+        
+        instruction.get("fill")
+            .push(new AttrVal("#000000"));
 
-        return instructions;
+        //stroke data
+        //instruction.get("stroke")
+        
+        return instruction;
     }
 }

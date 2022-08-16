@@ -15,7 +15,16 @@ export interface Renderable {
     getTriangles : (cameraDir: Vector, cameraPos: Vector) => Vector[];
 
     /**
-     * draw method returns an HTMLElem to be inserted into an svg element to generate an image
+     * draw method returns an HTMLElem to be inserted into an svg element to generate an image using vertices of a triangle
+     *
+     *         t0
+     *        /\
+     *       /  \
+     *      /    \ 
+     *     /      \
+     *    /        \
+     *   /__________\
+     *  t2           t1
      */
-    draw: (triangles: Vector[], screenPos: Map<Vector, Vector>) => HTMLElem[]
+    draw: (t0: Vector, t1: Vector, t2: Vector, screenPos: Map<Vector, Vector>) => HTMLElem
 }
