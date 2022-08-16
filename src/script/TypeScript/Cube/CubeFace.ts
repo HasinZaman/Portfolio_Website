@@ -44,6 +44,7 @@ export class CubeFace{
         let faceHTML : HTMLElem = new HTMLElem("");
 
         let img : HTMLElem = new HTMLElem("img");
+        img.endTag = false;
         img.get("src").push(new AttrVal(this.image));
 
         faceHTML.addChild(img);
