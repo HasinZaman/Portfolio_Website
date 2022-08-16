@@ -217,7 +217,8 @@ export class Pyramid implements Renderable {
         return visibleVectices;
     }
 
-    public draw(tmp: Vector[]): HTMLElem {
+    public draw(vertices: Vector[], screenPos: Map<Vector, Vector>): HTMLElem {
+        
         throw new Error("Method not implemented")
     }
 }
