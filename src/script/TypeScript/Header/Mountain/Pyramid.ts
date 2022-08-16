@@ -1,4 +1,4 @@
-import { HTMLElem } from "../../HTMLBuilder/HTMLBuilder";
+import { AttrVal, HTMLElem } from "../../HTMLBuilder/HTMLBuilder";
 import { Matrix } from "../../Math/Matrix";
 import { Vector } from "../../Math/Vector";
 import { Renderable } from "../RenderPipeLine/Renderable";
@@ -217,8 +217,43 @@ export class Pyramid implements Renderable {
         return visibleVectices;
     }
 
-    public draw(vertices: Vector[], screenPos: Map<Vector, Vector>): HTMLElem {
-        
-        throw new Error("Method not implemented")
+    /**
+     * draw method provides a set of HTMLElem required to draw pyramid
+     * @param {Vector[]} triangles is vertices of Triangle in 3D space
+     * @param {Map<Vector, Vector>} screenPos is a map that converts a vertex in 3D into Vertex in 2D screen space
+     * @returns 
+     */
+    public draw(triangles: Vector[], screenPos: Map<Vector, Vector>): HTMLElem[] {
+        let instructions : HTMLElem[] = [];
+
+        for(let i1 = 0; i1 < triangles.length; i1+=3) {
+            let instruction: HTMLElem = new HTMLElem("polygon");
+            instruction.endTag = false;
+
+            let points: AttrVal[] = instruction.get("points");
+
+            for(let i2 = 0; i2 < 3; i2++) {
+                let tmp: Vector | undefined = screenPos.get(triangles[i1 + i2]);
+                let p: Vector;
+                if(tmp !== undefined) {
+                    p = tmp;
+                }
+                else {
+                    throw new Error("Vector does not have valid ScreenPos");
+                }
+                 
+                points.push(new AttrVal(`${p.x},${p.y} `))
+            }
+
+            instruction.get("fill")
+                .push(new AttrVal("#000000"));
+
+            //stroke data
+            //instruction.get("stroke")
+
+            instructions.push(instruction);
+        }
+
+        return instructions;
     }
 }
