@@ -17,5 +17,5 @@ export interface Renderable {
     /**
      * draw method returns an HTMLElem to be inserted into an svg element to generate an image
      */
-    draw: (vertices: Vector[], screenPos: Map<Vector, Vector>) => HTMLElem
+    draw: (triangles: Vector[], screenPos: Map<Vector, Vector>) => HTMLElem[]
 }
