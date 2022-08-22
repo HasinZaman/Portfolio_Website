@@ -197,7 +197,7 @@ export class Pyramid implements Renderable {
      */
     public getTriangles(cameraDir: Vector, cameraPos: Vector) : Vector[] {
         let visibleVectices : Vector[] = [];
-
+        
         this._faces
             .filter(
                 face => Vector.dot(face.normal, cameraDir) <= 0
