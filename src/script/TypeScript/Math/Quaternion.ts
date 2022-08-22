@@ -68,7 +68,7 @@ export class Quaternion extends Matrix {
             2 * (this.x * this.z - this.w * this.y),
             2 * (this.w * this.x + this.y * this.z),
         1 - 2 * (this.x * this.x + this.y * this.y)
-    ]);
+        ]);
 
         return m;
     }
@@ -80,9 +80,57 @@ export class Quaternion extends Matrix {
     public constructor() {
         super(4, 1);
 
-        this.setVal(0, 0, 0);
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
+        this.w = 1;
     }
     
+    public setDir(rotationVec: Vector, angle: number) {
+        let w : number;
+        let x : number;
+        let y : number;
+        let z : number;
+
+        //convert angle: [0, 2*Pi] -> [-1, 1]
+        {
+            let tmp = angle % (2 * Math.PI);
+            tmp /= 2 * Math.PI;
+
+            tmp -= 1;
+
+            w = tmp;
+        }
+
+        //uses w to find x,y,z
+        {
+            // x' = x / (x + y + z + w)
+            // y' = y / (x + y + z + w)
+            // z' = z / (x + y + z + w)
+            // w' * (x + y + z + w) = w
+            // w' * x + w' * y + w' * z + w' * w = w
+            // w' * x + w' * y + w' * z = w - w' * w
+            // w' * x + w' * y + w' * z = w * (1 - w')
+            // (w' * x + w' * y + w' * z) / (1 - w') = w
+            // w = (w' * x + w' * y + w' * z) / (1 - w')
+
+            let tmp = (w * rotationVec.x + w * rotationVec.y + w * rotationVec.z) / (1 - w);
+
+            tmp = rotationVec.x + rotationVec.y + rotationVec.z + tmp;
+
+            x = rotationVec.x / tmp;
+            y = rotationVec.y / tmp;
+            z = rotationVec.z / tmp;
+        }
+
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.w = w;
+
+        this.normalize();
+    }
+
     public normalize() : Quaternion {
         let dist : number = this.dist;
 
