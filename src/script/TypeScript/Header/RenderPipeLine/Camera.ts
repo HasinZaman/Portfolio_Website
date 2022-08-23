@@ -25,6 +25,29 @@ export class Camera {
         this._rot.y = q.y;
         this._rot.z = q.z;
     }
+
+    private _width: number = 1;
+
+    public get width(): number {
+        return this._width;
+    }
+    public set width(val: number) {
+        if(val <= 0) {
+            throw new Error("Width must be greater than 0");
+        }
+        this._width = val;
+    }
+
+    private _height : number = 1;
+
+    public get height(): number {
+        return this._height;
+    }
+    public set height(val: number) {
+        if(val <= 0) {
+            throw new Error("Height must be greater than 0");
+        }
+        this._height = val;
     }
 
     public get forwardVector() : Vector {
@@ -34,7 +57,9 @@ export class Camera {
         return Matrix.vectorMult(this._rot.rotMatrix, new Vector(0, 0, 1));
     }
 
-    public constructor() {
+    public constructor(width: number, height: number) {
+        this.width = width;
+        this.height = height;
     }
 
     public draw(objs: Renderable[]): HTMLElem {
