@@ -247,6 +247,10 @@ export class Pyramid implements Renderable {
         
         instruction.get("fill")
             .push(new AttrVal("#000000"));
+        instruction.get("stroke")
+            .push(new AttrVal("White"));
+        instruction.get("stroke-width")
+            .push(new AttrVal("1"));
 
         //stroke data
         //instruction.get("stroke")
