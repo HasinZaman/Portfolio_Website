@@ -17,11 +17,14 @@ export class Camera {
     private _rot: Quaternion = new Quaternion();//quaternion rotation of forward direction [w, x, y, z]
 
     public get rot(): Quaternion {
-        return this._rot.clone() as Quaternion;
+        return this._rot;
     }
-
     public set rot(q : Quaternion) {
-        this._rot = q;
+        this._rot.w = q.w;
+        this._rot.x = q.x;
+        this._rot.y = q.y;
+        this._rot.z = q.z;
+    }
     }
 
     public get forwardVector() : Vector {
