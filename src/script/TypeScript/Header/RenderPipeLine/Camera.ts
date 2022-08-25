@@ -1,5 +1,8 @@
 import { HTMLElem } from "../../HTMLBuilder/HTMLBuilder";
 import { Matrix } from "../../Math/Matrix";
+import { interceptCheck } from "../../Math/Paths/Intercept";
+import { Line } from "../../Math/Paths/Line";
+import { Rect } from "../../Math/Paths/Rect";
 import { Quaternion } from "../../Math/Quaternion";
 import { Vector } from "../../Math/Vector";
 import { Renderable } from "./Renderable";
@@ -62,7 +65,7 @@ export class Camera {
         this.height = height;
     }
 
-    public draw(objs: Renderable[]): HTMLElem {
+    public draw(objs: Renderable[], screenSize : {width: number, height: number}): HTMLElem {
         let triangles: Vector[][] = [];
         let source: Map<Vector[], Renderable> = new Map<Vector[], Renderable>();
 
@@ -83,6 +86,7 @@ export class Camera {
                         this._rot.rotMatrix,
                         Vector.sub(objTriangles[i1+i2], this.pos)//move vertex-camera.pos
                     );
+                    //let v = Vector.sub(objTriangles[i1+i2], this.pos);
                     triangle.push(
                         v
                     );
@@ -106,9 +110,80 @@ export class Camera {
             })
             return min;
         }
+        let unwrap = (val: Vector | undefined) : Vector => {
+            if(val !== undefined) {
+                return val;
+            }
 
-        //sort triangles based on dist from camera
-        triangles.sort((t1: Vector[], t2: Vector[]) => {return min(t2) - min(t1)})
+            throw new Error("Failed to unwrap");
+        }
+
+        triangles = triangles.filter(//filter out triangles not visible
+            triangle => {
+                let tmp : Rect = new Rect(
+                    this.width,
+                    this.height,
+                    0,
+                    Vector.sub(
+                        new Vector(0,0),
+                        Vector.div(
+                            new Vector(this.width, this.height),
+                            2
+                        )
+                    )
+                )
+
+                for(let i1 = 0; i1 < 3; i1++) {
+
+                    let start = unwrap(screenPos.get(triangle[i1 % 3]));
+                    let end = unwrap(screenPos.get(triangle[(i1 + 1) % 3]));
+
+                    {
+                        let inXRange = this.width/-2 <= start.x && start.x <= this.width/2;
+                        let inYRange = this.height/-2 <= start.y && start.y <= this.height/2;
+
+                        if(inXRange && inYRange) {
+                            return true;
+                        }
+                    }
+
+                    {
+                        let line = new Line(start, Vector.sub(end, start).normalize(), Vector.dist(Vector.sub(end, start)));
+
+                        if(interceptCheck(tmp, line)){
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }
+        ).sort(//sort triangles based on dist from camera
+            (t1: Vector[], t2: Vector[]) => {
+                return min(t2) - min(t1)
+            }
+        )
+        triangles.forEach(//re map triangle from 0,0)-screen size
+            triangle => {
+                triangle.forEach(
+                    vertex => {
+                        let tmp = unwrap(screenPos.get(vertex));
+
+                        let topLeft = Vector.div(new Vector(-1 * this.width, -1 * this.height), 2);
+
+                        tmp = Vector.sub(tmp, topLeft);
+
+                        tmp.x = tmp.x / this.width * screenSize.width
+                        tmp.y = tmp.y / this.height * screenSize.height
+
+                        //flip y
+                        tmp.y = screenSize.height - tmp.y;
+
+                        screenPos.set(vertex, tmp);
+                    }
+                )
+            }
+        )
         
         //get instructions
 
@@ -126,12 +201,12 @@ export class Camera {
 
                 instructions.addChild(inst);
             })
-        
+        //console.log(instructions)
         return instructions;
     }
 
     private orthogonal(v: Vector): Vector {
-        return new Vector(v.x, v.y);
+        return new Vector(v.y, v.z);
     }
 
     private perspective(v: Vector): Vector {
