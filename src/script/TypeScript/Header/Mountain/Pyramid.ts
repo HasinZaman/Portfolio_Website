@@ -136,7 +136,23 @@ class Face {
  */
 export class Pyramid implements Renderable {
     private _faces : Face[] = [];
-    private center : Vector;
+    private _center : Vector;
+
+    private static get defaultLayers() : number {
+        return 1;
+    }
+    private static get defaultHeight() : number {
+        return 1;
+    }
+    private static get defaultBase() : number {
+        return 1;
+    }
+    private static get defaultStart() : Vector{
+        return new Vector(0, 0, 0);
+    }
+    private static get defaultRotation() : number{
+        return 0;
+    }
 
     /**
      * defaultAngle is the radian of the pitch required to make triangular faces of pyramid
@@ -176,17 +192,25 @@ export class Pyramid implements Renderable {
      * @param {number} base 
      * @param {Vector} start 
      */
-    public constructor(layers: number, height: number, base: number, start: Vector) {
-        this.center = start.clone();
+    public constructor(
+        layers: number = Pyramid.defaultLayers,
+        height: number = Pyramid.defaultHeight,
+        base: number = Pyramid.defaultBase,
+        start: Vector = Pyramid.defaultStart,
+        rotation : number = Pyramid.defaultRotation
+    ) {
+        this._center = start.clone();
         
         let defaultHeight : number = layers * Math.sqrt(0.5);
         let defaultBase : number = trianglesInFractal(layers) - trianglesInFractal(layers - 1);
 
         for(let i1 = 0; i1 < 4; i1++) {
-            this._faces.push(new Face(this.center, layers));
+            this._faces.push(new Face(this._center, layers));
             this._faces[i1].rotate(Pyramid.defaultAngle, Math.PI/2 * i1)
 
             this._faces[i1].scale(base / defaultBase, base / defaultBase, height/ defaultHeight);
+
+            this._faces[i1].rotate(0, rotation);
         }
     }
 
@@ -200,7 +224,7 @@ export class Pyramid implements Renderable {
         
         this._faces
             .filter(
-                face => Vector.dot(face.normal, cameraDir) <= 0
+                face => Vector.dot(face.normal, cameraDir) < 0
             )
             .forEach(
                 face => {
@@ -227,7 +251,7 @@ export class Pyramid implements Renderable {
         let triangle: Vector[] = [t0, t1, t2];
 
         let instruction: HTMLElem = new HTMLElem("polygon");
-        instruction.endTag = false;
+        //instruction.endTag = false;
 
         let points: AttrVal[] = instruction.get("points");
 
@@ -246,14 +270,11 @@ export class Pyramid implements Renderable {
         }
         
         instruction.get("fill")
-            .push(new AttrVal("#000000"));
+            .push(new AttrVal(/*"#000000"*/"none"));
         instruction.get("stroke")
             .push(new AttrVal("White"));
         instruction.get("stroke-width")
             .push(new AttrVal("1"));
-
-        //stroke data
-        //instruction.get("stroke")
         
         return instruction;
     }
