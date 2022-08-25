@@ -91,12 +91,12 @@ body {
 			background: linear-gradient(0deg, $col2 0%, RGBtoRGBA($col2, 0.6) 50%);
 		}
 
-		:not(:first-child) {
-			z-index: 1;
-			width: 100%;
-			height: auto;
-			margin: 0;
-		}
+		// :not(:first-child) {
+		// 	z-index: 1;
+		// 	width: 100%;
+		// 	height: auto;
+		// 	margin: 0;
+		// }
 
 		#starSystem {
 			width: 100%;
@@ -145,6 +145,10 @@ body {
 			height: 100%;
 			width: 100%;
 			
+			position: absolute;
+
+			top: 0;
+
 			line {
 				stroke: white;
 			}
