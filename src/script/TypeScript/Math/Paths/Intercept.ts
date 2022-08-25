@@ -67,7 +67,7 @@ export function rayCheck(ray : Line, p : Path) : number {
  * @param {number[]} ignoreIndex: array of index of colliders that won't be checked
  * @returns {number[]} array of indexes colliders that intersect path
  */
-export function interceptChecks(path : Path, colliders : Path[], ignoreIndex : number[]) : number[] {
+export function interceptChecks(path : Path, colliders : Path[], ignoreIndex : number[] = []) : number[] {
     let tmp : number[] = [];
     for(let i : number = 0; i < colliders.length; i++)
     {
