@@ -84,6 +84,9 @@ export class Quaternion extends Matrix {
         return Math.sqrt(sum);
     }
     
+    /**
+     * constructor generates a quaternion at (1,0,0,0). Where q = (w,x,y,z). The quaternion is represented by a 1 by 4 matrix.
+     */
     public constructor() {
         super(4, 1);
 
@@ -93,6 +96,11 @@ export class Quaternion extends Matrix {
         this.w = 1;
     }
     
+    /**
+     * setDir method defines a quaternion using a rotation vector an angle that rotates around the rotation vector
+     * @param {Vector} rotationVec 
+     * @param {number} angle is a number in radians
+     */
     public setDir(rotationVec: Vector, angle: number) {
         rotationVec = rotationVec.normalize();
 
