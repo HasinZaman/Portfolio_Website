@@ -74,7 +74,14 @@ export class Quaternion extends Matrix {
     }
 
     private get dist() : number {
-        return Math.sqrt(this.w*this.w + this.x*this.x + this.y*this.y + this.z*this.z);
+        let sum = 0;
+
+        for(let i = 0; i < this.rowCount; i++) {
+            let val = this.getVal(0, i);
+            sum+=val*val
+        }
+
+        return Math.sqrt(sum);
     }
     
     public constructor() {
