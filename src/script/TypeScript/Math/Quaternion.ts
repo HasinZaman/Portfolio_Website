@@ -94,6 +94,8 @@ export class Quaternion extends Matrix {
     }
     
     public setDir(rotationVec: Vector, angle: number) {
+        rotationVec = rotationVec.normalize();
+        
         let w : number;
         let x : number;
         let y : number;
@@ -101,29 +103,59 @@ export class Quaternion extends Matrix {
 
         //convert angle: [0, 2*Pi] -> [-1, 1]
         {
-            let tmp = angle % (2 * Math.PI);
-            tmp /= 2 * Math.PI;
+            let tmp = angle % (2 * Math.PI);//angle = [0, 2*pi]
+            
+            tmp /= 2 * Math.PI;//angle = [0, 1]
 
-            tmp -= 1;
+            tmp -= 0.5;//angle = [-0.5, 0.5]
+
+            tmp *= 2;//angle = [-1, 1]
 
             w = tmp;
         }
 
         //uses w to find x,y,z
         {
-            // x' = x / (x + y + z + w)
-            // y' = y / (x + y + z + w)
-            // z' = z / (x + y + z + w)
-            // w' * (x + y + z + w) = w
-            // w' * x + w' * y + w' * z + w' * w = w
-            // w' * x + w' * y + w' * z = w - w' * w
-            // w' * x + w' * y + w' * z = w * (1 - w')
-            // (w' * x + w' * y + w' * z) / (1 - w') = w
-            // w = (w' * x + w' * y + w' * z) / (1 - w')
+            /* 
+            let q be normalized quaternion
 
-            let tmp = (w * rotationVec.x + w * rotationVec.y + w * rotationVec.z) / (1 - w);
+            q = (w,x,y,z)
 
-            tmp = rotationVec.x + rotationVec.y + rotationVec.z + tmp;
+            let q' be the initial non normalized quaternion
+
+            q' = (w',x',y',z')
+
+            let w be q.w value & is derived in the previous section
+            let x',y',z' be known
+
+            therefore,
+            ||q|| = 1
+            ||q'|| = (w'^2 + x'^2 + y'^2 + z'^2)^0.5
+            
+            1: w = w' * ||q'||^(-1)
+            2: x = x' * ||q'||^(-1)
+            3: y = y' * ||q'||^(-1)
+            4: z = z' * ||q'||^(-1)
+            
+            therefore, from equation 1
+            w = w' * ||q'||^(-1)
+            or, w * ||q'|| = w'
+            or, w * (w'^2 + x'^2 + y'^2 + z'^2)^0.5 = w'
+            or, w^2 * (w'^2 + x'^2 + y'^2 + z'^2) = w'^2
+            or, w^2 * w'^2 + w^2 * (x'^2 + y'^2 + z'^2) = w'^2
+            or, w^2 * (x'^2 + y'^2 + z'^2) = w'^2 - w^2 * w'^2
+            or, w^2 * (x'^2 + y'^2 + z'^2) = w'^2 * (1 - w^2)
+            or, w^2 * (x'^2 + y'^2 + z'^2) * (1 - w^2)^(-1) = w'^2
+            or, (w^2 * (x'^2 + y'^2 + z'^2) * (1 - w^2)^(-1))^0.5 = w'
+            or, w'= (w^2 * (x'^2 + y'^2 + z'^2) * (1 - w^2)^(-1))^0.5
+
+            since, w' has now been derived. Therefore, ||q'|| can be calculated & the remaining unknowns can be derived from equations 2-4.
+            */
+            let tmp = Math.sqrt(
+                w*w * (rotationVec.x * rotationVec.x + rotationVec.y * rotationVec.y + rotationVec.z * rotationVec.z) / (1 - w*w))
+
+            tmp = Math.sqrt(rotationVec.x * rotationVec.x + rotationVec.y * rotationVec.y + rotationVec.z * rotationVec.z + tmp * tmp);
+            
 
             x = rotationVec.x / tmp;
             y = rotationVec.y / tmp;
@@ -134,8 +166,6 @@ export class Quaternion extends Matrix {
         this.y = y;
         this.z = z;
         this.w = w;
-
-        this.normalize();
     }
 
     public normalize() : Quaternion {
