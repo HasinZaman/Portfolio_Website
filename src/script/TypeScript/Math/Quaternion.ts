@@ -95,7 +95,7 @@ export class Quaternion extends Matrix {
     
     public setDir(rotationVec: Vector, angle: number) {
         rotationVec = rotationVec.normalize();
-        
+
         let w : number;
         let x : number;
         let y : number;
@@ -150,16 +150,26 @@ export class Quaternion extends Matrix {
             or, w'= (w^2 * (x'^2 + y'^2 + z'^2) * (1 - w^2)^(-1))^0.5
 
             since, w' has now been derived. Therefore, ||q'|| can be calculated & the remaining unknowns can be derived from equations 2-4.
-            */
-            let tmp = Math.sqrt(
-                w*w * (rotationVec.x * rotationVec.x + rotationVec.y * rotationVec.y + rotationVec.z * rotationVec.z) / (1 - w*w))
-
-            tmp = Math.sqrt(rotationVec.x * rotationVec.x + rotationVec.y * rotationVec.y + rotationVec.z * rotationVec.z + tmp * tmp);
             
+            since there is a discontinuous at w = 1
+            then, lim w -> 0 then x = 0, y = 0, z = 0
+            */
+            if(1 - w*w === 0) {
+                x = 0;
+                y = 0;
+                z = 0;
+            }
+            else {
+                let tmp = Math.sqrt(
+                    w*w * (rotationVec.x * rotationVec.x + rotationVec.y * rotationVec.y + rotationVec.z * rotationVec.z) / (1 - w*w))
 
-            x = rotationVec.x / tmp;
-            y = rotationVec.y / tmp;
-            z = rotationVec.z / tmp;
+                tmp = Math.sqrt(rotationVec.x * rotationVec.x + rotationVec.y * rotationVec.y + rotationVec.z * rotationVec.z + tmp * tmp);
+                
+
+                x = rotationVec.x / tmp;
+                y = rotationVec.y / tmp;
+                z = rotationVec.z / tmp;
+            }
         }
 
         this.x = x;
