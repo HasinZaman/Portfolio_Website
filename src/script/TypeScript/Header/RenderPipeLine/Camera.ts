@@ -60,18 +60,29 @@ export class Camera {
         return Matrix.vectorMult(this._rot.rotMatrix, new Vector(0, 0, 1));
     }
 
+    /**
+     * constructor defines characteristics of camera
+     * @param {number} width 
+     * @param {number} height 
+     */
     public constructor(width: number, height: number) {
         this.width = width;
         this.height = height;
     }
 
-    public draw(objs: Renderable[], screenSize : {width: number, height: number}): HTMLElem {
+    /**
+     * draw method gets a set of svg draw instructions to render a scene
+     * @param {Renderable[]} scene is an array of Renderable objects that will be rendered
+     * @param {{width: number, height: number}} screenSize is object that defines the screen size
+     * @returns 
+     */
+    public draw(scene: Renderable[], screenSize : {width: number, height: number}): HTMLElem {
         let triangles: Vector[][] = [];
         let source: Map<Vector[], Renderable> = new Map<Vector[], Renderable>();
 
         let screenPos: Map<Vector, Vector> = new Map<Vector, Vector>()
 
-        objs.forEach(obj => {
+        scene.forEach(obj => {
             let objTriangles: Vector[] = obj.getTriangles(this.rot.dirVector, this.pos);
 
             if(objTriangles.length % 3 !== 0) {
@@ -86,7 +97,7 @@ export class Camera {
                         this._rot.rotMatrix,
                         Vector.sub(objTriangles[i1+i2], this.pos)//move vertex-camera.pos
                     );
-                    //let v = Vector.sub(objTriangles[i1+i2], this.pos);
+                    
                     triangle.push(
                         v
                     );
@@ -186,7 +197,6 @@ export class Camera {
         )
         
         //get instructions
-
         let instructions: HTMLElem = new HTMLElem("g");
         
 
@@ -201,7 +211,7 @@ export class Camera {
 
                 instructions.addChild(inst);
             })
-        //console.log(instructions)
+            
         return instructions;
     }
 
