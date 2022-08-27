@@ -19,7 +19,7 @@ function vectorCheck(expected: Vector, actual: Vector) {
     expect(actual.z).toBeCloseTo(expected.z);
 }
 
-test("Quaternion(1, 0, 0, 0)", () => {
+test("Rotation matrix & direction vector check at Quaternion(1, 0, 0, 0)", () => {
     let q : Quaternion = new Quaternion();
     
     q.x = 0;
@@ -46,7 +46,7 @@ test("Quaternion(1, 0, 0, 0)", () => {
     vectorCheck(expectedDirVector, q.dirVector)
 })
 
-test("Quaternion(-0.5281095941123474, 0, 0.849176222351104, 0)", () => {
+test("Rotation matrix & direction vector check at Quaternion(-0.5281095941123474, 0, 0.849176222351104, 0)", () => {
     let q : Quaternion = new Quaternion();
     
     q.x = 0;
@@ -73,7 +73,7 @@ test("Quaternion(-0.5281095941123474, 0, 0.849176222351104, 0)", () => {
     vectorCheck(expectedDirVector, q.dirVector)
 })
 
-test("Quaternion(-0.5281582070780787, -0.5171549110972854, 0.32809828015456405, -0.588176185155133)", () => {
+test("Rotation matrix & direction vector check at Quaternion(-0.5281582070780787, -0.5171549110972854, 0.32809828015456405, -0.588176185155133)", () => {
     let q : Quaternion = new Quaternion();
     
     q.x = -0.5171549110972854;
