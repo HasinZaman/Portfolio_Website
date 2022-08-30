@@ -208,6 +208,10 @@ export class Quaternion extends Matrix {
         this.w = w;
     }
 
+    /**
+     * normalize method converts quaternion such that ||q|| = 1
+     * @returns {Quaternion} reference to self
+     */
     public normalize() : Quaternion {
         let dist : number = this.dist;
 
