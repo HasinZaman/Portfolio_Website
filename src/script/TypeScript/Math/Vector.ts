@@ -1,3 +1,5 @@
+import { Interpolation } from "./Interpolation";
+
 /**
  * Vector class defines methods and variables to create 3d/2d vector
  */
@@ -153,5 +155,19 @@ export class Vector {
      */
     public static equal(v1: Vector, v2: Vector) : boolean {
         return v1.x == v2.x && v1.y == v2.y && v1.z == v2.z;
+    }
+
+    
+    /**
+     * interpolation static method is a higher order function that returns a interpolation function 
+     * @param {Interpolation<number>} xAlgorithm: interpolation function to be used on the x axis
+     * @param {Interpolation<number>} yAlgorithm: interpolation function to be used on the y axis
+     * @param {Interpolation<number>} zAlgorithm: interpolation function to be used on the z axis
+     * @returns {Interpolation<Vector>} interpolation function that takes a number and interpolates between different Vector
+     */
+    public static interpolation(xAlgorithm: Interpolation<number>, yAlgorithm: Interpolation<number>, zAlgorithm: Interpolation<number>) : Interpolation<Vector> {
+        return (n: number): Vector => {
+            return new Vector(xAlgorithm(n), yAlgorithm(n), zAlgorithm(n));
+        };
     }
 }

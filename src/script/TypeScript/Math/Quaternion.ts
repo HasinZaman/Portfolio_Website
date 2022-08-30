@@ -1,7 +1,29 @@
+import { Interpolation } from "./Interpolation";
 import { Matrix } from "./Matrix";
 import { Vector } from "./Vector";
 
 export class Quaternion extends Matrix {
+
+    /**
+     * interpolation static method is a higher order function that returns a interpolation function 
+     * @param {Interpolation<number>} wAlgorithm: interpolation function to be used on the w axis
+     * @param {Interpolation<number>} xAlgorithm: interpolation function to be used on the x axis
+     * @param {Interpolation<number>} yAlgorithm: interpolation function to be used on the y axis
+     * @param {Interpolation<number>} zAlgorithm: interpolation function to be used on the z axis
+     * @returns {Interpolation<Quaternion>} interpolation function that takes a number and interpolates between different quaternions
+     */
+     public static interpolation(wAlgorithm: Interpolation<number>, xAlgorithm: Interpolation<number>, yAlgorithm: Interpolation<number>, zAlgorithm: Interpolation<number>) : Interpolation<Quaternion> {
+        return (n: number): Quaternion => {
+            let final = new Quaternion();
+
+            final.w = wAlgorithm(n);
+            final.x = xAlgorithm(n);
+            final.y = yAlgorithm(n);
+            final.z = zAlgorithm(n);
+
+            return final;
+        }
+    }
 
     public get w() : number {
         return this.getVal(0, 0);
