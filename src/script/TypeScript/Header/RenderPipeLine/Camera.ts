@@ -256,7 +256,45 @@ export class Camera {
         return new Vector(v.y, v.z);
     }
 
+    /**
+     * perspective method converts a vector in 3d space onto an 2d plane using an perspective projection
+     * @param {Vector} v 
+     * @returns {Vector} 2d vector of perspective projection of v on plane
+     */
     private perspective(v: Vector): Vector {
-        throw new Error("Method not implemented")
+        let vector : Matrix = new Matrix(4,1);
+        vector.setColumn(0, [v.x, v.y, v.z, 1]);
+
+        let l = -1 * this.width/2;
+        let r = this.width /2;
+
+        let b = -1 * this.height/2;
+        let t = this.height/2;
+
+        let n = this.nearClipping;
+        let f = this.farClipping;
+
+        let perspectiveMatrix : Matrix = new Matrix(4, 4);
+        perspectiveMatrix.setRow(0, [0,         0,          -1*(f+n)/(f-n), -2*f*n/(f-n)]);//x: depth
+        perspectiveMatrix.setRow(1, [2*n/(r-l), 0,          (r+l)/(r-l),    0           ]);//y: l-r
+        perspectiveMatrix.setRow(2, [0,         2*n/(t-b),  (t+b)/(t-b),    0           ]);//z: height
+        perspectiveMatrix.setRow(3, [0,         0,          -1,             0           ]);
+        
+        let tmp = Matrix.mult(perspectiveMatrix, vector);
+
+        let scale = tmp.getVal(0, 3);
+
+        for(let i1 = 0; i1 < 3; i1++) {
+            let val = tmp.getVal(0, i1);
+            tmp.setVal(0, i1, val/scale);
+        }
+
+        let final = new Vector(tmp.getVal(0, 0), tmp.getVal(0, 1), tmp.getVal(0, 2));
+        console.log({i: v, f: final})
+        //console.log(this.orthogonal(final));
+        //console.log(Vector.div(Vector.add(this.orthogonal(final), new Vector(1,1)), 2));
+        return this.orthogonal(final);
+        return Vector.div(Vector.add(this.orthogonal(final), new Vector(1,1)), 2);
+        //return this.orthogonal(new Vector(tmp.getVal(0, 0), tmp.getVal(0, 1), tmp.getVal(0, 2)));
     }
 }
