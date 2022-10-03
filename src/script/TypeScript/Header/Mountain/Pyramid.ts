@@ -256,34 +256,54 @@ export class Pyramid implements Renderable {
      * @param {Map<Vector, Vector>} screenPos is a map that converts a vertex in 3D into Vertex in 2D screen space
      * @returns 
      */
-    public draw(t0: Vector, t1: Vector, t2: Vector, screenPos: Map<Vector, Vector>): HTMLElem {
-        let triangle: Vector[] = [t0, t1, t2];
-
+    public draw(screenPos: {t0: Vector, t1: Vector, t2: Vector}, originalPos: {t0: Vector, t1: Vector, t2: Vector}): HTMLElem {
+        let screenTriangle: Vector[] = [screenPos.t0, screenPos.t1, screenPos.t2];
+        let originalTriangle: Vector[] = [originalPos.t0, originalPos.t1, originalPos.t2];
         let instruction: HTMLElem = new HTMLElem("polygon");
         //instruction.endTag = false;
 
         let points: AttrVal[] = instruction.get("points");
 
         for(let i1 = 0; i1 < 3; i1++) {
-            let tmp: Vector | undefined = screenPos.get(triangle[i1]);
-            let p: Vector;
-
-            if(tmp !== undefined) {
-                p = tmp;
-            }
-            else {
-                throw new Error("Vector does not have valid ScreenPos");
-            }
+            let p: Vector = screenTriangle[i1];
                 
             points.push(new AttrVal(`${p.x},${p.y} `))
         }
-        
-        instruction.get("fill")
-            .push(new AttrVal(/*"#000000"*/"none"));
+
+        let isSilhouette : ()=>boolean = () : boolean => {
+            return this._faces.some(
+                face => {
+                    if(face.vertices.length <= 3) {
+                        return false;
+                    }
+                    let silhouette = face.silhouette;
+                    //console.info(face, "\n", silhouette, "\n", originalTriangle);
+                    return silhouette.every(
+                        (vertex, index) => {
+                            // console.info(
+                            //     "vertex: ",vertex,"\n",
+                            //     `tmp:`, originalTriangle,"\n",
+                            //     Vector.equal(vertex, originalTriangle[index])
+                            // )
+                            return Vector.equal(vertex, originalTriangle[index])
+                        }
+                    )
+                }
+            )
+        }
+
+        if(isSilhouette()) {
+            instruction.get("fill")
+                .push(new AttrVal("#000000"));
+        }
+        else {
+            instruction.get("fill")
+                .push(new AttrVal("none"));
+        }
         instruction.get("stroke")
             .push(new AttrVal("White"));
         instruction.get("stroke-width")
-            .push(new AttrVal("1"));
+            .push(new AttrVal("2"));
         
         return instruction;
     }
