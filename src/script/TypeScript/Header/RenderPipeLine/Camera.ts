@@ -53,6 +53,32 @@ export class Camera {
         this._height = val;
     }
 
+    private _nearClipping : number = 1;
+    public get nearClipping(): number {
+        return this._nearClipping;
+    }
+    public set nearClipping(val: number) {
+        if(val < 0) {
+            throw new Error("Near clipping plane must be greater than 0")
+        }
+        if(this.farClipping <= val) {
+            throw new Error("near clipping plane cannot be greater than far clipping plane")
+        }
+        this._nearClipping = val;
+    }
+
+    private _farClipping : number = 2;
+    public get farClipping() : number {
+        return this._farClipping;
+    }
+    public set farClipping(val: number) {
+        if(val <= this.nearClipping) {
+            throw new Error(`Far clipping plane must be greater than near clipping plane ${this.nearClipping}`);
+        }
+        this._farClipping = val;
+
+    }
+
     public get forwardVector() : Vector {
         return Matrix.vectorMult(this._rot.rotMatrix, new Vector(1, 0, 0));
     }
@@ -65,9 +91,11 @@ export class Camera {
      * @param {number} width 
      * @param {number} height 
      */
-    public constructor(width: number, height: number) {
+    public constructor(width: number, height: number, nearClipping: number, farClipping: number) {
         this.width = width;
         this.height = height;
+        this.nearClipping = nearClipping;
+        this.farClipping = farClipping;
     }
 
     /**
