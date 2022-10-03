@@ -108,10 +108,11 @@ export class Camera {
         let triangles: Vector[][] = [];
         let source: Map<Vector[], Renderable> = new Map<Vector[], Renderable>();
 
-        let screenPos: Map<Vector, Vector> = new Map<Vector, Vector>()
+        let relativePosToScreenPosMap: Map<Vector, Vector> = new Map<Vector, Vector>()
+        let relativePosToOriginalPosMap: Map<Vector, Vector> = new Map<Vector, Vector>()
 
-        scene.forEach(obj => {
-            let objTriangles: Vector[] = obj.getTriangles(this.rot.dirVector, this.pos);
+        scene.forEach(renderable => {
+            let objTriangles: Vector[] = renderable.getTriangles(this.rot.dirVector, this.pos);
 
             if(objTriangles.length % 3 !== 0) {
                 throw new Error("Invalid triangles");
@@ -130,24 +131,31 @@ export class Camera {
                         v
                     );
 
-                    //turn vertex 3D => screen pos 2D                    
-                    screenPos.set(v, this.orthogonal(v))
+                    //turn vertex 3D => screen pos 2D
+                    {
+                        let tmp = this.orthogonal(v);
+
+                        relativePosToScreenPosMap.set(v, tmp);
+                    }
+
+                    relativePosToOriginalPosMap.set(v, objTriangles[i1+i2]);
+                    
                 }
 
                 triangles.push(triangle);
-                source.set(triangle, obj);
+                source.set(triangle, renderable);
             }
         })
         
-        let min = (t: Vector[]) : number => {
-            let min : number = t[0].y;
+        let max = (t: Vector[]) : number => {
+            let max : number = t[0].x;
 
             t.forEach(v => {
-                if(v.y < min) {
-                    min = v.y;
+                if(v.x > max) {
+                    max = v.x;
                 }
             })
-            return min;
+            return max;
         }
         let unwrap = (val: Vector | undefined) : Vector => {
             if(val !== undefined) {
@@ -159,79 +167,111 @@ export class Camera {
 
         triangles = triangles.filter(//filter out triangles not visible
             triangle => {
+                
                 let tmp : Rect = new Rect(
-                    this.width,
-                    this.height,
+                    1,
+                    1,
                     0,
-                    Vector.sub(
-                        new Vector(0,0),
-                        Vector.div(
-                            new Vector(this.width, this.height),
-                            2
-                        )
-                    )
+                    new Vector(-1, -1)
                 )
 
                 for(let i1 = 0; i1 < 3; i1++) {
 
-                    let start = unwrap(screenPos.get(triangle[i1 % 3]));
-                    let end = unwrap(screenPos.get(triangle[(i1 + 1) % 3]));
-
-                    {
-                        let inXRange = this.width/-2 <= start.x && start.x <= this.width/2;
-                        let inYRange = this.height/-2 <= start.y && start.y <= this.height/2;
+                    let start = unwrap(relativePosToScreenPosMap.get(triangle[i1 % 3]));
+                    let end = unwrap(relativePosToScreenPosMap.get(triangle[(i1 + 1) % 3]));
+                    {//check start point is in the viewing rect
+                        let inXRange = (-1 < start.x) && (start.x < 1);
+                        let inYRange = (-1 < start.y) && (start.y < 1);
 
                         if(inXRange && inYRange) {
+                            // console.info("Proj triangle:", triangle.map(v=>relativePosToScreenPosMap.get(v)), "\n", "OG triangle:", triangle, "\n","in viewing area:",tmp)
                             return true;
                         }
                     }
+                    {//checking if the line from start & end point intersect the viewing rect
+                        let dir = Vector.sub(
+                            end,
+                            start
+                        );
 
-                    {
-                        let line = new Line(start, Vector.sub(end, start).normalize(), Vector.dist(Vector.sub(end, start)));
+                        let line = new Line(
+                            start,
+                            dir.normalize(),
+                            Vector.dist(dir)
+                        );
 
                         if(interceptCheck(tmp, line)){
+                            // console.info("Proj triangle:", triangle.map(v=>relativePosToScreenPosMap.get(v)), "\n", "OG triangle:", triangle, "\n","intersects rect:",tmp)
                             return true;
                         }
                     }
                 }
+                
+                {//checking if points of rect in the triangle
+                    for(let x = -1; x <= 1; x+=2) {
+                        for(let y = -1; x <= 1; x+=2) {
+                            let point = new Vector(x, y);
 
+                            if(this.pointInTriangle(triangle, point)) {
+                                //console.info("Proj triangle:", triangle.map(v=>screenPos.get(v)), "\n", "OG triangle:", triangle, "\n","rect in triangle:",tmp)
+                                return true;
+                            }
+                        }
+                    }
+                }
+                //console.info("Proj triangle:", triangle.map(v=>screenPos.get(v)), "\n", "OG triangle:", triangle, "\n","failed rect:",tmp)
                 return false;
             }
         ).sort(//sort triangles based on dist from camera
             (t1: Vector[], t2: Vector[]) => {
-                return min(t2) - min(t1)
+                return max(t2) - max(t1)
             }
         )
-        triangles.forEach(//re map triangle from 0,0)-screen size
+
+        //console.log(triangles);
+        triangles.forEach(//re map triangle from (0,0)-screen size
             triangle => {
                 triangle.forEach(
                     vertex => {
-                        let tmp = unwrap(screenPos.get(vertex));
+                        let tmp = unwrap(relativePosToScreenPosMap.get(vertex));
 
-                        let topLeft = Vector.div(new Vector(-1 * this.width, -1 * this.height), 2);
+                        tmp.x = (tmp.x + 1)/2;
+                        tmp.y = (tmp.y + 1)/2;
 
-                        tmp = Vector.sub(tmp, topLeft);
-
-                        tmp.x = tmp.x / this.width * screenSize.width
-                        tmp.y = tmp.y / this.height * screenSize.height
-
-                        //flip y
-                        tmp.y = screenSize.height - tmp.y;
-
-                        screenPos.set(vertex, tmp);
+                        tmp.x = tmp.x * screenSize.width;
+                        tmp.y = tmp.y * screenSize.height;
+                        
+                        relativePosToScreenPosMap.set(vertex, tmp);
                     }
                 )
+                // console.info(
+                //     "final Pos:", triangle.map(v => screenPos.get(v)),"\n",
+                //     "top left:", Vector.div(new Vector(this.width, this.height), -2), "\n",
+                //     "screen dim:", new Vector(screenSize.width, screenSize.height), "\n",
+                //     "dim:", new Vector(this.width, this.height)
+                // )
             }
         )
         
         //get instructions
         let instructions: HTMLElem = new HTMLElem("g");
-        
-
         triangles.forEach(
             triangle => {
+                
                 let r: Renderable | undefined = source.get(triangle);
-                let inst: HTMLElem | undefined = r?.draw(triangle[0], triangle[1], triangle[2], screenPos);
+
+                let inst: HTMLElem | undefined = r?.draw(
+                    {
+                        t0: unwrap(relativePosToScreenPosMap.get(triangle[0])),
+                        t1: unwrap(relativePosToScreenPosMap.get(triangle[1])),
+                        t2: unwrap(relativePosToScreenPosMap.get(triangle[2]))
+                    },
+                    {
+                        t0: unwrap(relativePosToOriginalPosMap.get(triangle[0])),
+                        t1: unwrap(relativePosToOriginalPosMap.get(triangle[1])),
+                        t2: unwrap(relativePosToOriginalPosMap.get(triangle[2]))
+                    }                    
+                );
 
                 if(inst == undefined) {
                     throw new Error("Undefined error");
@@ -241,6 +281,52 @@ export class Camera {
             })
             
         return instructions;
+    }
+    /**
+     * pointInTriangle method is a utility method to check if a point in n dimensional point exists in the plane of an n dimensional triangle
+     * @param {Vector[]} triangle vertices of a triangle
+     * @param {Vector} point is a vector that is being checked to be in triangle
+     * @returns {boolean}
+     */
+    private pointInTriangle(triangle: Vector[], point: Vector) : boolean {
+        let subTrianglesVectors : Vector[][] = [];
+
+        for(let i1 = 0; i1 < 3; i1++) {
+            subTrianglesVectors.push([triangle[i1 % 3], triangle[(i1 + 1) % 3], point]);
+        }
+
+        let triangleSideLength : number[]  = triangle.map(
+            (point: Vector, index: number) => {
+                return Vector.dist(Vector.sub(point, triangle[(index + 1) % 3]));
+            }
+        )
+
+        let areaCalc = (a: number, b: number, c: number) : number => {
+            return 0.25 * Math.sqrt(
+                (a + (b + c)) *
+                (c - (a - b)) *
+                (c + (a - b)) *
+                (a + (b - c))
+            );
+        }
+
+        let area = 0;
+        
+       subTrianglesVectors.map(
+            (triangle: Vector[]) => {
+                let dists : number[] = [];
+                for(let i1 = 0; i1 < 3; i1++) {
+                    dists.push(Vector.dist(Vector.sub(triangle[i1 % 3], triangle[(i1 + 1) % 3])));
+                }
+                return dists.sort().reverse();;
+            }
+        ).forEach(
+            (triangleSideLength: number[]) => {
+                area+= areaCalc(triangleSideLength[0], triangleSideLength[1], triangleSideLength[2])
+            }
+        )
+        
+        return areaCalc(triangleSideLength[0], triangleSideLength[1], triangleSideLength[2]) + 0.0000001 >= area;
     }
 
     /**
