@@ -25,6 +25,8 @@ export interface Renderable {
      *    /        \
      *   /__________\
      *  t2           t1
+     * @param {{t0: Vector, t1: Vector, t2: Vector}} screenTriangle
+     * @param {{t0: Vector, t1: Vector, t2: Vector}} originalSpaceTriangle
      */
-    draw: (screenPos: {t0: Vector, t1: Vector, t2: Vector}, originalPos: {t0: Vector, t1: Vector, t2: Vector}) => HTMLElem
+    draw: (screenTriangle: {t0: Vector, t1: Vector, t2: Vector}, originalSpaceTriangle: {t0: Vector, t1: Vector, t2: Vector}) => HTMLElem
 }

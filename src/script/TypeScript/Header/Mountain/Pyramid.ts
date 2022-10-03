@@ -252,20 +252,20 @@ export class Pyramid implements Renderable {
 
     /**
      * draw method provides a set of HTMLElem required to draw pyramid
-     * @param {Vector[]} triangles is vertices of Triangle in 3D space
-     * @param {Map<Vector, Vector>} screenPos is a map that converts a vertex in 3D into Vertex in 2D screen space
+     * @param {{t0: Vector, t1: Vector, t2: Vector}} screenTriangle
+     * @param {{t0: Vector, t1: Vector, t2: Vector}} originalSpaceTriangle
      * @returns 
      */
-    public draw(screenPos: {t0: Vector, t1: Vector, t2: Vector}, originalPos: {t0: Vector, t1: Vector, t2: Vector}): HTMLElem {
-        let screenTriangle: Vector[] = [screenPos.t0, screenPos.t1, screenPos.t2];
-        let originalTriangle: Vector[] = [originalPos.t0, originalPos.t1, originalPos.t2];
+    public draw(screenTriangle: {t0: Vector, t1: Vector, t2: Vector}, originalSpaceTriangle: {t0: Vector, t1: Vector, t2: Vector}): HTMLElem {
+        let screenTriangleTmp: Vector[] = [screenTriangle.t0, screenTriangle.t1, screenTriangle.t2];
+        let originalSpaceTriangleTmp: Vector[] = [originalSpaceTriangle.t0, originalSpaceTriangle.t1, originalSpaceTriangle.t2];
         let instruction: HTMLElem = new HTMLElem("polygon");
         //instruction.endTag = false;
 
         let points: AttrVal[] = instruction.get("points");
 
         for(let i1 = 0; i1 < 3; i1++) {
-            let p: Vector = screenTriangle[i1];
+            let p: Vector = screenTriangleTmp[i1];
                 
             points.push(new AttrVal(`${p.x},${p.y} `))
         }
@@ -285,7 +285,7 @@ export class Pyramid implements Renderable {
                             //     `tmp:`, originalTriangle,"\n",
                             //     Vector.equal(vertex, originalTriangle[index])
                             // )
-                            return Vector.equal(vertex, originalTriangle[index])
+                            return Vector.equal(vertex, originalSpaceTriangleTmp[index])
                         }
                     )
                 }
