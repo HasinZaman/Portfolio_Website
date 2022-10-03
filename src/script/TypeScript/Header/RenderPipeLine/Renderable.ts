@@ -26,5 +26,5 @@ export interface Renderable {
      *   /__________\
      *  t2           t1
      */
-    draw: (t0: Vector, t1: Vector, t2: Vector, screenPos: Map<Vector, Vector>) => HTMLElem
+    draw: (screenPos: {t0: Vector, t1: Vector, t2: Vector}, originalPos: {t0: Vector, t1: Vector, t2: Vector}) => HTMLElem
 }
