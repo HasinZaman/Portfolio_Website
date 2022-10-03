@@ -153,8 +153,10 @@ export class Vector {
      * @param {Vector} v2
      * @returns {boolean} boolean of whether v1 == v2
      */
-    public static equal(v1: Vector, v2: Vector) : boolean {
-        return v1.x == v2.x && v1.y == v2.y && v1.z == v2.z;
+    public static equal(v1: Vector, v2: Vector, threshold: number = 0.00001) : boolean {
+        return Math.abs(v1.x - v2.x) < threshold &&
+            Math.abs(v1.y - v2.y) < threshold &&
+            Math.abs(v1.z - v2.z) < threshold;
     }
 
     
