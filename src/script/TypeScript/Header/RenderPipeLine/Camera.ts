@@ -250,7 +250,7 @@ export class Camera {
      */
     private orthogonal(v: Vector): Vector {
         let vector : Matrix = new Matrix(4,1);
-        vector.setColumn(0, [v.x, v.z, v.y, 1]);
+        vector.setColumn(0, [v.y, v.z, v.x, 1]);
 
         let r = this.width/2;
         let l = -1 * r;
@@ -263,25 +263,13 @@ export class Camera {
 
         let orthogonalMatrix : Matrix = new Matrix(4, 4);
         orthogonalMatrix.setRow(0, [2/(r - l), 0, 0, -1 * (r + l)/(r - l)]);
-        orthogonalMatrix.setRow(1, [0, 2/(t - b), 0, -1 * (t + b)/(t - b)]);
-        orthogonalMatrix.setRow(2, [0, 0, -2 / (f-n),-1 * (f + n)/(f - n)]);
+        orthogonalMatrix.setRow(1, [0, -2/(t - b), 0, -1 * (t + b)/(t - b)]);
+        orthogonalMatrix.setRow(2, [0, 0,-2/(f - n), -1 * (f + n)/(f - n)]);
         orthogonalMatrix.setRow(3, [0, 0, 0, 1]);
 
         let tmp = Matrix.mult(orthogonalMatrix, vector);
 
-        let scale = tmp.getVal(0, 3);
-
-        /*for(let i1 = 0; i1 < 3; i1++) {
-            let val = tmp.getVal(0, i1);
-            tmp.setVal(0, i1, val/scale);
-        }*/
-
-        let final = new Vector(tmp.getVal(0, 0), tmp.getVal(0, 1), tmp.getVal(0, 2));
-
-        //console.info("initial: ", v, "| final: ", final);
-
-        return final;
-        return new Vector(v.y, v.z);
+        return new Vector(tmp.getVal(0, 0), tmp.getVal(0, 1));
     }
 
     /**
