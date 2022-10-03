@@ -230,10 +230,19 @@ export class Pyramid implements Renderable {
                 face => {
                     let silhouette : Vector[] = face.silhouette;
 
-                    if(silhouette.some(v => Vector.dot(Vector.sub(v, cameraPos), cameraDir) >= 0)) {
+                    if(silhouette.some(v => Vector.dot(Vector.sub(v, cameraPos).normalize(), cameraDir) > 0)) {
                         face.silhouette.forEach(vertex => visibleVectices.push(vertex))
 
-                        face.vertices.forEach(vertex => visibleVectices.push(vertex))
+                        if(face.vertices.length > 3) {
+                            face.vertices.forEach(
+                                vertex => visibleVectices.push(
+                                    Vector.add(
+                                        vertex,
+                                        Vector.mult(face.normal.clone(), 0.0001)
+                                    )
+                                )
+                            );
+                        }
                     }
                 }
             )
