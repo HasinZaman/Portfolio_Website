@@ -274,7 +274,7 @@ export class Pyramid implements Renderable {
             return this._faces.some(
                 face => {
                     if(face.vertices.length <= 3) {
-                        return false;
+                        return true;
                     }
                     let silhouette = face.silhouette;
                     return silhouette.every(
