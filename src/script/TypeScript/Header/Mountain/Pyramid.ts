@@ -277,14 +277,8 @@ export class Pyramid implements Renderable {
                         return false;
                     }
                     let silhouette = face.silhouette;
-                    //console.info(face, "\n", silhouette, "\n", originalTriangle);
                     return silhouette.every(
                         (vertex, index) => {
-                            // console.info(
-                            //     "vertex: ",vertex,"\n",
-                            //     `tmp:`, originalTriangle,"\n",
-                            //     Vector.equal(vertex, originalTriangle[index])
-                            // )
                             return Vector.equal(vertex, originalSpaceTriangleTmp[index])
                         }
                     )

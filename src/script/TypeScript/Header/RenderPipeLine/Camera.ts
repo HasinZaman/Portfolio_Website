@@ -184,7 +184,6 @@ export class Camera {
                         let inYRange = (-1 < start.y) && (start.y < 1);
 
                         if(inXRange && inYRange) {
-                            // console.info("Proj triangle:", triangle.map(v=>relativePosToScreenPosMap.get(v)), "\n", "OG triangle:", triangle, "\n","in viewing area:",tmp)
                             return true;
                         }
                     }
@@ -201,7 +200,6 @@ export class Camera {
                         );
 
                         if(interceptCheck(tmp, line)){
-                            // console.info("Proj triangle:", triangle.map(v=>relativePosToScreenPosMap.get(v)), "\n", "OG triangle:", triangle, "\n","intersects rect:",tmp)
                             return true;
                         }
                     }
@@ -213,13 +211,11 @@ export class Camera {
                             let point = new Vector(x, y);
 
                             if(this.pointInTriangle(triangle, point)) {
-                                //console.info("Proj triangle:", triangle.map(v=>screenPos.get(v)), "\n", "OG triangle:", triangle, "\n","rect in triangle:",tmp)
                                 return true;
                             }
                         }
                     }
                 }
-                //console.info("Proj triangle:", triangle.map(v=>screenPos.get(v)), "\n", "OG triangle:", triangle, "\n","failed rect:",tmp)
                 return false;
             }
         ).sort(//sort triangles based on dist from camera
@@ -228,7 +224,6 @@ export class Camera {
             }
         )
 
-        //console.log(triangles);
         triangles.forEach(//re map triangle from (0,0)-screen size
             triangle => {
                 triangle.forEach(
@@ -244,12 +239,6 @@ export class Camera {
                         relativePosToScreenPosMap.set(vertex, tmp);
                     }
                 )
-                // console.info(
-                //     "final Pos:", triangle.map(v => screenPos.get(v)),"\n",
-                //     "top left:", Vector.div(new Vector(this.width, this.height), -2), "\n",
-                //     "screen dim:", new Vector(screenSize.width, screenSize.height), "\n",
-                //     "dim:", new Vector(this.width, this.height)
-                // )
             }
         )
         
