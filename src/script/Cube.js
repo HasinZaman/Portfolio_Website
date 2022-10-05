@@ -234,6 +234,7 @@ class CubeFace {
     getContent() {
         let faceHTML = new HTMLBuilder_1.HTMLElem("");
         let img = new HTMLBuilder_1.HTMLElem("img");
+        img.endTag = false;
         img.get("src").push(new HTMLBuilder_1.AttrVal(this.image));
         faceHTML.addChild(img);
         let messageDiv = new HTMLBuilder_1.HTMLElem("text");
@@ -313,37 +314,6 @@ exports.Generator = Generator;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HTMLText = exports.HTMLElem = exports.StyleAttr = exports.AttrVal = void 0;
 /**
- * KeyValuePair defines variables and methods for html element attr
-*/
-class KeyValuePair {
-    /**
-     * @constructor creates a KeyValuePair
-     * @param {string} key: key name
-     * @param {AttrVal[]} values: array of attribute values for key
-     */
-    constructor(key, values) {
-        this.key = key;
-        this.values = [];
-        for (let i1 = 0; i1 < values.length; i1++) {
-            this.values.push(values[i1]);
-        }
-    }
-    /**
-     * generate method turns KeyValuePair into string attr for HTML elements
-     * @returns {string} string format of KeyValuePair for HTML elements
-     */
-    generate() {
-        let valueStr = "";
-        if (this.values.length === 0) {
-            return "";
-        }
-        for (let i1 = 0; i1 < this.values.length; i1++) {
-            valueStr += this.values[i1].generate();
-        }
-        return `${this.key}=\"${valueStr}\" `;
-    }
-}
-/**
  * AttrVal class defines AttrVal for KeyValuePair
  */
 class AttrVal {
@@ -394,8 +364,11 @@ class HTMLElem {
      * @param {string} tagname: tagname of HTML element
      */
     constructor(tagname) {
+        this.attr = new Map();
+        this.endTag = true;
         this.tagname = tagname;
-        this.attr = [new KeyValuePair("id", []), new KeyValuePair("class", [])];
+        this.attr.set("id", []);
+        this.attr.set("class", []);
         this.children = [];
     }
     /**
@@ -404,12 +377,14 @@ class HTMLElem {
      * @returns {AttrVal[]} array of AttrVal
      */
     get(key) {
-        let tmp = this.attr.find(kvp => kvp.key === key);
-        if (tmp == null) {
-            tmp = new KeyValuePair(key, []);
-            this.attr.push(tmp);
+        if (!this.attr.has(key)) {
+            this.attr.set(key, []);
         }
-        return tmp.values;
+        let data = this.attr.get(key);
+        if (data !== undefined) {
+            return data;
+        }
+        throw new Error("Invalid state");
     }
     /**
      * addChild adds an HTML child Element
@@ -425,10 +400,25 @@ class HTMLElem {
      */
     generate() {
         let attrStr = "";
-        for (let i1 = 0; i1 < this.attr.length; i1++) {
-            attrStr += `${this.attr[i1].generate()} `;
+        this.attr.forEach((values, key) => attrStr += `${this.attrGenerate(key, values)} `);
+        if (this.endTag) {
+            return `<${this.tagname} ${attrStr}>${this.generateChildren()}</${this.tagname}>`;
         }
-        return `<${this.tagname} ${attrStr}>${this.generateChildren()}</${this.tagname}>`;
+        return `<${this.tagname} ${attrStr}>`;
+    }
+    /**
+     * attrGenerate method generates string that represent an attribute of an HTML element
+     * @returns {string} string format of an attribute of an HTML element
+     */
+    attrGenerate(key, values) {
+        let valueStr = "";
+        if (values.length === 0) {
+            return "";
+        }
+        for (let i1 = 0; i1 < values.length; i1++) {
+            valueStr += values[i1].generate();
+        }
+        return `${key}=\"${valueStr}\" `;
     }
     /**
      * generateChildren method returns string representation of child content of HTMLElem
