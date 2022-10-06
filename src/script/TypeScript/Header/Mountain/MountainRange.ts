@@ -103,6 +103,7 @@ function generateMountainRange(width:number, height:number, seed: string | numbe
         maxHeight *= 0.75
     }
     
+    //generate sibling pyramids
     while(width/-2 < lastX[0] || lastX[1] < width/2) {
         let y = posNextY();
         switch (direction) {
