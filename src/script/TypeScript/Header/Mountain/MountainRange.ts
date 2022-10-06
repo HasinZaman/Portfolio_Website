@@ -4,6 +4,7 @@ import { Camera } from "../RenderPipeLine/Camera";
 import { Pyramid } from "./Pyramid";
 
 let svgCanvas = $("section#header > svg");
+let layer = $("section#header > svg > g#mountainRange");
 
 let cameraMountainRange : Camera = new Camera(1, 1, 0.5, 100);
 
@@ -23,7 +24,7 @@ export function main() {
             {width: getWidth(), height: getHeight()}
         );
 
-        svgCanvas.html(inst.generate());
+        layer.html(inst.generateChildren());
     }
     
     initializeRange();
