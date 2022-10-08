@@ -406,41 +406,53 @@ const Vector_1 = require("../../Math/Vector");
 const Camera_1 = require("../RenderPipeLine/Camera");
 const Pyramid_1 = require("./Pyramid");
 let svgCanvas = $("section#header > svg");
+let layer = $("section#header > svg > g#mountainRange");
 let cameraMountainRange = new Camera_1.Camera(1, 1, 0.5, 100);
 let seed = "u3JBP^>hEm";
+/**
+ * main function generates  mountain range on call & binds generation on window resize
+ */
 function main() {
     cameraMountainRange.pos = new Vector_1.Vector(-2, 0, 0);
     let initializeRange = () => {
         let tmp = generateMountainRange(getWidth(), getHeight(), seed);
         let inst = cameraMountainRange.draw(tmp, { width: getWidth(), height: getHeight() });
-        svgCanvas.html(inst.generate());
+        layer.html(inst.generateChildren());
     };
     initializeRange();
     $(window).on("resize", initializeRange);
 }
 exports.main = main;
+/**
+ * generateMountainRange function creates a procedural mountain range
+ * @param {number} width: width of svg environment
+ * @param {number} height: height of svg environment
+ * @param {string | number} seed: random seed to start generation process
+ * @returns {Pyramid[]} array of pyramids that represents a mountain range
+ */
 function generateMountainRange(width, height, seed) {
     width = getWidth();
     height = getHeight();
     svgCanvas.attr("viewBox", `0 0 ${width} ${height}`);
     cameraMountainRange.width = width;
     let tmp = [];
+    //use seed to generate random strings => to be used to initialize other random number generators
     let seedGenerator = (0, Random_1.randomStringGenerator)(seed, 10, 10);
-    //random rotation
+    //random rotation of pyramid
     let rotNext = () => {
         let next = (0, Random_1.randomFloatGenerator)(seedGenerator());
         return next() * Math.PI * 2;
     };
-    //random layerCount
+    //random layer count of pyramids
     let layerNext = (0, Random_1.randomIntGenerator)(seedGenerator(), 1, 2);
-    //random base
+    //random base width of pyramid
     let minBase = 150;
     let maxBase = minBase * 3;
     let baseNext = () => {
         let next = (0, Random_1.randomFloatGenerator)(seedGenerator());
         return next() * (maxBase - minBase) + minBase;
     };
-    //random height
+    //random height of pyramid
     let minHeight = 0.25;
     let maxHeight = 0.75;
     let groundLevel = -0.5;
@@ -448,6 +460,8 @@ function generateMountainRange(width, height, seed) {
         let next = (0, Random_1.randomFloatGenerator)(seedGenerator());
         return next() * (maxHeight - minHeight) + minHeight;
     };
+    //random y position (x-axis in 2d space)
+    //generate from (0,0) and osculate generation for pyramids where y>0 & y<0
     let direction = -1;
     let lastX = [0, 0];
     let minDist = 100;
@@ -460,11 +474,12 @@ function generateMountainRange(width, height, seed) {
         direction *= -1;
         return direction * yNext();
     };
-    { //central pyramid
+    { //generate central pyramid
         let heightTmp = maxHeight;
         tmp.push(new Pyramid_1.Pyramid(layerNext(), heightTmp, baseNext(), new Vector_1.Vector(0, 0, heightTmp + groundLevel), rotNext()));
         maxHeight *= 0.75;
     }
+    //generate sibling pyramids
     while (width / -2 < lastX[0] || lastX[1] < width / 2) {
         let y = posNextY();
         switch (direction) {
@@ -499,7 +514,7 @@ function getHeight() {
     throw new Error();
 }
 
-},{"../../Math/Random/Random":19,"../../Math/Vector":20,"../RenderPipeLine/Camera":8,"./Pyramid":6}],6:[function(require,module,exports){
+},{"../../Math/Random/Random":18,"../../Math/Vector":19,"../RenderPipeLine/Camera":8,"./Pyramid":6}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Pyramid = void 0;
@@ -734,7 +749,7 @@ exports.Pyramid = Pyramid;
  */
 Pyramid.defaultAngle = 0.6154797086703873;
 
-},{"../../HTMLBuilder/HTMLBuilder":3,"../../Math/Matrix":12,"../../Math/Vector":20,"./Triangle":7}],7:[function(require,module,exports){
+},{"../../HTMLBuilder/HTMLBuilder":3,"../../Math/Matrix":12,"../../Math/Vector":19,"./Triangle":7}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.trianglesInFractal = exports.triangleFractal = exports.equilateralTriangleHeight = void 0;
@@ -809,7 +824,7 @@ function trianglesInFractal(levels) {
 }
 exports.trianglesInFractal = trianglesInFractal;
 
-},{"../../Math/Vector":20,"queue-typescript":2}],8:[function(require,module,exports){
+},{"../../Math/Vector":19,"queue-typescript":2}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Camera = void 0;
@@ -1101,626 +1116,313 @@ class Camera {
 }
 exports.Camera = Camera;
 
-},{"../../HTMLBuilder/HTMLBuilder":3,"../../Math/Matrix":12,"../../Math/Paths/Intercept":15,"../../Math/Paths/Line":16,"../../Math/Paths/Rect":17,"../../Math/Quaternion":18,"../../Math/Vector":20}],9:[function(require,module,exports){
+},{"../../HTMLBuilder/HTMLBuilder":3,"../../Math/Matrix":12,"../../Math/Paths/Intercept":14,"../../Math/Paths/Line":15,"../../Math/Paths/Rect":16,"../../Math/Quaternion":17,"../../Math/Vector":19}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = void 0;
-const Line_1 = require("../../Math/Paths/Line");
 const Vector_1 = require("../../Math/Vector");
-const Star_1 = require("./Star");
+const Camera_1 = require("../RenderPipeLine/Camera");
 const StarGeneration_1 = require("./StarGeneration");
-let stars = $("#header #starSystem");
-let constellations = $("#header svg");
-let environmentSize = new Vector_1.Vector(stars.width(), stars.height());
-;
-let starSize = new Vector_1.Vector(5, 5);
-;
-let timeDelta = 20; //ms
-//entities
-let entities = [];
-function start(environmentSettings, starSettings) {
-    reSize();
-    entities = [];
-    (0, StarGeneration_1.starGenerate)(environmentSettings, starSettings).forEach(star => {
-        entities.push(star);
-        render(star);
-    });
-    setTimeout(update, timeDelta);
-}
-function update() {
-    //calculate star physics
-    // for(let i1 : number = 4; i1 < entities.length; i1++) {
-    //     let star = entities[i1] as Star;
-    //     star.move(timeDelta / 1000);
-    // }
-    //ball rendering
-    //let boundary = new Rect(environmentSize.x, environmentSize.y, 0, new Vector(0, 0));
-    for (let i1 = 4; i1 < entities.length; i1++) {
-        //let star = entities[i1] as Star;
-        //check if ball is within environment
-        // if(!boundaryCheck(star)) {
-        //     //update position
-        //     let pos : Vector = randomPos(
-        //         star.radius,
-        //         boundary,
-        //         [i1],
-        //         entities
-        //     );
-        //     star.p.x = pos.x;
-        //     star.p.y = pos.y;
-        //     star.vel = Vector.mult(
-        //         Vector.normalize(
-        //             new Vector(
-        //                 Math.random(),
-        //                 Math.random()
-        //             )
-        //         ),
-        //         Vector.dist(star.vel)
-        //     );
-        // }
-        // render(star);
-    }
-    //edge rendering
-    Star_1.Star.edgeList.forEach(edge => {
-        edge.updateLine();
-    });
-    Star_1.Edge.updateSVGElem(Star_1.Star.edgeList);
-    //update after n time
-    setTimeout(update, timeDelta);
-}
-/**
- * render method updates the DOM of all entities in environment
- * @param {Star} star
- */
-function render(star) {
-    let tmp = Vector_1.Vector.sub(star.p, new Vector_1.Vector(starSize.x / 2, -1 * starSize.y / 2));
-    star.element.css("left", `${tmp.x / environmentSize.x * 100}%`);
-    star.element.css("bottom", `${tmp.y / environmentSize.y * 100}%`);
-}
-function reSize() {
-    environmentSize = new Vector_1.Vector(stars.width(), stars.height());
-    Star_1.Edge.setSVGElemSize(environmentSize.x, environmentSize.y);
-    let gradientPath = [new Vector_1.Vector(1, 0), new Vector_1.Vector(0, 1), new Vector_1.Vector(-1, 0), new Vector_1.Vector(0, -1)];
-    let start = new Vector_1.Vector(0, 0);
-    if (entities.length > 4) {
-        for (let i = 0; i < 4; i++) {
-            switch (i) {
-                case 0:
-                case 2:
-                    entities[i] = new Line_1.Line(start, gradientPath[i], environmentSize.x);
-                    break;
-                case 1:
-                case 3:
-                    entities[i] = new Line_1.Line(start, gradientPath[i], environmentSize.y);
-                    break;
-            }
-            start = entities[i].getPoint(entities[i].l);
-        }
-    }
-    else {
-        entities = [];
-        for (let i = 0; i < 4; i++) {
-            switch (i) {
-                case 0:
-                case 2:
-                    entities.push(new Line_1.Line(start, gradientPath[i], environmentSize.x));
-                    break;
-                case 1:
-                case 3:
-                    entities.push(new Line_1.Line(start, gradientPath[i], environmentSize.y));
-                    break;
-            }
-            start = entities[i].getPoint(entities[i].l);
-        }
-    }
-}
+let svgCanvas = $("section#header > svg");
+let layer = $("section#header > svg > g#starSystem");
+let camera = new Camera_1.Camera(1, 1, 0.5, 100);
+let seed = "Sfe-x24";
 function main() {
-    let tmp = () => {
-        let environmentSettings = {
-            size: environmentSize,
-            skyJquery: stars,
-        };
-        let ballSettings = {
-            defaultRadius: starSize.x / 2,
-            count: (3 / (200 * 200)) * environmentSize.x * environmentSize.y
-        };
-        start(environmentSettings, ballSettings);
+    //camera initialize
+    camera.width = getWidth();
+    camera.height = getHeight();
+    camera.pos = new Vector_1.Vector(-2, Math.cos(Math.PI / 2) * getWidth() / 2, Math.sin(Math.PI / 2) * getHeight() / 2);
+    //generate stars
+    let stars = (0, StarGeneration_1.randomStarDistribution)(camera.width, camera.height, seed);
+    //star update
+    let theta = 0;
+    let starUpdate = (delta) => {
+        theta = (theta + delta) % (Math.PI * 2);
+        camera.pos = new Vector_1.Vector(-2, Math.cos(theta) * camera.width / 2, Math.sin(theta) * camera.width / 2);
+        let tmp = 2 * Math.PI - (theta + (3 * Math.PI / 2)) % (Math.PI * 2);
+        camera.rot.w = Math.cos(tmp / 2);
+        camera.rot.x = Math.sin(tmp / 2);
+        let inst = camera.draw(stars, { width: getWidth(), height: getHeight() });
+        layer.html(inst.generateChildren());
     };
-    $(window).on("load", tmp);
+    starUpdate(0.001);
+    $(window).on("resize", () => {
+        camera.width = getWidth();
+        camera.height = getHeight();
+        stars = (0, StarGeneration_1.randomStarDistribution)(camera.width, camera.height, seed);
+        starUpdate(0);
+    });
+    let deltaTime = 1000 / 30;
+    let update = () => {
+        starUpdate(0.00025);
+        setTimeout(update, deltaTime);
+    };
+    setTimeout(update, deltaTime);
 }
 exports.main = main;
-
-},{"../../Math/Paths/Line":16,"../../Math/Vector":20,"./Star":10,"./StarGeneration":11}],10:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Star = exports.Edge = void 0;
-const HTMLBuilder_1 = require("../../HTMLBuilder/HTMLBuilder");
-const BezierCurve_1 = require("../../Math/Paths/BezierCurve");
-const Circle_1 = require("../../Math/Paths/Circle");
-const Line_1 = require("../../Math/Paths/Line");
-const Vector_1 = require("../../Math/Vector");
-/**
- * Edge class defines data and methods related to lines between balls
- */
-class Edge {
-    /**
-     * Edge constructor creates Edge instance
-     * @constructor
-     * @param {Star} star1: reference of starting ball
-     * @param {Star} star2: reference of ending ball
-     * @throws {Error} will throw error if ball1 and ball2 reference the same edge
-     */
-    constructor(star1, star2) {
-        if (star1.id == star2.id) {
-            throw Error("Edge cannot connect ball to itself");
-        }
-        if (star1.id < star2.id) {
-            this.star1 = star1;
-            this.star2 = star2;
-        }
-        else {
-            this.star2 = star1;
-            this.star1 = star2;
-        }
-        this.width = Edge.defaultWidth;
-        let tmp = new HTMLBuilder_1.HTMLElem("line");
-        let id = `line-${this.star1.id}-${this.star2.id}`;
-        tmp.get("id").push(new HTMLBuilder_1.AttrVal(id));
-        this.line = new HTMLBuilder_1.HTMLElem("line");
-        this.line.get("style").push(new HTMLBuilder_1.StyleAttr("stroke-width", this.width.toString()));
-        this.line.get("x1").push(new HTMLBuilder_1.AttrVal("0px"));
-        this.line.get("y1").push(new HTMLBuilder_1.AttrVal("0px"));
-        this.line.get("x2").push(new HTMLBuilder_1.AttrVal("0px"));
-        this.line.get("y2").push(new HTMLBuilder_1.AttrVal("0px"));
-        this.updateLine();
-        Edge.svg.addChild(this.line);
-    }
-    /**
-     * setSVGElemSize method sets the width and height of SVG object
-     * @param {number} width
-     * @param {number} height
-     */
-    static setSVGElemSize(width, height) {
-        Edge.size.x = width;
-        Edge.size.y = height;
-        if (Edge.svg.get("width").length == 0) {
-            Edge.svg.get("width").push(new HTMLBuilder_1.AttrVal(width.toString()));
-        }
-        else {
-            Edge.svg.get("width")[0].value = width.toString();
-        }
-        if (Edge.svg.get("height").length == 0) {
-            Edge.svg.get("height").push(new HTMLBuilder_1.AttrVal(height.toString()));
-        }
-        else {
-            Edge.svg.get("height")[0].value = height.toString();
-        }
-    }
-    /**
-     * updateSVGElem updates edges on SVG element
-     * @param edges array of edges that are being updated
-     */
-    static updateSVGElem(edges) {
-        Edge.svgJquery.html(Edge.svg.generateChildren());
-        Edge.svgJquery.attr("height", Edge.svg.get("height")[0].value);
-        Edge.svgJquery.attr("width", Edge.svg.get("width")[0].value);
-    }
-    /**
-     * updateLine method update attributes of line
-     */
-    updateLine() {
-        this.line.get("style")[0].value = this.width.toString();
-        this.line.get("x1")[0].value = `${this.star1.p.x}px`;
-        this.line.get("y1")[0].value = `${Edge.size.y - this.star1.p.y}px`;
-        this.line.get("x2")[0].value = `${this.star2.p.x}px`;
-        this.line.get("y2")[0].value = `${Edge.size.y - this.star2.p.y}px`;
-    }
-}
-exports.Edge = Edge;
-/**
- * svgJquery: HTML element that in which edges are drawn upon
- */
-Edge.svgJquery = $("#header #constellation");
-/**
- * svg: HTMLElem object that generates HTML DOM
- */
-Edge.svg = new HTMLBuilder_1.HTMLElem("svg");
-/**
- * size: Define the length and width of HTMLElem
- */
-Edge.size = new Vector_1.Vector(0, 0);
-/**
- * defaultWidth: Width of default edge between balls
- */
-Edge.defaultWidth = 3;
-/**
- * SkillBall class handles data related to skill balls in environment
- * @extends {Circle}
- */
-class Star extends Circle_1.Circle {
-    /**
-     * constructor creates Skill Ball
-     * @constructor
-     * @param {number} id: id of skill ball
-     * @param {number} radius: initial radius of skill ball
-     * @param {Vector} start: vector position of start position
-     * @param {Vector} initialVelocity: initial velocity of skill ball
-     * @param {number} mass: mass of skill ball
-     * @param {JQuery} environment: JQuery object that references the HTML physics ball environment
-     * @param {string} iconName: name of skill ball
-     */
-    constructor(id, radius, start, initialVelocity, environment) {
-        let radiusTmp = radius * (Math.random() + 0.5);
-        super(radiusTmp, start);
-        /**
-         * radiusAnim: cached values of playing animation
-         */
-        this.radiusAnim = null;
-        //connected balls
-        /**
-         * connections: array of connections that link balls
-         */
-        this.connections = [];
-        this.initialRadius = radiusTmp;
-        this.id = id;
-        this.vel = initialVelocity;
-        this.scale = 1;
-        this.element = this.buildHTML(environment);
-        this.movementLine = new Line_1.Line(this.p, this.vel, -1);
-        this.setRadius(0);
-        this.setRadiusAnimation(radius * 0.5, 0.5, Star.creationAnimation);
-    }
-    /**
-     * creationAnimation: Static const that defines default creation animation curve
-     */
-    static get creationAnimation() {
-        return new BezierCurve_1.BezierCurve([
-            new Vector_1.Vector(0, 0),
-            new Vector_1.Vector(1, 0),
-            new Vector_1.Vector(0.1, 1.5),
-            new Vector_1.Vector(1, 1)
-        ]);
-    }
-    ;
-    /**
-     * defaultAnimation: Static const that defines default animation curve
-     */
-    static get defaultAnimation() {
-        return new BezierCurve_1.BezierCurve([
-            new Vector_1.Vector(0, 0),
-            new Vector_1.Vector(1, 1)
-        ]);
-    }
-    ;
-    /**
-     * addEdge method adds an edge between ball1 and ball2
-     * @param {Star} ball1
-     * @param {Star} ball2
-     */
-    static addEdge(ball1, ball2) {
-        let edge = new Edge(ball1, ball2);
-        if (this.edgeList.length == 0) {
-            this.edgeList.push(edge);
-            ball1.connections.push(edge);
-            ball2.connections.push(edge);
-            return;
-        }
-        let id1, id2;
-        id1 = edge.star1.id;
-        id2 = edge.star2.id;
-        if (id1 == id2) {
-            return;
-        }
-        let start = 0;
-        let end = this.edgeList.length - 1;
-        let pointer;
-        let edgeTmp;
-        while (end - start < 0) {
-            pointer = start + Math.floor((end - start) / 2);
-            edgeTmp = this.edgeList[pointer];
-            if (edgeTmp.star1.id == id1) {
-                if (edgeTmp.star2.id == id2) {
-                    return;
-                }
-                //first half
-                if (id2 < edgeTmp.star2.id) {
-                    end = pointer;
-                } //second half
-                else {
-                    start = pointer;
-                }
-            }
-            else if (id1 < edgeTmp.star1.id) {
-                end = pointer;
-            }
-            else {
-                start = pointer;
-            }
-        }
-        edgeTmp = this.edgeList[start];
-        if (edgeTmp.star1.id == id1 && edgeTmp.star2.id == id2) {
-            return;
-        }
-        ball1.connections.push(edge);
-        ball2.connections.push(edge);
-        this.edgeList.splice(start + 1, 0, edge);
-    }
-    /**
-     * findEdge method finds edge that connects ball1 and ball2.
-     * Order of ball1 and ball2 does not matter
-     * @param {Star | number} ball1: reference or id of ball
-     * @param {Star | number} ball2: reference or id of ball
-     * @returns {Edge | null} Edge is returned if it exists else, null is returned
-     */
-    static findEdge(ball1, ball2) {
-        if (this.edgeList.length == 0) {
-            return null;
-        }
-        let id1, id2;
-        if (ball1 instanceof Star) {
-            id1 = ball1.id;
-        }
-        else {
-            id1 = ball1;
-        }
-        if (ball2 instanceof Star) {
-            id2 = ball2.id;
-        }
-        else {
-            id2 = ball2;
-        }
-        if (id2 < id1) {
-            let tmp = id1;
-            id1 = id2;
-            id2 = tmp;
-        }
-        let start = 0;
-        let end = this.edgeList.length - 1;
-        let pointer;
-        let edgeTmp;
-        while (end - start < 0) {
-            pointer = start + Math.floor((end - start) / 2);
-            edgeTmp = this.edgeList[pointer];
-            if (edgeTmp.star1.id == id1) {
-                if (edgeTmp.star2.id == id2) {
-                    return edgeTmp;
-                }
-                //first half
-                if (id2 < edgeTmp.star2.id) {
-                    end = pointer;
-                } //second half
-                else {
-                    start = pointer;
-                }
-            }
-            else if (id1 < edgeTmp.star1.id) {
-                end = pointer;
-            }
-            else {
-                start = pointer;
-            }
-        }
-        edgeTmp = this.edgeList[start];
-        if (edgeTmp.star1.id == id1 && edgeTmp.star2.id == id2) {
-            return edgeTmp;
-        }
-        return null;
-    }
-    /**
-     * utility method to create HTML DOM required to make Skill Ball in environment
-     * @param {JQuery} environment: JQuery object that references the HTML physics ball environment
-     * @returns {JQuery} JQuery object that references HTML DOM of skill ball
-     */
-    buildHTML(environment) {
-        let elem = new HTMLBuilder_1.HTMLElem("div");
-        elem.get("style").push(new HTMLBuilder_1.StyleAttr("width", `${this.radius * 2}px`));
-        elem.get("style").push(new HTMLBuilder_1.StyleAttr("height", `${this.radius * 2}px`));
-        let getDir = () => {
-            if (Math.random() < 0.5) {
-                return "reverse";
-            }
-            else {
-                return "normal";
-            }
-        };
-        let loadInTime = 900 * Math.random() + 100; //ms
-        elem.get("style")
-            .push(new HTMLBuilder_1.StyleAttr("animation", `loadIn ` +
-            `${loadInTime}ms `));
-        //console.log(`twinkle ${60*Math.random()+60}s ${60*Math.random()} infinite ${getDir()}`)
-        elem.get("class").push(new HTMLBuilder_1.AttrVal("star"));
-        elem.get("id").push(new HTMLBuilder_1.AttrVal(`star-${this.id}`));
-        //create dom
-        environment.append(elem.generate());
-        let tmp = environment.find(`#star-${this.id}`);
-        ;
-        setTimeout(() => {
-            tmp.css("animation", `twinkle ` +
-                `${60 * Math.random() + 60}s ` +
-                `infinite ` +
-                `${getDir()}`);
-        }, loadInTime);
+function getWidth() {
+    let tmp = svgCanvas.width();
+    if (tmp !== undefined) {
         return tmp;
     }
-    /**
-     * setRadiusAnimation method sets radius based on animationCurve
-     * @param {number} radius: new radius of skill ball
-     * @param {number | null} duration: number of seconds for a radius interpolate animation
-     * @param {BezierCurve | null | undefined} animationCurve: animation curve interpolation
-     * @returns {boolean} boolean whether animation has been set
-     */
-    setRadiusAnimation(radius, duration, animationCurve) {
-        if (radius < 0) {
-            return false;
+    throw new Error();
+}
+function getHeight() {
+    let tmp = svgCanvas.height();
+    if (tmp !== undefined) {
+        return tmp;
+    }
+    throw new Error();
+}
+
+},{"../../Math/Vector":19,"../RenderPipeLine/Camera":8,"./StarGeneration":11}],10:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Star = void 0;
+const HTMLBuilder_1 = require("../../HTMLBuilder/HTMLBuilder");
+const Matrix_1 = require("../../Math/Matrix");
+const Vector_1 = require("../../Math/Vector");
+/**
+ *  Star is a class handles the state of triangles required to render a single star
+ *
+ *
+ *  where,
+ *      v00, v01, v10, v11 are the vertex of triangle
+ *
+ *      t0, t1 are the triangles of star
+ *      t0 = [v00, v01, v11]
+ *      t1 = [v00, v11, v10]
+ *
+ *      (cx, cy) are the central point of the star & vertex are defined in local space relative to (cx, cy)
+ *
+ *  v10____________v11
+ *    |           /|
+ *    | t0       / |
+ *    |         /  |
+ *    |        /   |
+ *    |       /    |
+ *    |      /     |
+ *    |     X<─┐   |
+ *    |    /   |   |
+ *    |   /(cx, cy)|
+ *    |  /         |
+ *    | /       t1 |
+ *    |/___________|
+ *  v00            v01
+ */
+class Star {
+    constructor(pos, rot, size = Star.defaultSize, normal) {
+        this._pos = new Vector_1.Vector(0, 0);
+        this._rot = 0;
+        this.rotMatrix = Matrix_1.Matrix.rotationX(0);
+        this._size = 1;
+        this.pos = pos;
+        this.rot = rot;
+        this.size = size;
+        this._normal = normal;
+    }
+    static get defaultSize() {
+        return 1;
+    }
+    get pos() {
+        return this._pos;
+    }
+    set pos(val) {
+        this._pos = val;
+    }
+    get rot() {
+        return this._rot;
+    }
+    set rot(val) {
+        this._rot = val % (Math.PI * 2);
+        this.rotMatrix = Matrix_1.Matrix.rotationX(this._rot);
+    }
+    get size() {
+        return this._size;
+    }
+    set size(val) {
+        if (val < 0) {
+            throw new Error("size must be greater than 0");
         }
-        let animation;
-        if (animationCurve == null) {
-            animation = Star.defaultAnimation.Clone();
+        this._size = val;
+    }
+    get v00() {
+        return Vector_1.Vector.add(Vector_1.Vector.mult(Matrix_1.Matrix.vectorMult(this.rotMatrix, new Vector_1.Vector(0, -1, -1)), this.size / 2), this.pos);
+    }
+    get v01() {
+        return Vector_1.Vector.add(Vector_1.Vector.mult(Matrix_1.Matrix.vectorMult(this.rotMatrix, new Vector_1.Vector(0, -1, 1)), this.size / 2), this.pos);
+    }
+    get v10() {
+        return Vector_1.Vector.add(Vector_1.Vector.mult(Matrix_1.Matrix.vectorMult(this.rotMatrix, new Vector_1.Vector(0, 1, -1)), this.size / 2), this.pos);
+    }
+    get v11() {
+        return Vector_1.Vector.add(Vector_1.Vector.mult(Matrix_1.Matrix.vectorMult(this.rotMatrix, new Vector_1.Vector(0, 1, 1)), this.size / 2), this.pos);
+    }
+    getTriangles(cameraDir, cameraPos) {
+        let pointingTowardsCamera = Vector_1.Vector.dot(this._normal, cameraDir) < 0;
+        let inFrontOfCamera = Vector_1.Vector.dot(Vector_1.Vector.sub(this.pos, cameraPos).normalize(), cameraDir) > 0;
+        if (!pointingTowardsCamera || !inFrontOfCamera) {
+            // console.info(
+            //     "FAIL\n",
+            //     "normal:", this._normal, "\n",
+            //     "cameraDir:", cameraDir, "\n",
+            //     "pointingTowardsCamera:", pointingTowardsCamera, "\n",
+            //     "starPos:", this.pos, "\n",
+            //     "rel Pos:", Vector.sub(this.pos, cameraPos),"\t normalized:", Vector.sub(this.pos, cameraPos).normalize(), "\n",
+            //     "inFrontOfCamera:", inFrontOfCamera
+            // );
+            return [];
         }
-        else {
-            animation = animationCurve.Clone();
-        }
-        let durationTmp;
-        if (duration == null || duration == undefined) {
-            durationTmp = 1;
-        }
-        else {
-            durationTmp = duration;
-        }
-        let delta = radius - this.radius;
-        let start = this.radius;
-        animation.parameters.forEach(p => {
-            p.y = start + delta * p.y;
+        // console.info(
+        //     "Star Vertices",
+        //     [this.v00, this.v10, this.v11, this.v00, this.v11, this.v01].map(
+        //         v => Vector.add(
+        //                 Matrix.vectorMult(
+        //                     Matrix.rotationX(this.rot),
+        //                     v
+        //                 ),
+        //                 this.pos
+        //             )
+        //         )
+        // )
+        return [this.v00, this.v10, this.v11, this.v00, this.v11, this.v01];
+    }
+    draw(screenTriangle, originalSpaceTriangle) {
+        let triangle = [screenTriangle.t0, screenTriangle.t1, screenTriangle.t2];
+        let instruction = new HTMLBuilder_1.HTMLElem("polygon");
+        let points = instruction.get("points");
+        triangle.forEach(p => {
+            points.push(new HTMLBuilder_1.AttrVal(`${p.x},${p.y} `));
         });
-        this.radiusAnim = {
-            duration: durationTmp,
-            time: 0,
-            animationCurve: animation,
-            target: radius
-        };
-        return true;
-    }
-    /**
-     * setRadius sets the radius of skill ball
-     * @deprecated
-     * @param {number} radius: new radius of skill ball
-     * @returns: boolean if new radius is set
-     */
-    setRadius(radius) {
-        if (radius < 0) {
-            return false;
-        }
-        this.radius = radius;
-        this.scale = radius / this.initialRadius;
-        return true;
-    }
-    /**
-     * updateRadius method updates radius based on timeDelta and radius animation curve
-     * @param {number} timeDelta: delta time used to calculate new radius
-     */
-    updateRadius(timeDelta) {
-        if (this.radiusAnim == null) {
-            return;
-        }
-        let deltaRadius = Math.abs(this.radius - this.radiusAnim.target);
-        if (deltaRadius > 0.01) {
-            this.radiusAnim.time += timeDelta;
-            let pos = this.radiusAnim.time / this.radiusAnim.duration;
-            if (pos > 1) {
-                this.radius = this.radiusAnim.target;
-                return;
-            }
-            this.setRadius(this.radiusAnim.animationCurve.getPoint(pos).y);
-        }
-        else {
-            this.radiusAnim = null;
-        }
-    }
-    /**
-     * toString returns a string of Skill Ball
-     * @returns {String} string representation of skill ball
-     */
-    toString() {
-        return `radius:${this.radius}\np:${this.p.x},${this.p.y}\ndir:${this.vel.x},${this.vel.y}`;
-    }
-    /**
-     * move method moves ball
-     * @param {number} deltaTime: delta time used to calculate new ball position & ball radius
-     */
-    move(deltaTime) {
-        this.movementLine.p = this.p;
-        this.movementLine.gradient = this.vel;
-        this.p = this.movementLine.getPoint(deltaTime);
-        //update radius
-        this.updateRadius(deltaTime);
-    }
-    /**
-     * destroy method handles the deconstruction of SkillBall
-     */
-    destroy() {
-        let edge;
-        for (let i1 = Star.edgeList.length - 1; i1 >= 0; i1--) {
-            edge = Star.edgeList[i1];
-            if (edge.star1.id == this.id || edge.star2.id == this.id) {
-                Star.edgeList.splice(i1, 1);
-            }
-        }
+        instruction.get("fill")
+            .push(new HTMLBuilder_1.AttrVal("white"));
+        instruction.get("stroke")
+            .push(new HTMLBuilder_1.AttrVal("White"));
+        instruction.get("stroke-width")
+            .push(new HTMLBuilder_1.AttrVal("0.5"));
+        return instruction;
     }
 }
 exports.Star = Star;
-/**
- * edgeList: static array of all edges
- */
-Star.edgeList = [];
 
-},{"../../HTMLBuilder/HTMLBuilder":3,"../../Math/Paths/BezierCurve":13,"../../Math/Paths/Circle":14,"../../Math/Paths/Line":16,"../../Math/Vector":20}],11:[function(require,module,exports){
+},{"../../HTMLBuilder/HTMLBuilder":3,"../../Math/Matrix":12,"../../Math/Vector":19}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.randomPos = exports.starGenerate = void 0;
-const Circle_1 = require("../../Math/Paths/Circle");
-const Intercept_1 = require("../../Math/Paths/Intercept");
-const Rect_1 = require("../../Math/Paths/Rect");
+exports.randomStarDistribution = void 0;
+const Random_1 = require("../../Math/Random/Random");
 const Vector_1 = require("../../Math/Vector");
 const Star_1 = require("./Star");
 /**
- * ballGenerate function sets up environment and skill balls
- * @param {IEnvironmentSettings} environment
- * @param {IBallSettings} starSettings
- * @returns {Star[]} array of generated skill balls
+ * randomStarDistribution creates a random star-y sky
+ * @param {number} width: width of sky
+ * @param {number} height: height of sky
+ * @param {string | number} seed: random seed to start generation process
+ * @returns {Star[]} array of star objects
  */
-function starGenerate(environment, starSettings) {
-    /**
-     * todo
-     * Generate stars in a circular pattern around center of screen
-     *      defined using circular coordinates
-     *      (r, theta) = r * (cos(theta), sin(theta))
-     *
-     * environment of generation should be radius from center to corner of screen
-     *
-     * stars should not overlap
-     *
-     * stars should be generated using rect svg rather
-     */
-    let tmp = [];
-    //console.log(environment);
-    //console.log(starSettings);
-    for (let i1 = 0; i1 < starSettings.count; i1++) {
-        tmp.push(new Star_1.Star(i1, starSettings.defaultRadius, randomPos(starSettings.defaultRadius, new Rect_1.Rect(environment.size.x, environment.size.y, 0, new Vector_1.Vector(0, 0)), [], tmp), Vector_1.Vector.mult(Vector_1.Vector.normalize(new Vector_1.Vector(Math.random() * 2 - 1, Math.random() * 2 - 1)), 1), environment.skyJquery));
+function randomStarDistribution(width, height, seed) {
+    let stars = [];
+    let seedNext = (0, Random_1.randomStringGenerator)(seed, 10, 10);
+    let radMax = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
+    let rad = 0;
+    let radIncrementNext;
+    {
+        let minIncrRad = 50;
+        let maxIncrRad = 100;
+        let next = (0, Random_1.randomFloatGenerator)(seedNext());
+        radIncrementNext = () => {
+            return next() * (maxIncrRad - minIncrRad) + minIncrRad;
+        };
     }
-    return tmp;
+    let rotNext;
+    {
+        let next = (0, Random_1.randomFloatGenerator)(seedNext());
+        rotNext = () => {
+            return next() * Math.PI / 2;
+        };
+    }
+    let posVariance;
+    {
+        let minVar = 20;
+        let maxVar = 50;
+        let signNext = (0, Random_1.randomIntGenerator)(seedNext(), 0, 1);
+        let next = (0, Random_1.randomFloatGenerator)(seedNext());
+        posVariance = () => {
+            return new Vector_1.Vector((2 * signNext() - 1) * (next() * (maxVar - minVar) + minVar), (2 * signNext() - 1) * (next() * (maxVar - minVar) + minVar));
+        };
+    }
+    let sizeNext;
+    {
+        let minSize = 1;
+        let maxSize = 7.5;
+        let next = (0, Random_1.randomFloatGenerator)(seedNext());
+        sizeNext = () => {
+            return next() * (maxSize - minSize) + minSize;
+        };
+    }
+    let offsetNext;
+    {
+        let next = (0, Random_1.randomFloatGenerator)(seedNext());
+        offsetNext = () => next() * Math.PI * rad * 2;
+    }
+    rad = 150;
+    let offset = offsetNext();
+    //generate rings
+    while (rad < radMax) {
+        rad += radIncrementNext();
+        let next = getPoints(rad, offset);
+        let result = next();
+        //generate a single ring
+        while (result[0]) {
+            let point;
+            {
+                let tmp = polarToCartesian(result[1]);
+                point = new Vector_1.Vector(0, tmp.x, tmp.y);
+            }
+            let variance;
+            {
+                let tmp = posVariance();
+                variance = new Vector_1.Vector(0, tmp.x, tmp.y);
+            }
+            stars.push(new Star_1.Star(Vector_1.Vector.add(variance, point), rotNext(), sizeNext(), new Vector_1.Vector(-1, 0, 0)));
+            result = next();
+        }
+        offset = offsetNext();
+    }
+    return stars;
 }
-exports.starGenerate = starGenerate;
+exports.randomStarDistribution = randomStarDistribution;
 /**
- * randomBallPos returns a random valid position to generate a skill ball
- * @param {number} radius: minimum distance between position vector and entities
- * @param {Rect} space: Rect define the settings of environment and valid range
- * @param {number[]} ignore: array of indexes of entities that are ignored from intercept checks
- * @param {Path[]} entities: list of entities in the system
- * @returns {Vector} vector position of valid position
+ * getPoints is a utility function that returns an iterator of all points in a circle
+ * @param {number} radius: radius of circle
+ * @param {number} offset
+ * @returns {(): readonly [boolean, Vector]} function that returns a readonly tuple. In the format [boolean: next point exists, vector: position]
  */
-function randomPos(radius, space, ignore, entities) {
-    let circle;
-    let pos = new Vector_1.Vector(0, 0);
-    circle = new Circle_1.Circle(radius * 1.5, pos);
-    do {
-        pos.x = Math.random() * (space.width - radius) + radius;
-        pos.y = Math.random() * (space.height - radius) + radius;
-    } while ((0, Intercept_1.interceptChecks)(circle, entities, ignore).length > 0 && boundaryCheck(circle, space));
-    return pos;
+function getPoints(radius, offset = 0) {
+    let starCount;
+    {
+        let length = Math.PI * 2 * radius;
+        let starsPerDist = 100;
+        starCount = length / starsPerDist;
+    }
+    let deltaTheta = (Math.PI * 2) / starCount;
+    let theta = 0;
+    return () => {
+        if (theta > Math.PI * 2) {
+            return [false, new Vector_1.Vector(0, 0)];
+        }
+        let tmpTheta = (theta + offset) % (Math.PI * 2);
+        let pos = new Vector_1.Vector(radius, tmpTheta);
+        theta += deltaTheta;
+        return [true, pos];
+    };
 }
-exports.randomPos = randomPos;
-function boundaryCheck(star, system) {
-    let bufferZone = -5;
-    if (star.p.x - star.radius + bufferZone < 0 || system.width < star.p.x + star.radius - bufferZone) {
-        return false;
-    }
-    if (star.p.y - star.radius + bufferZone < 0 || system.height < star.p.y + star.radius - bufferZone) {
-        return false;
-    }
-    return true;
+function polarToCartesian(polar) {
+    let rad = polar.x;
+    let theta = polar.y;
+    return new Vector_1.Vector(rad * Math.cos(theta), rad * Math.sin(theta));
 }
 
-},{"../../Math/Paths/Circle":14,"../../Math/Paths/Intercept":15,"../../Math/Paths/Rect":17,"../../Math/Vector":20,"./Star":10}],12:[function(require,module,exports){
+},{"../../Math/Random/Random":18,"../../Math/Vector":19,"./Star":10}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Matrix = void 0;
@@ -1996,79 +1698,7 @@ class Matrix {
 }
 exports.Matrix = Matrix;
 
-},{"./Vector":20}],13:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BezierCurve = void 0;
-const Line_1 = require("./Line");
-const Vector_1 = require("../Vector");
-/**
- * BezierCurve class defines a point and methods required to make a bezier curve
- * @extends {Path}
- */
-class BezierCurve {
-    /**
-     * @constructor Constructor creates BezierCurve object
-     * @param parameters
-     */
-    constructor(parameters) {
-        /**
-         * parameters is an array of positions that define bezier curve
-         */
-        this.parameters = [];
-        if (parameters.length < 2) {
-            throw new Error("parameters must have at least size 2");
-        }
-        this.parameters = parameters;
-    }
-    /**
-     * getPoint method get a point from bezier curve
-     * @param {number} t: number [0:1] define a point on bezier curve
-     * @returns {Vector} vector position of bezier curve at t
-     */
-    getPoint(t) {
-        if (t < 0 || 1 < t) {
-            throw new Error("out of range [0,1]");
-        }
-        let line;
-        let parameterTmp = Object.assign([], this.parameters);
-        let linesTmp;
-        while (parameterTmp.length > 1) {
-            //create lines
-            linesTmp = [];
-            for (let i1 = 0; i1 < parameterTmp.length - 1; i1++) {
-                linesTmp.push(new Line_1.Line(parameterTmp[i1], Vector_1.Vector.sub(parameterTmp[i1 + 1], parameterTmp[i1]), -1));
-            }
-            //update parameterTmp with new values at t
-            parameterTmp = [];
-            for (let i1 = 0; i1 < linesTmp.length; i1++) {
-                parameterTmp.push(linesTmp[i1].getPoint(t));
-            }
-        }
-        return parameterTmp[0];
-    }
-    /**
-     * getCenter method returns the center point of bezier curve
-     * @returns {Vector} vector position of bezier curve at t
-     */
-    getCenter() {
-        return this.getPoint(0.5);
-    }
-    /**
-     * Clone method creates a deep copy of BezierCurve object
-     * @returns {BezierCurve} deep copy of BezierCurve
-     */
-    Clone() {
-        let tmp = [];
-        this.parameters.forEach(p => {
-            tmp.push(p.clone());
-        });
-        return new BezierCurve(tmp);
-    }
-}
-exports.BezierCurve = BezierCurve;
-
-},{"../Vector":20,"./Line":16}],14:[function(require,module,exports){
+},{"./Vector":19}],13:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Circle = void 0;
@@ -2121,7 +1751,7 @@ class Circle {
 }
 exports.Circle = Circle;
 
-},{"../Vector":20}],15:[function(require,module,exports){
+},{"../Vector":19}],14:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.interceptCheck = exports.interceptChecks = exports.rayCheck = exports.rayChecks = void 0;
@@ -2362,7 +1992,7 @@ function LineRectIntercept(l, r) {
     return tmp;
 }
 
-},{"../Vector":20,"./Circle":14,"./Line":16,"./Rect":17}],16:[function(require,module,exports){
+},{"../Vector":19,"./Circle":13,"./Line":15,"./Rect":16}],15:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Line = void 0;
@@ -2425,7 +2055,7 @@ class Line {
 }
 exports.Line = Line;
 
-},{"../Vector":20}],17:[function(require,module,exports){
+},{"../Vector":19}],16:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Rect = void 0;
@@ -2555,7 +2185,7 @@ class Rect {
 }
 exports.Rect = Rect;
 
-},{"../Vector":20,"./Line":16}],18:[function(require,module,exports){
+},{"../Vector":19,"./Line":15}],17:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Quaternion = void 0;
@@ -2748,7 +2378,7 @@ class Quaternion extends Matrix_1.Matrix {
 }
 exports.Quaternion = Quaternion;
 
-},{"./Matrix":12,"./Vector":20}],19:[function(require,module,exports){
+},{"./Matrix":12,"./Vector":19}],18:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.randomStringGenerator = exports.randomFloatGenerator = exports.randomIntGenerator = void 0;
@@ -2850,7 +2480,7 @@ function seedToNumber(seedStr) {
     return Number.parseInt(tmp);
 }
 
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Vector = void 0;
