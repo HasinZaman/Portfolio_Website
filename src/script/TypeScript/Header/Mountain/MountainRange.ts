@@ -36,7 +36,7 @@ export function main() {
  * @param {number} width: width of svg environment
  * @param {number} height: height of svg environment
  * @param {string | number} seed: random seed to start generation process
- * @returns 
+ * @returns {Pyramid[]} array of pyramids that represents a mountain range
  */
 function generateMountainRange(width:number, height:number, seed: string | number) : Pyramid[] {
     width = getWidth()
