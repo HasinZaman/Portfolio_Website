@@ -4,7 +4,7 @@ This repository contains the source code for the front end of my [portfolio webs
 
 # Render Pipe Line
 
-The website uses its own proprietary render pipeline to create a dynamic header. In which, triangles in 3D converted into a set svg xml elements.
+The website uses its own proprietary render pipeline to create a dynamic header. In which, points & triangles in 3D space converted into a set svg xml elements.
 
 The relevant files are
  - [RenderPipeLine](src/script/TypeScript/Header/RenderPipeLine/)
