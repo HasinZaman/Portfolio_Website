@@ -7,9 +7,9 @@ This repository contains the source code for the front end of my [portfolio webs
 The website uses its own proprietary render pipeline to create a dynamic header. In which, points & triangles in 3D space converted into a set svg xml elements.
 
 The relevant files are
- - [RenderPipeLine](src/script/TypeScript/Header/RenderPipeLine/)
- - [Mountain](src/script/TypeScript/Header/Mountain/)
- - [Star](src/script/TypeScript/Header/Stars/)
+ - [Render PipeLine](src/script/TypeScript/Header/RenderPipeLine/)
+ - [Mountain Generation](src/script/TypeScript/Header/Mountain/)
+ - [Star Generation](src/script/TypeScript/Header/Stars/)
  - [Math](src/script//TypeScript/Math/)
 
 # Random
