@@ -1,7 +1,5 @@
-import { Quaternion } from "../../Math/Quaternion";
 import { Vector } from "../../Math/Vector";
 import { Camera } from "../RenderPipeLine/Camera";
-import { Star } from "./Star";
 import { randomStarDistribution } from "./StarGeneration";
 
 let svgCanvas = $("section#header > svg");
