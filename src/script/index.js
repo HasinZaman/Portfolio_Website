@@ -124,7 +124,7 @@ class ProjectList {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                data: JSON.stringify(["project"])
+                data: JSON.stringify(["projects"])
             }).done(function (dataRaw) {
                 if (dataRaw.length != 1) {
                     throw Error("Expect one value");
@@ -133,10 +133,18 @@ class ProjectList {
                 let tags = Tag_1.TagList.getInstance().tags;
                 for (let i = 0; i < projectJson.length; i++) {
                     let tmp = projectJson[i];
+                    if (tmp["Update"] == "null") {
+                        let date = new Date();
+                        let day = date.getDate();
+                        let month = date.getMonth() + 1;
+                        let year = date.getFullYear();
+                        tmp["Update"] = year + "-" + month + "-" + day;
+                    }
+                    console.log(tmp);
                     ProjectList.getInstance()
                         .updateProject(tags.findIndex((tag) => {
                         return tag.id == tmp["Tag"];
-                    }), new Date(tmp["Start"][0], tmp["Start"][1]), new Date(tmp["Update"][0], tmp["Update"][1]), tmp["Description"], tmp["link"]);
+                    }), new Date(tmp["Start"]), new Date(tmp["Update"]), tmp["Description"], tmp["link"]);
                 }
                 listener();
             });
