@@ -171,9 +171,17 @@ export class TagList{
         return this.tags_[id];
     }
 
+    /**
+     * updateCallbackFunctions method adds a listener to the end of callback function stack
+     * @param {() => void} listener
+     */
     private updateCallbackFunctions(listener: () => void) {
         this.callbackFunctions.push(listener)
     }
+
+    /**
+     * runCallbacks method calls and pops every closure stored in callbackFunctions
+     */
     private runCallbacks() {
         let i1 = 0;
         while (0 < this.callbackFunctions.length) {
