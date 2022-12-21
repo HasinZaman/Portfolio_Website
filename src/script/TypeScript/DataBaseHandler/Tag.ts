@@ -75,8 +75,6 @@ export class TagList{
 
     private updateWait: boolean = false;
     private callbackFunctions: (()=> void)[] = [() => {this.updateWait = false}];
-    private timeout : NodeJS.Timeout | undefined = undefined;
-    private waitTime: number = 50;
     /**
      * tags getter returns array of tags 
      */
@@ -195,35 +193,29 @@ export class TagList{
     public update(listener: () => void) {
         this.updateCallbackFunctions(listener);
         if (!this.updateWait) {
-            this.timeout = setTimeout(
-                () => {
-                    $.ajax({
-                        type: "POST",
-                        url: "get_data",
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        data : JSON.stringify(["tag", "related"])
-                    }).done(( dataRaw ) => {
-                        if (dataRaw.length != 2) {
-                            throw Error("Expect one value")
-                        }
-                        let tagJson = JSON.parse(dataRaw[0])["data"];
-                        let connectionsJson = JSON.parse(dataRaw[1])["data"];
-            
-                        for (let i = 0; i < tagJson.length; i++) {
-                            TagList.getInstance().updateTag(tagJson[i]["id"], tagJson[i]["colour"], tagJson[i]["symbol"], tagJson[i]["tag_type"]);
-                        }
-            
-                        for (let i = 0; i < connectionsJson.length; i++) {
-                            TagList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"])
-                        }
-                        this.runCallbacks();
-                    })
-
+            $.ajax({
+                type: "POST",
+                url: "get_data",
+                headers: {
+                    'Content-Type': 'application/json'
                 },
-                this.waitTime
-            );
+                data : JSON.stringify(["tag", "related"])
+            }).done(( dataRaw ) => {
+                if (dataRaw.length != 2) {
+                    throw Error("Expect one value")
+                }
+                let tagJson = JSON.parse(dataRaw[0])["data"];
+                let connectionsJson = JSON.parse(dataRaw[1])["data"];
+    
+                for (let i = 0; i < tagJson.length; i++) {
+                    TagList.getInstance().updateTag(tagJson[i]["id"], tagJson[i]["colour"], tagJson[i]["symbol"], tagJson[i]["tag_type"]);
+                }
+    
+                for (let i = 0; i < connectionsJson.length; i++) {
+                    TagList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"])
+                }
+                this.runCallbacks();
+            })
             this.updateWait = true;
         }
         

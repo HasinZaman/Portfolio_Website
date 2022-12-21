@@ -76,8 +76,6 @@ export class ProjectList {
 
     private updateWait: boolean = false;
     private callbackFunctions: (()=> void)[] = [() => {this.updateWait = false}];
-    private timeout : NodeJS.Timeout | undefined = undefined;
-    private waitTime: number = 50;
 
     private get keys() : number[] {
         return TagList.getInstance().projects;
@@ -132,53 +130,48 @@ export class ProjectList {
         .update(() => {
             this.updateCallbackFunctions(listener);
             if (!this.updateWait) {
-                this.timeout = setTimeout(
-                    () => {
-                        $.ajax({
+                $.ajax({
                             type: "POST",
                             url: "get_data",
                             headers: {
                                 'Content-Type': 'application/json'
                             },
                             data : JSON.stringify(["projects"])
-                        }).done((dataRaw) => {
-                            if (dataRaw.length != 1) {
-                                throw Error("Expect one value")
-                            }
-                            let projectJson = JSON.parse(dataRaw[0])["data"];
-                            let tags = TagList.getInstance().tags;
-                            
-                            for (let i = 0; i < projectJson.length; i++) {
-                                let tmp = projectJson[i];
-            
-                                if (tmp["Update"]=="null") {
-                                    let date = new Date();
-            
-                                    let day = date.getDate();
-                                    let month = date.getMonth()+1;
-                                    let year = date.getFullYear();
-            
-                                    tmp["Update"] = year+"-"+month+"-"+day;
-                                }
-            
-                                ProjectList.getInstance()
-                                    .updateProject(
-                                        tags.findIndex(
-                                            (tag : Tag) => {
-                                                return tag.id == tmp["Tag"]
-                                            }
-                                        ),
-                                        new Date(tmp["Start"]),
-                                        new Date(tmp["Update"]),
-                                        tmp["Description"],
-                                        tmp["link"]
-                                    );
-                            }
-                            this.runCallbacks();
-                        });
-                    },
-                    this.waitTime
-                );
+                }).done((dataRaw) => {
+                    if (dataRaw.length != 1) {
+                        throw Error("Expect one value")
+                    }
+                    let projectJson = JSON.parse(dataRaw[0])["data"];
+                    let tags = TagList.getInstance().tags;
+                    
+                    for (let i = 0; i < projectJson.length; i++) {
+                        let tmp = projectJson[i];
+    
+                        if (tmp["Update"]=="null") {
+                            let date = new Date();
+    
+                            let day = date.getDate();
+                            let month = date.getMonth()+1;
+                            let year = date.getFullYear();
+    
+                            tmp["Update"] = year+"-"+month+"-"+day;
+                        }
+    
+                        ProjectList.getInstance()
+                            .updateProject(
+                                tags.findIndex(
+                                    (tag : Tag) => {
+                                        return tag.id == tmp["Tag"]
+                                    }
+                                ),
+                                new Date(tmp["Start"]),
+                                new Date(tmp["Update"]),
+                                tmp["Description"],
+                                tmp["link"]
+                            );
+                    }
+                    this.runCallbacks();
+                });
                 this.updateWait = true;
             }
             
