@@ -87,6 +87,10 @@ exports.Project = Project;
  */
 class ProjectList {
     constructor() {
+        this.updateWait = false;
+        this.callbackFunctions = [() => { this.updateWait = false; }];
+        this.timeout = undefined;
+        this.waitTime = 50;
         this._projects = [];
     }
     get keys() {
@@ -111,6 +115,19 @@ class ProjectList {
         }
         return ProjectList.instance;
     }
+    updateCallbackFunctions(listener) {
+        this.callbackFunctions.push(listener);
+    }
+    runCallbacks() {
+        let i1 = 0;
+        while (0 < this.callbackFunctions.length) {
+            let callback = this.callbackFunctions.pop();
+            if (callback != undefined) {
+                callback();
+            }
+        }
+        this.callbackFunctions = [() => { this.updateWait = false; }];
+    }
     /**
      * update method gets list of Skill and organizational tags from database
      * @param {() => void} listener: function that is called after database information is retrieved
@@ -118,36 +135,41 @@ class ProjectList {
     update(listener) {
         Tag_1.TagList.getInstance()
             .update(() => {
-            $.ajax({
-                type: "POST",
-                url: "get_data",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: JSON.stringify(["projects"])
-            }).done(function (dataRaw) {
-                if (dataRaw.length != 1) {
-                    throw Error("Expect one value");
-                }
-                let projectJson = JSON.parse(dataRaw[0])["data"];
-                let tags = Tag_1.TagList.getInstance().tags;
-                for (let i = 0; i < projectJson.length; i++) {
-                    let tmp = projectJson[i];
-                    if (tmp["Update"] == "null") {
-                        let date = new Date();
-                        let day = date.getDate();
-                        let month = date.getMonth() + 1;
-                        let year = date.getFullYear();
-                        tmp["Update"] = year + "-" + month + "-" + day;
-                    }
-                    console.log(tmp);
-                    ProjectList.getInstance()
-                        .updateProject(tags.findIndex((tag) => {
-                        return tag.id == tmp["Tag"];
-                    }), new Date(tmp["Start"]), new Date(tmp["Update"]), tmp["Description"], tmp["link"]);
-                }
-                listener();
-            });
+            this.updateCallbackFunctions(listener);
+            if (!this.updateWait) {
+                this.timeout = setTimeout(() => {
+                    $.ajax({
+                        type: "POST",
+                        url: "get_data",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data: JSON.stringify(["projects"])
+                    }).done((dataRaw) => {
+                        if (dataRaw.length != 1) {
+                            throw Error("Expect one value");
+                        }
+                        let projectJson = JSON.parse(dataRaw[0])["data"];
+                        let tags = Tag_1.TagList.getInstance().tags;
+                        for (let i = 0; i < projectJson.length; i++) {
+                            let tmp = projectJson[i];
+                            if (tmp["Update"] == "null") {
+                                let date = new Date();
+                                let day = date.getDate();
+                                let month = date.getMonth() + 1;
+                                let year = date.getFullYear();
+                                tmp["Update"] = year + "-" + month + "-" + day;
+                            }
+                            ProjectList.getInstance()
+                                .updateProject(tags.findIndex((tag) => {
+                                return tag.id == tmp["Tag"];
+                            }), new Date(tmp["Start"]), new Date(tmp["Update"]), tmp["Description"], tmp["link"]);
+                        }
+                        this.runCallbacks();
+                    });
+                }, this.waitTime);
+                this.updateWait = true;
+            }
         });
     }
     updateProject(primaryTag, start, update, desc, link) {
@@ -222,6 +244,11 @@ class TagList {
         this.tags_ = {};
         this.keys = [];
         this.connections_ = [];
+        this.lastUpdate = Date.now();
+        this.updateWait = false;
+        this.callbackFunctions = [() => { this.updateWait = false; }];
+        this.timeout = undefined;
+        this.waitTime = 50;
         this.tags_ = {};
         this.connections_ = [];
     }
@@ -295,32 +322,51 @@ class TagList {
     getById(id) {
         return this.tags_[id];
     }
+    updateCallbackFunctions(listener) {
+        this.callbackFunctions.push(listener);
+    }
+    runCallbacks() {
+        let i1 = 0;
+        while (0 < this.callbackFunctions.length) {
+            let callback = this.callbackFunctions.pop();
+            if (callback != undefined) {
+                callback();
+            }
+        }
+        this.callbackFunctions = [() => { this.updateWait = false; }];
+    }
     /**
      * update method gets list of Tag and organizational tags from database
      * @param {() => void} listener: function that is called after database information is retrieved
      */
     update(listener) {
-        $.ajax({
-            type: "POST",
-            url: "get_data",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: JSON.stringify(["tag", "related"])
-        }).done(function (dataRaw) {
-            if (dataRaw.length != 2) {
-                throw Error("Expect one value");
-            }
-            let tagJson = JSON.parse(dataRaw[0])["data"];
-            let connectionsJson = JSON.parse(dataRaw[1])["data"];
-            for (let i = 0; i < tagJson.length; i++) {
-                TagList.getInstance().updateTag(tagJson[i]["id"], tagJson[i]["colour"], tagJson[i]["symbol"], tagJson[i]["tag_type"]);
-            }
-            for (let i = 0; i < connectionsJson.length; i++) {
-                TagList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"]);
-            }
-            listener();
-        });
+        this.updateCallbackFunctions(listener);
+        if (!this.updateWait) {
+            this.timeout = setTimeout(() => {
+                $.ajax({
+                    type: "POST",
+                    url: "get_data",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify(["tag", "related"])
+                }).done((dataRaw) => {
+                    if (dataRaw.length != 2) {
+                        throw Error("Expect one value");
+                    }
+                    let tagJson = JSON.parse(dataRaw[0])["data"];
+                    let connectionsJson = JSON.parse(dataRaw[1])["data"];
+                    for (let i = 0; i < tagJson.length; i++) {
+                        TagList.getInstance().updateTag(tagJson[i]["id"], tagJson[i]["colour"], tagJson[i]["symbol"], tagJson[i]["tag_type"]);
+                    }
+                    for (let i = 0; i < connectionsJson.length; i++) {
+                        TagList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"]);
+                    }
+                    this.runCallbacks();
+                });
+            }, this.waitTime);
+            this.updateWait = true;
+        }
     }
     /**
      * updateTag method update tag with specific id
