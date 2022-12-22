@@ -1,0 +1,492 @@
+@import "variables_and_functions.scss";
+
+body {
+	#aboutMe {
+		width: 100%;
+		height: fit-content;
+
+		$padding: 10px;
+
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+
+		//cube settings
+		
+		$sideLength: 40vw;
+		$borderWidth: 2px;
+		$marginPadding: 20px;
+
+		> * {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			padding: $padding;
+			width: calc(50% - #{$padding} * 2);
+
+			//https://stackoverflow.com/questions/12328259/how-do-you-strip-the-unit-from-any-number-in-sass
+			@function stripUnits($number) {
+				@return $number / ($number * 0 + 1);
+			}
+
+			//https://www.antimath.info/css/sass-sqrt-function/
+			@function sqrt($r) {
+				$x0: 1;
+				$x1: $x0;
+
+				@for $i from 1 through 10 {
+					$x1: $x0 - ($x0 * $x0 - abs($r)) / (2 * $x0);
+					$x0: $x1;
+				}
+
+				@return $x1;
+			}
+
+			//a^n
+			@function pow($a, $n) {
+				$tmp : 1;
+
+				@for $i from 1 through $n {
+					$tmp: $tmp * $a;
+				}
+
+				@return $tmp;
+			}
+		
+			.cube {
+
+				width: $sideLength !important;
+				height: $sideLength !important;
+
+				position: relative;
+				transform-style: preserve-3d;
+				transition: transform 1000ms ease-in-out;
+				padding: 0 !important;
+				
+				div {
+					width: calc(#{$sideLength} - #{$borderWidth}) !important;
+					height: calc(#{$sideLength} - #{$borderWidth}) !important;
+					position: absolute;
+					padding: 0 !important;
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					align-items: center;
+					border: solid white #{$borderWidth};
+					background-color: $bg2;
+
+					img {
+						width: 50%;
+						height: auto;
+					}
+
+					text {
+						padding: 10%;
+						width: fit-content;
+						height: fit-content;
+						text-align: center;
+					}
+	
+				}
+
+				.front {
+					transform: translateZ($sideLength/2);
+				}
+
+				.back {
+					transform: translateZ(-1 * $sideLength/2) scaleX(-1);
+				}
+
+				.left {
+					transform: translateX(-1 * $sideLength/2) rotateY(90deg) scaleX(-1);
+				}
+
+				.right {
+					transform: translateX($sideLength/2) rotateY(-90deg) scaleX(-1);
+				}
+
+				.up {
+					transform: translateY(-1 * $sideLength/2) rotateX(90deg);
+				}
+
+				.down {
+					transform: translateY($sideLength/2) rotateX(-90deg);
+				}
+			}
+
+			.cube[front="front"] {
+				transform : rotateY(0deg);
+			}
+			.cube[front="back"] {
+				transform : rotateY(180deg);
+			}
+			.cube[front="left"] {
+				transform : rotateY(90deg);
+			}
+			.cube[front="right"] {
+				transform : rotateY(270deg);
+			}
+			.cube[front="up"] {
+				transform : rotateX(-90deg);
+			}
+			.cube[front="down"] {
+				transform : rotateX(90deg);
+			}
+		}
+	}
+
+	#skills {
+		display: flex;
+		flex-direction: column;
+
+		justify-content: center;
+		align-items: center;
+
+		> div{
+
+			$outlineWidth: 5px;
+
+			width: 75%;
+
+			margin: 30px;
+
+			$sideLength: 100px;
+
+			display: grid;
+
+			grid-template-columns: repeat(auto-fill, minmax($sideLength, 1fr));
+			grid-auto-columns: $sideLength;
+			grid-auto-rows: $sideLength;
+
+			//grid-gap: $outlineWidth;
+
+			grid-auto-flow: row dense;
+
+			position: relative;
+
+			overflow: hidden;
+
+			> .skill {
+				// width: calc(100% - $outlineWidth);
+				// height: calc(100% - $outlineWidth);
+
+				display: flex;
+				flex-direction: column;
+
+				justify-content: center;
+				align-items: center;
+
+				z-index: 1;
+
+				background-color: $bg2;
+
+				border: solid 0 white;
+				
+				transition: border-width ease-in-out 250ms;
+
+				* {
+					cursor: pointer;
+				}
+
+				> img {
+					width: $sideLength * 0.50;
+					height: $sideLength * 0.50;
+				}
+	
+				> div {
+					color: white;
+					mix-blend-mode: difference;
+				}
+			}
+
+			> .selected {
+				background-color: rgba(0,0,0,0);
+				border-style: solid;
+			}
+
+			> .bg {
+				position: absolute;
+
+				width: 100%;
+				height: 100%;
+
+				z-index: 0;
+
+				transform: translatey(100%);
+
+				animation-name: slideIn;
+				animation-duration: 500ms;
+			}
+
+			@keyframes slideIn {
+				0% {
+					transform: translatey(100%);
+				}
+				90% {
+					transform: translatey(0%);
+				}
+			}
+		}
+		
+		nav {
+			margin-top: 10px;
+			display: flex;
+			flex-direction: row;
+			> div {
+				position: relative;
+
+				padding: 10px;
+				margin-left: 2px;
+				margin-right: 2px;
+
+				font-size: 20px;
+
+				color: white;
+				//mix-blend-mode: difference;
+
+				cursor: pointer;
+
+				text-align: center;
+
+				overflow: hidden;
+				z-index: 1;
+				> span {
+					z-index: 1;
+
+				}
+			}
+
+			.selected::after {
+				mix-blend-mode: difference;
+				top: 0%;
+			}
+			div::after {
+				content: "";
+
+				position: absolute;
+
+				width: 100%;
+				height: 100%;
+
+				top: 100%;
+				left: 0;
+
+				opacity: 0.75;
+
+				transition: top ease-out 250ms;
+
+				z-index: 0;
+			}
+
+			div:hover{
+				padding: 5px;
+				border: solid 5px;
+			}
+		}
+	}
+
+	#portfolio {
+		display: flex;
+		flex-direction: column;
+
+		justify-content: center;
+		align-items: center;
+
+		height: -moz-fit-content;
+		height: fit-content;
+
+		> * {
+			width: 75%;
+		}
+
+		#search {
+			display: flex;
+			position: relative;
+			
+			justify-content: flex-start;
+
+			flex-wrap: wrap;
+
+			padding-bottom: 5px;
+			border-bottom: solid white 2px;
+
+			* {
+				margin-left: 4px;
+			}
+
+			.searchBox{
+				position: relative;
+
+				flex-grow: 1;
+
+				input{
+					all: unset;
+					width: 100%;
+					padding: $tagPadding + $tagBorderWidth;
+				}
+
+				input:focus ~ .suggestions, .suggestions:hover{
+					display:block !important;
+				}
+				input:focus ~ img {
+					right: 0;
+				}
+				.suggestions {
+					display: none !important;
+					> div {
+						background-color: $bg1;
+
+						padding: 5px 10px;
+
+						transform: translate(-10px, 0px);
+
+						color: white;
+
+						cursor: pointer;
+
+						b {
+							margin: 0;
+						}
+					}
+					> div:hover {
+						background-color: white;
+						color: $bg2;
+					}
+					position: absolute;
+				}
+
+				img {
+					z-index: -1;
+					position: absolute;
+
+					height: 28.4px;
+					width: 28.4px;
+
+					top: 0;
+
+					right: calc(100% - 28.4px);
+
+					transition: right 500ms;
+				}
+			}
+		}
+
+		@media only screen and (max-width: 460px) {
+			#columns {
+				display: block !important;
+				> * {
+					display: none !important;
+				}
+				.sortBy {
+					display: inline-block !important;
+				}
+			}
+		}
+		#columns {
+			display: grid;
+			grid-template-columns: auto 100px 150px;
+			column-gap: 10px;
+			
+			*:not(.sortBy) {
+				width: -moz-fit-content;
+				width: fit-content;
+
+				cursor: pointer;
+
+				border-bottom: solid 2px rgba(0,0,0,0);
+			}
+			*:not(:first-child) {
+				justify-self: center;
+				align-self: center;
+			}
+			*:not(.sortBy):hover, .selected {
+				border-bottom-color: white;
+			}
+
+			.sortBy {
+				display: none;
+			}
+		}
+
+		@media only screen and (max-width: 460px) {
+			#results > div {
+				grid-template-columns: auto auto !important;
+				grid-template-rows: 1fr 1fr auto auto !important;
+
+				grid-template-areas:
+				"name name"
+				"start update"
+				"tag tag"
+				"desc desc"
+				!important;
+
+				* {
+					align-content: center;
+					align-self: center;
+				}
+			}
+		}
+
+		#results > div {
+			display: grid;
+			grid-template-columns: auto 100px 150px;
+			grid-template-rows: 1fr 1fr auto;
+
+			column-gap: 10px;
+			row-gap: 8px;
+
+			grid-template-areas:
+			"name start update"
+			"tag tag tag"
+			"desc desc desc";
+
+			margin-top: 8px;
+			//margin-top: 10px;
+
+			* {
+				align-self: center;
+			}
+
+			#start {
+				grid-area: start;
+				text-align: center;
+			}
+			#update {
+				grid-area: update;
+				text-align: center;
+			}
+			#desc {
+				grid-area: desc;
+			}
+			#name {
+				grid-area: name;
+
+				width: -moz-fit-content;
+				width: fit-content;
+
+				font-size: 1.5em;
+
+				border-bottom: solid rgba(0,0,0,0) 2px;
+
+				cursor: pointer;
+			}
+			#name:hover {
+				font-style: bold;
+				// border-bottom: solid white 2px;
+			}
+			#name::after{
+				bottom: -5px;
+				height: 2px;
+			}
+			#tags {
+				grid-area: tag;
+			
+				.tag {
+					cursor: pointer;
+				}
+			}
+		}
+	}
+}

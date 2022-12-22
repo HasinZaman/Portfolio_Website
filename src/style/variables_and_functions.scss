@@ -1,0 +1,14 @@
+//colours
+$col1 : rgb(173,60,92);
+$col2 : rgb(54,3,97);
+$col3 : rgb(223,124,60);
+
+$bg1 : rgb(0, 33, 55);
+$bg2 : rgb(0, 17, 28);
+
+@function RGBtoRGBA($col, $alpha) {
+	@return rgba(red($col), green($col), blue($col), 0.75);
+}
+//Tag constants
+$tagPadding: 2px;
+$tagBorderWidth: 3px;

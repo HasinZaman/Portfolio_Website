@@ -1,0 +1,84 @@
+@import "variables_and_functions.scss";
+
+#summary{
+
+    margin-top:40px;
+
+    h1{
+
+    }
+    #activity{
+        *{
+            padding: 0;
+        }
+        #start {
+
+        }
+        #update::before{
+            content:"- ";
+        }
+        #update{
+
+        }
+    }
+    a.repo::before{
+        content: "Repo: ";
+    }
+}
+
+article{
+
+    width: 75%;
+
+    margin: auto;
+    margin-top:20px;
+
+    display: flex;
+    flex-direction: column;
+
+    *{
+        padding: 4px;
+    }
+
+    h1, h2 {
+        margin-bottom: -5px;
+    }
+    .date {
+        font-size: small;
+    }
+
+    > span, > a, .date {
+        width: fit-content;
+        color: scale-color($col2, $lightness: 80%, $saturation: -50%);
+    }
+
+    > a::after {
+        height: 1px;
+        bottom: 0.5px;
+    }
+
+    @function repeat($val, $count) {
+        @if $count < 1 {
+            @return "";
+        }
+        @return $val + repeat($val, $count - 1);
+    }
+
+    .content, summary{
+        display: block;
+
+        width: 90%;
+        margin: auto;
+
+        @for $i1 from 1 to 6 {
+            h#{$i1} {
+                margin-left: -10px;
+            }
+            h#{$i1}::before{
+                content: repeat("#", $i1);
+                margin-right: 10px;
+            }
+        }
+
+    }
+}

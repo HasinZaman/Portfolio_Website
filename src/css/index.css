@@ -1,0 +1,459 @@
+/* line 4, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* line 21, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe > * {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  width: calc(50% - 10px * 2);
+}
+
+/* line 58, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe > * .cube {
+  width: 40vw !important;
+  height: 40vw !important;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 1000ms ease-in-out;
+  padding: 0 !important;
+}
+
+/* line 68, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe > * .cube div {
+  width: calc(40vw - 2px) !important;
+  height: calc(40vw - 2px) !important;
+  position: absolute;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: solid white 2px;
+  background-color: #00111c;
+}
+
+/* line 80, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe > * .cube div img {
+  width: 50%;
+  height: auto;
+}
+
+/* line 85, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe > * .cube div text {
+  padding: 10%;
+  width: fit-content;
+  height: fit-content;
+  text-align: center;
+}
+
+/* line 94, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe > * .cube .front {
+  transform: translateZ(20vw);
+}
+
+/* line 98, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe > * .cube .back {
+  transform: translateZ(-20vw) scaleX(-1);
+}
+
+/* line 102, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe > * .cube .left {
+  transform: translateX(-20vw) rotateY(90deg) scaleX(-1);
+}
+
+/* line 106, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe > * .cube .right {
+  transform: translateX(20vw) rotateY(-90deg) scaleX(-1);
+}
+
+/* line 110, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe > * .cube .up {
+  transform: translateY(-20vw) rotateX(90deg);
+}
+
+/* line 114, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe > * .cube .down {
+  transform: translateY(20vw) rotateX(-90deg);
+}
+
+/* line 119, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe > * .cube[front="front"] {
+  transform: rotateY(0deg);
+}
+
+/* line 122, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe > * .cube[front="back"] {
+  transform: rotateY(180deg);
+}
+
+/* line 125, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe > * .cube[front="left"] {
+  transform: rotateY(90deg);
+}
+
+/* line 128, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe > * .cube[front="right"] {
+  transform: rotateY(270deg);
+}
+
+/* line 131, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe > * .cube[front="up"] {
+  transform: rotateX(-90deg);
+}
+
+/* line 134, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #aboutMe > * .cube[front="down"] {
+  transform: rotateX(90deg);
+}
+
+/* line 140, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #skills {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* line 147, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #skills > div {
+  width: 75%;
+  margin: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-auto-columns: 100px;
+  grid-auto-rows: 100px;
+  grid-auto-flow: row dense;
+  position: relative;
+  overflow: hidden;
+}
+
+/* line 171, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #skills > div > .skill {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  background-color: #00111c;
+  border: solid 0 white;
+  transition: border-width ease-in-out 250ms;
+}
+
+/* line 189, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #skills > div > .skill * {
+  cursor: pointer;
+}
+
+/* line 193, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #skills > div > .skill > img {
+  width: 50px;
+  height: 50px;
+}
+
+/* line 198, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #skills > div > .skill > div {
+  color: white;
+  mix-blend-mode: difference;
+}
+
+/* line 204, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #skills > div > .selected {
+  background-color: rgba(0, 0, 0, 0);
+  border-style: solid;
+}
+
+/* line 209, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #skills > div > .bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  transform: translatey(100%);
+  animation-name: slideIn;
+  animation-duration: 500ms;
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translatey(100%);
+  }
+  90% {
+    transform: translatey(0%);
+  }
+}
+
+/* line 233, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #skills nav {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+/* line 237, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #skills nav > div {
+  position: relative;
+  padding: 10px;
+  margin-left: 2px;
+  margin-right: 2px;
+  font-size: 20px;
+  color: white;
+  cursor: pointer;
+  text-align: center;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* line 255, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #skills nav > div > span {
+  z-index: 1;
+}
+
+/* line 261, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #skills nav .selected::after {
+  mix-blend-mode: difference;
+  top: 0%;
+}
+
+/* line 265, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #skills nav div::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 100%;
+  left: 0;
+  opacity: 0.75;
+  transition: top ease-out 250ms;
+  z-index: 0;
+}
+
+/* line 283, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #skills nav div:hover {
+  padding: 5px;
+  border: solid 5px;
+}
+
+/* line 290, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+
+/* line 300, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio > * {
+  width: 75%;
+}
+
+/* line 304, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #search {
+  display: flex;
+  position: relative;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  padding-bottom: 5px;
+  border-bottom: solid white 2px;
+}
+
+/* line 315, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #search * {
+  margin-left: 4px;
+}
+
+/* line 319, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #search .searchBox {
+  position: relative;
+  flex-grow: 1;
+}
+
+/* line 324, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #search .searchBox input {
+  all: unset;
+  width: 100%;
+  padding: 5px;
+}
+
+/* line 330, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #search .searchBox input:focus ~ .suggestions, body #portfolio #search .searchBox .suggestions:hover {
+  display: block !important;
+}
+
+/* line 333, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #search .searchBox input:focus ~ img {
+  right: 0;
+}
+
+/* line 336, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #search .searchBox .suggestions {
+  display: none !important;
+  position: absolute;
+}
+
+/* line 338, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #search .searchBox .suggestions > div {
+  background-color: #002137;
+  padding: 5px 10px;
+  transform: translate(-10px, 0px);
+  color: white;
+  cursor: pointer;
+}
+
+/* line 349, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #search .searchBox .suggestions > div b {
+  margin: 0;
+}
+
+/* line 353, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #search .searchBox .suggestions > div:hover {
+  background-color: white;
+  color: #00111c;
+}
+
+/* line 360, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #search .searchBox img {
+  z-index: -1;
+  position: absolute;
+  height: 28.4px;
+  width: 28.4px;
+  top: 0;
+  right: calc(100% - 28.4px);
+  transition: right 500ms;
+}
+
+@media only screen and (max-width: 460px) {
+  /* line 377, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+  body #portfolio #columns {
+    display: block !important;
+  }
+  /* line 379, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+  body #portfolio #columns > * {
+    display: none !important;
+  }
+  /* line 382, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+  body #portfolio #columns .sortBy {
+    display: inline-block !important;
+  }
+}
+
+/* line 387, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #columns {
+  display: grid;
+  grid-template-columns: auto 100px 150px;
+  column-gap: 10px;
+}
+
+/* line 392, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #columns *:not(.sortBy) {
+  width: -moz-fit-content;
+  width: fit-content;
+  cursor: pointer;
+  border-bottom: solid 2px rgba(0, 0, 0, 0);
+}
+
+/* line 400, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #columns *:not(:first-child) {
+  justify-self: center;
+  align-self: center;
+}
+
+/* line 404, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #columns *:not(.sortBy):hover, body #portfolio #columns .selected {
+  border-bottom-color: white;
+}
+
+/* line 408, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #columns .sortBy {
+  display: none;
+}
+
+@media only screen and (max-width: 460px) {
+  /* line 414, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+  body #portfolio #results > div {
+    grid-template-columns: auto auto !important;
+    grid-template-rows: 1fr 1fr auto auto !important;
+    grid-template-areas: "name name" "start update" "tag tag" "desc desc" !important;
+  }
+  /* line 425, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+  body #portfolio #results > div * {
+    align-content: center;
+    align-self: center;
+  }
+}
+
+/* line 432, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #results > div {
+  display: grid;
+  grid-template-columns: auto 100px 150px;
+  grid-template-rows: 1fr 1fr auto;
+  column-gap: 10px;
+  row-gap: 8px;
+  grid-template-areas: "name start update" "tag tag tag" "desc desc desc";
+  margin-top: 8px;
+}
+
+/* line 448, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #results > div * {
+  align-self: center;
+}
+
+/* line 452, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #results > div #start {
+  grid-area: start;
+  text-align: center;
+}
+
+/* line 456, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #results > div #update {
+  grid-area: update;
+  text-align: center;
+}
+
+/* line 460, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #results > div #desc {
+  grid-area: desc;
+}
+
+/* line 463, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #results > div #name {
+  grid-area: name;
+  width: -moz-fit-content;
+  width: fit-content;
+  font-size: 1.5em;
+  border-bottom: solid rgba(0, 0, 0, 0) 2px;
+  cursor: pointer;
+}
+
+/* line 475, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #results > div #name:hover {
+  font-style: bold;
+}
+
+/* line 479, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #results > div #name::after {
+  bottom: -5px;
+  height: 2px;
+}
+
+/* line 483, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #results > div #tags {
+  grid-area: tag;
+}
+
+/* line 486, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #results > div #tags .tag {
+  cursor: pointer;
+}
+
+/*# sourceMappingURL=index.css.map */

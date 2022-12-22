@@ -1,0 +1,119 @@
+/* line 3, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+#summary {
+  margin-top: 40px;
+}
+
+/* line 11, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+#summary #activity * {
+  padding: 0;
+}
+
+/* line 17, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+#summary #activity #update::before {
+  content: "- ";
+}
+
+/* line 24, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+#summary a.repo::before {
+  content: "Repo: ";
+}
+
+/* line 29, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article {
+  width: 75%;
+  margin: auto;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* line 39, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article * {
+  padding: 4px;
+}
+
+/* line 43, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article h1, article h2 {
+  margin-bottom: -5px;
+}
+
+/* line 46, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article .date {
+  font-size: small;
+}
+
+/* line 50, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article > span, article > a, article .date {
+  width: fit-content;
+  color: #d8c3e9;
+}
+
+/* line 55, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article > a::after {
+  height: 1px;
+  bottom: 0.5px;
+}
+
+/* line 67, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article .content, article summary {
+  display: block;
+  width: 90%;
+  margin: auto;
+}
+
+/* line 74, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article .content h1, article summary h1 {
+  margin-left: -10px;
+}
+
+/* line 77, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article .content h1::before, article summary h1::before {
+  content: "#";
+  margin-right: 10px;
+}
+
+/* line 74, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article .content h2, article summary h2 {
+  margin-left: -10px;
+}
+
+/* line 77, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article .content h2::before, article summary h2::before {
+  content: "##";
+  margin-right: 10px;
+}
+
+/* line 74, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article .content h3, article summary h3 {
+  margin-left: -10px;
+}
+
+/* line 77, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article .content h3::before, article summary h3::before {
+  content: "###";
+  margin-right: 10px;
+}
+
+/* line 74, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article .content h4, article summary h4 {
+  margin-left: -10px;
+}
+
+/* line 77, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article .content h4::before, article summary h4::before {
+  content: "####";
+  margin-right: 10px;
+}
+
+/* line 74, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article .content h5, article summary h5 {
+  margin-left: -10px;
+}
+
+/* line 77, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article .content h5::before, article summary h5::before {
+  content: "#####";
+  margin-right: 10px;
+}
+
+/*# sourceMappingURL=devlog.css.map */

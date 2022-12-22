@@ -1,1 +1,286 @@
-html{scroll-behavior:smooth}body{background-color:#00111c;display:flex;flex-direction:column;margin:0;color:white;overflow-x:hidden}body nav{display:flex !important;flex-direction:row;justify-content:center}body nav a{all:unset;display:block-inline;position:relative;padding:10px;margin-left:2px;margin-right:2px;font-size:20px;padding-bottom:10px;cursor:pointer;color:white}body nav a:hover:after{transform:scaleX(1)}body nav a:after{display:block;position:absolute;width:100%;height:3px;background-color:white;content:'';bottom:5px;left:0;transform:scaleX(0);transition:transform 250ms ease-in-out}body a{cursor:pointer}body{width:100%}body section:not(:first-child){margin-top:25px}body section:not(:first-child) h1{text-align:center}body #header{position:relative;width:100vw;height:100vh;overflow:hidden;margin:none}body #header .overlay{z-index:2;background:linear-gradient(0deg, #360361 0%, rgba(54,3,97,0.75) 50%)}body #header #starSystem{width:100%;height:100%}body #header #starSystem .star{position:absolute;border:3px solid white;background-color:white;transform-origin:50% 50%}@keyframes twinkle{from{transform:rotate(0 deg) scale(1)}50%{transform:rotate(180 deg) scale(1.2)}to{transform:rotate(360deg) scale(1)}}@keyframes loadIn{from{transform:scale(0)}to{transform:scale(1)}}body #header svg{height:100%;width:100%;position:absolute;top:0}body #header svg line{stroke:white}@media only screen and (hover: none) and (pointer: coarse){body #menu{display:flex;flex-direction:column;justify-content:flex-end !important;align-self:center;height:42px}body #menu *{margin-top:50Px}body #menu .mobile{transform:translateX(100%);display:block !important}body #menu img{transition:transform 1s;transform-origin:50% 50%}body #menu.selected{height:100%}}body #menu{position:absolute;width:100%;background-color:#360361;transform:translateY(-100%);transition:transform 1s,height 1s,padding-bottom 1s;z-index:2;padding-top:5px;overflow:hidden}body #menu *{text-align:center}body #menu .mobile{display:none;width:42px;height:42px}body #aboutMe{width:100%;height:fit-content;display:flex;flex-direction:column;justify-content:center;align-items:center}body #aboutMe>*{display:flex;justify-content:center;align-items:center;padding:10px;width:calc(50% - 10px * 2)}body #aboutMe>* .cube{width:40vw !important;height:40vw !important;position:relative;transform-style:preserve-3d;transition:transform 1000ms ease-in-out;padding:0 !important}body #aboutMe>* .cube div{width:calc(40vw - 2px) !important;height:calc(40vw - 2px) !important;position:absolute;padding:0 !important;display:flex;flex-direction:column;justify-content:center;align-items:center;border:solid white 2px;background-color:#00111c}body #aboutMe>* .cube div img{width:50%;height:auto}body #aboutMe>* .cube div text{padding:10%;width:fit-content;height:fit-content;text-align:center}body #aboutMe>* .cube .front{transform:translateZ(20vw)}body #aboutMe>* .cube .back{transform:translateZ(-20vw) scaleX(-1)}body #aboutMe>* .cube .left{transform:translateX(-20vw) rotateY(90deg) scaleX(-1)}body #aboutMe>* .cube .right{transform:translateX(20vw) rotateY(-90deg) scaleX(-1)}body #aboutMe>* .cube .up{transform:translateY(-20vw) rotateX(90deg)}body #aboutMe>* .cube .down{transform:translateY(20vw) rotateX(-90deg)}body #aboutMe>* .cube[front="front"]{transform:rotateY(0deg)}body #aboutMe>* .cube[front="back"]{transform:rotateY(180deg)}body #aboutMe>* .cube[front="left"]{transform:rotateY(90deg)}body #aboutMe>* .cube[front="right"]{transform:rotateY(270deg)}body #aboutMe>* .cube[front="up"]{transform:rotateX(-90deg)}body #aboutMe>* .cube[front="down"]{transform:rotateX(90deg)}body #skills{display:flex;flex-direction:column;justify-content:center;align-items:center}body #skills>div{width:75%;margin:30px;display:grid;grid-template-columns:repeat(auto-fill, minmax(100px, 1fr));grid-auto-columns:100px;grid-auto-rows:100px;grid-auto-flow:row dense;position:relative;overflow:hidden}body #skills>div>.skill{display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:1;background-color:#00111c;border:solid 0 white;transition:border-width ease-in-out 250ms}body #skills>div>.skill *{cursor:pointer}body #skills>div>.skill>img{width:50px;height:50px}body #skills>div>.skill>div{color:white;mix-blend-mode:difference}body #skills>div>.selected{background-color:rgba(0,0,0,0);border-style:solid}body #skills>div>.bg{position:absolute;width:100%;height:100%;z-index:0;transform:translatey(100%);animation-name:slideIn;animation-duration:500ms}@keyframes slideIn{0%{transform:translatey(100%)}90%{transform:translatey(0%)}}body #skills nav{margin-top:10px;display:flex;flex-direction:row}body #skills nav>div{position:relative;padding:10px;margin-left:2px;margin-right:2px;font-size:20px;color:white;cursor:pointer;text-align:center;overflow:hidden;z-index:1}body #skills nav>div>span{z-index:1}body #skills nav .selected::after{mix-blend-mode:difference;top:0%}body #skills nav div::after{content:"";position:absolute;width:100%;height:100%;top:100%;left:0;opacity:0.75;transition:top ease-out 250ms;z-index:0}body #skills nav div:hover{padding:5px;border:solid 5px}body #portfolio{display:flex;flex-direction:column;justify-content:center;align-items:center;height:-moz-fit-content;height:fit-content}body #portfolio>*{width:75%}body #portfolio #search{display:flex;position:relative;justify-content:flex-start;flex-wrap:wrap;padding-bottom:5px;border-bottom:solid white 2px}body #portfolio #search *{margin-left:4px}body #portfolio #search .searchBox{position:relative;flex-grow:1}body #portfolio #search .searchBox input{all:unset;width:100%;padding:5px}body #portfolio #search .searchBox input:focus ~ .suggestions,body #portfolio #search .searchBox .suggestions:hover{display:block !important}body #portfolio #search .searchBox input:focus ~ img{right:0}body #portfolio #search .searchBox .suggestions{display:none !important;position:absolute}body #portfolio #search .searchBox .suggestions>div{background-color:#002137;padding:5px 10px;transform:translate(-10px, 0px);color:white;cursor:pointer}body #portfolio #search .searchBox .suggestions>div b{margin:0}body #portfolio #search .searchBox .suggestions>div:hover{background-color:white;color:#00111c}body #portfolio #search .searchBox img{z-index:-1;position:absolute;height:28.4px;width:28.4px;top:0;right:calc(100% - 28.4px);transition:right 500ms}@media only screen and (max-width: 460px){body #portfolio #columns{display:block !important}body #portfolio #columns>*{display:none !important}body #portfolio #columns .sortBy{display:inline-block !important}}body #portfolio #columns{display:grid;grid-template-columns:auto 100px 150px;column-gap:10px}body #portfolio #columns *:not(.sortBy){width:-moz-fit-content;width:fit-content;cursor:pointer;border-bottom:solid 2px rgba(0,0,0,0)}body #portfolio #columns *:not(:first-child){justify-self:center;align-self:center}body #portfolio #columns *:not(.sortBy):hover,body #portfolio #columns .selected{border-bottom-color:white}body #portfolio #columns .sortBy{display:none}@media only screen and (max-width: 460px){body #portfolio #results>div{grid-template-columns:auto auto !important;grid-template-rows:1fr 1fr auto auto !important;grid-template-areas:"name name" "start update" "tag tag" "desc desc" !important}body #portfolio #results>div *{align-content:center;align-self:center}}body #portfolio #results>div{display:grid;grid-template-columns:auto 100px 150px;grid-template-rows:1fr 1fr auto;column-gap:10px;row-gap:8px;grid-template-areas:"name start update" "tag tag tag" "desc desc desc";margin-top:8px}body #portfolio #results>div *{align-self:center}body #portfolio #results>div #start{grid-area:start;text-align:center}body #portfolio #results>div #update{grid-area:update;text-align:center}body #portfolio #results>div #desc{grid-area:desc}body #portfolio #results>div #name{all:unset;grid-area:name;width:-moz-fit-content;width:fit-content;font-size:1.5em;border-bottom:solid rgba(0,0,0,0) 2px;cursor:pointer}body #portfolio #results>div #name:hover{font-style:bold;border-bottom:solid white 2px}body #portfolio #results>div #tags{grid-area:tag;display:flex;flex-direction:row;flex-wrap:wrap;overflow:hidden}body #portfolio #results>div #tags .tag{cursor:pointer}body #portfolio .tag{width:-moz-fit-content;width:fit-content;height:min-content;border:solid white 3px;padding:2px}body #footer{display:flex;flex-direction:column;justify-content:center;align-items:center;padding-top:25px;padding-bottom:25px;margin-top:25px;background-color:#360361}body #footer>a{all:unset;border-bottom:solid rgba(0,0,0,0) 2px;cursor:pointer}body #footer>a:hover{border-bottom:solid white 2px}body #footer>*,body #footer>a{display:flex;justify-content:center;align-items:center;width:-moz-fit-content;width:fit-content;padding-bottom:5px;margin-top:15px}body #footer>*>img,body #footer>a>img{width:30px;height:30px;margin-right:10px}.overlay{position:absolute;width:100%;height:100%;top:0;left:0}.content{display:flex;width:100%}.ball{border-radius:100%;overflow:hidden}
+/* line 3, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+html {
+  scroll-behavior: smooth;
+}
+
+/* line 7, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+a {
+  all: unset;
+  position: relative;
+  border-bottom: solid rgba(0, 0, 0, 0) 2px;
+  cursor: pointer;
+}
+
+/* line 15, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+a:hover:after {
+  transform: scaleX(1);
+}
+
+/* line 19, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+a:after {
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 3px;
+  background-color: white;
+  content: '';
+  bottom: 5px;
+  left: 0;
+  transform: scaleX(0);
+  transition: transform 250ms ease-in-out;
+}
+
+/* line 32, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body {
+  background-color: #00111c;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  color: white;
+  overflow-x: hidden;
+}
+
+/* line 41, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body nav {
+  display: flex !important;
+  flex-direction: row;
+  justify-content: center;
+}
+
+/* line 46, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body nav a {
+  display: block-inline;
+  padding: 10px;
+  margin-left: 2px;
+  margin-right: 2px;
+  font-size: 20px;
+  padding-bottom: 10px;
+  color: white;
+}
+
+/* line 57, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body nav a:hover:after {
+  transform: scaleX(1);
+}
+
+/* line 61, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body nav a:after {
+  height: 3px !important;
+  background-color: white !important;
+}
+
+/* line 67, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body {
+  width: 100%;
+}
+
+/* line 71, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body section:not(:first-child) {
+  margin-top: 25px;
+}
+
+/* line 74, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body section:not(:first-child) h1 {
+  text-align: center;
+}
+
+/* line 79, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body #header {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  margin: none;
+}
+
+/* line 87, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body #header .overlay {
+  z-index: 2;
+  background: linear-gradient(0deg, #360361 0%, rgba(54, 3, 97, 0.75) 50%);
+}
+
+/* line 99, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body #header #starSystem {
+  width: 100%;
+  height: 100%;
+}
+
+/* line 107, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body #header #starSystem .star {
+  position: absolute;
+  border: 3px solid white;
+  background-color: white;
+  transform-origin: 50% 50%;
+}
+
+@keyframes twinkle {
+  from {
+    transform: rotate(0 deg) scale(1);
+  }
+  50% {
+    transform: rotate(180 deg) scale(1.2);
+  }
+  to {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes loadIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* line 142, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body #header svg {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+}
+
+/* line 150, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body #header svg line {
+  stroke: white;
+}
+
+@media only screen and (hover: none) and (pointer: coarse) {
+  /* line 158, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+  body #menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end !important;
+    align-self: center;
+    height: 42px;
+  }
+  /* line 166, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+  body #menu * {
+    margin-top: 50Px;
+  }
+  /* line 170, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+  body #menu .mobile {
+    transform: translateX(100%);
+    display: block !important;
+  }
+  /* line 175, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+  body #menu img {
+    transition: transform 1s;
+    transform-origin: 50% 50%;
+  }
+  /* line 181, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+  body #menu.selected {
+    height: 100%;
+  }
+}
+
+/* line 186, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body #menu {
+  position: absolute;
+  width: 100%;
+  background-color: #360361;
+  transform: translateY(-100%);
+  transition: transform 1s, height 1s, padding-bottom 1s;
+  z-index: 2;
+  padding-top: 5px;
+  overflow: hidden;
+}
+
+/* line 203, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body #menu * {
+  text-align: center;
+}
+
+/* line 207, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body #menu .mobile {
+  display: none;
+  width: 42px;
+  height: 42px;
+}
+
+/* line 214, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body #footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  margin-top: 25px;
+  background-color: #360361;
+}
+
+/* line 227, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body #footer > a {
+  border-bottom: solid rgba(0, 0, 0, 0) 2px;
+}
+
+/* line 230, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body #footer > a::after {
+  height: 3px;
+  background-color: white;
+  bottom: -10px;
+}
+
+/* line 236, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body #footer > *, body #footer > a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: -moz-fit-content;
+  width: fit-content;
+  padding-bottom: 5px;
+  margin-top: 15px;
+}
+
+/* line 249, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+body #footer > * > img, body #footer > a > img {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+/* line 259, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+.overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+/* line 267, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+.content {
+  display: flex;
+  width: 100%;
+}
+
+/* line 273, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+.ball {
+  border-radius: 100%;
+  overflow: hidden;
+}
+
+/* line 278, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+#tags {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  overflow: hidden;
+  margin-top: 2.5px;
+  margin-bottom: 2.5px;
+}
+
+/* line 290, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/styles.scss */
+.tag {
+  width: -moz-fit-content;
+  width: fit-content;
+  height: min-content;
+  border: solid white 3px;
+  padding: 2px;
+  font-size: small;
+}
+
+/*# sourceMappingURL=styles.css.map */

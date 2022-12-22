@@ -1,16 +1,32 @@
-$col1 : rgb(173,60,92);
-$col2 : rgb(54,3,97);
-$col3 : rgb(223,124,60);
-
-$bg1 : rgb(0, 33, 55);
-$bg2 : rgb(0, 17, 28);
-
-@function RGBtoRGBA($col, $alpha) {
-	@return rgba(red($col), green($col), blue($col), 0.75);
-}
+@import "variables_and_functions.scss";
 
 html{
 	scroll-behavior: smooth;
+}
+
+a {
+	all: unset;
+	position: relative;
+	border-bottom: solid rgba(0,0,0,0) 2px;
+
+	cursor: pointer;
+}
+
+a:hover:after {
+	transform: scaleX(1);
+}
+
+a:after {
+	display: block;
+	position: absolute;
+	width: 100%;
+	height: 3px;
+	background-color: white;
+	content: '';
+	bottom: 5px;
+	left: 0;
+	transform: scaleX(0);
+	transition: transform 250ms ease-in-out;
 }
 
 body {
@@ -22,25 +38,18 @@ body {
 
 	overflow-x: hidden;
 
-
-
 	nav {
 		display: flex !important;
 		flex-direction: row;
 		justify-content: center;
 
 		a {
-			all: unset;
-
 			display: block-inline;
-			position: relative;
 			padding: 10px;
 			margin-left: 2px;
 			margin-right: 2px;
 			font-size: 20px;
 			padding-bottom: 10px;
-
-			cursor: pointer;
 
 			color : white;
 		}
@@ -50,22 +59,11 @@ body {
 		}
 
 		a:after {
-			display: block;
-			position: absolute;
-			width: 100%;
-			height: 3px;
-			background-color: white;
-			content: '';
-			bottom: 5px;
-			left: 0;
-			transform: scaleX(0);
-			transition: transform 250ms ease-in-out;
+			height: 3px !important;
+			background-color: white !important;
 		}
 	}
 
-	a {
-		cursor: pointer;
-	}
 	& {
 		width: 100%;
 	}
@@ -81,7 +79,7 @@ body {
 	#header {
 		position: relative;
 		
-		width: 100vw;
+		width: 100%;
 		height: 100vh;
 		overflow: hidden;
 		margin: none;
@@ -213,766 +211,6 @@ body {
 		}
 	}
 
-	#aboutMe {
-		width: 100%;
-		height: fit-content;
-
-		$padding: 10px;
-
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-
-		//cube settings
-		
-		$sideLength: 40vw;
-		$borderWidth: 2px;
-		$marginPadding: 20px;
-
-		> * {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-
-			padding: $padding;
-			width: calc(50% - #{$padding} * 2);
-
-			//https://stackoverflow.com/questions/12328259/how-do-you-strip-the-unit-from-any-number-in-sass
-			@function stripUnits($number) {
-				@return $number / ($number * 0 + 1);
-			}
-
-			//https://www.antimath.info/css/sass-sqrt-function/
-			@function sqrt($r) {
-				$x0: 1;
-				$x1: $x0;
-
-				@for $i from 1 through 10 {
-					$x1: $x0 - ($x0 * $x0 - abs($r)) / (2 * $x0);
-					$x0: $x1;
-				}
-
-				@return $x1;
-			}
-
-			//a^n
-			@function pow($a, $n) {
-				$tmp : 1;
-
-				@for $i from 1 through $n {
-					$tmp: $tmp * $a;
-				}
-
-				@return $tmp;
-			}
-		
-			.cube {
-
-				width: $sideLength !important;
-				height: $sideLength !important;
-
-				position: relative;
-				transform-style: preserve-3d;
-				transition: transform 1000ms ease-in-out;
-				padding: 0 !important;
-				
-				div {
-					width: calc(#{$sideLength} - #{$borderWidth}) !important;
-					height: calc(#{$sideLength} - #{$borderWidth}) !important;
-					position: absolute;
-					padding: 0 !important;
-					display: flex;
-					flex-direction: column;
-					justify-content: center;
-					align-items: center;
-					border: solid white #{$borderWidth};
-					background-color: $bg2;
-
-					img {
-						width: 50%;
-						height: auto;
-					}
-
-					text {
-						padding: 10%;
-						width: fit-content;
-						height: fit-content;
-						text-align: center;
-					}
-	
-				}
-
-				.front {
-					transform: translateZ($sideLength/2);
-				}
-
-				.back {
-					transform: translateZ(-1 * $sideLength/2) scaleX(-1);
-				}
-
-				.left {
-					transform: translateX(-1 * $sideLength/2) rotateY(90deg) scaleX(-1);
-				}
-
-				.right {
-					transform: translateX($sideLength/2) rotateY(-90deg) scaleX(-1);
-				}
-
-				.up {
-					transform: translateY(-1 * $sideLength/2) rotateX(90deg);
-				}
-
-				.down {
-					transform: translateY($sideLength/2) rotateX(-90deg);
-				}
-			}
-
-			.cube[front="front"] {
-				transform : rotateY(0deg);
-			}
-			.cube[front="back"] {
-				transform : rotateY(180deg);
-			}
-			.cube[front="left"] {
-				transform : rotateY(90deg);
-			}
-			.cube[front="right"] {
-				transform : rotateY(270deg);
-			}
-			.cube[front="up"] {
-				transform : rotateX(-90deg);
-			}
-			.cube[front="down"] {
-				transform : rotateX(90deg);
-			}
-		}
-	}
-
-	#skills {
-		display: flex;
-		flex-direction: column;
-
-		justify-content: center;
-		align-items: center;
-
-		> div{
-
-			$outlineWidth: 5px;
-
-			width: 75%;
-
-			margin: 30px;
-
-			$sideLength: 100px;
-
-			display: grid;
-
-			grid-template-columns: repeat(auto-fill, minmax($sideLength, 1fr));
-			grid-auto-columns: $sideLength;
-			grid-auto-rows: $sideLength;
-
-			//grid-gap: $outlineWidth;
-
-			grid-auto-flow: row dense;
-
-			position: relative;
-
-			overflow: hidden;
-
-			> .skill {
-				// width: calc(100% - $outlineWidth);
-				// height: calc(100% - $outlineWidth);
-
-				display: flex;
-				flex-direction: column;
-
-				justify-content: center;
-				align-items: center;
-
-				z-index: 1;
-
-				background-color: $bg2;
-
-				border: solid 0 white;
-				
-				transition: border-width ease-in-out 250ms;
-
-				* {
-					cursor: pointer;
-				}
-
-				> img {
-					width: $sideLength * 0.50;
-					height: $sideLength * 0.50;
-				}
-	
-				> div {
-					color: white;
-					mix-blend-mode: difference;
-				}
-			}
-
-			> .selected {
-				background-color: rgba(0,0,0,0);
-				border-style: solid;
-			}
-
-			> .bg {
-				position: absolute;
-
-				width: 100%;
-				height: 100%;
-
-				z-index: 0;
-
-				transform: translatey(100%);
-
-				animation-name: slideIn;
-				animation-duration: 500ms;
-			}
-
-			@keyframes slideIn {
-				0% {
-					transform: translatey(100%);
-				}
-				90% {
-					transform: translatey(0%);
-				}
-			}
-		}
-		
-		nav {
-			margin-top: 10px;
-			display: flex;
-			flex-direction: row;
-			> div {
-				position: relative;
-
-				padding: 10px;
-				margin-left: 2px;
-				margin-right: 2px;
-
-				font-size: 20px;
-
-				color: white;
-				//mix-blend-mode: difference;
-
-				cursor: pointer;
-
-				text-align: center;
-
-				overflow: hidden;
-				z-index: 1;
-				> span {
-					z-index: 1;
-
-				}
-			}
-
-			.selected::after {
-				mix-blend-mode: difference;
-				top: 0%;
-			}
-			div::after {
-				content: "";
-
-				position: absolute;
-
-				width: 100%;
-				height: 100%;
-
-				top: 100%;
-				left: 0;
-
-				opacity: 0.75;
-
-				transition: top ease-out 250ms;
-
-				z-index: 0;
-			}
-
-			div:hover{
-				padding: 5px;
-				border: solid 5px;
-			}
-		}
-
-
-		*{
-		// $whiteSpace: 5vw;
-		
-		// width: 100vw;
-		// height: fit-content;
-
-		// margin: 10px $whiteSpace;
-
-		// position: relative;
-		// .ballSystem {
-		// 	$ballRadius: 50px;
-		// 	$ballBorder: 3px;
-
-		// 	width: 100vw-$whiteSpace*2;
-		// 	height: 90vh;
-
-		// 	position: relative;
-
-		// 	border: solid white 2px;
-
-		// 	* {
-		// 		position: absolute;
-		// 	}
-
-		// 	.container {
-		// 		height: 100%;
-		// 		width: 100%;
-		// 		svg {
-		// 			height: 100%;
-		// 			width: 100%;
-					
-		// 			line {
-		// 				stroke: white;
-		// 			}
-		// 		}
-		// 	}
-			
-		// 	.ball {
-		// 		width: calc((#{$ballRadius} - #{$ballBorder}) * 2);
-		// 		height: calc((#{$ballRadius} - #{$ballBorder}) * 2);
-		// 		border: #{$ballBorder} solid white;
-
-		// 		background-color: $bg2;
-
-		// 		display: flex;
-		// 		justify-content: center;
-		// 		align-items: center;
-
-		// 		img{
-		// 			width: 80%;
-		// 			height: auto;
-		// 		}
-		// 	}
-
-		// 	p {
-		// 		left: 50%;
-		// 		transform: translate(-50%, 0%);
-	
-		// 		display: block;
-		// 		position: absolute;
-	
-		// 		opacity: 1;
-	
-		// 		transition: opacity 10s cubic-bezier(1, 0, 1, 0);
-		// 	}
-			
-		// 	//desktop veiw
-		// 	@media screen and (min-width: 768px) {
-				
-		// 		content: "Click ";
-		// 	}
-			
-		// 	//tablet & mobile veiw
-		// 	@media screen and (max-width: 768px) {
-		// 		content: "Tap ";
-		// 	}
-		// }
-
-		// .ballSystem:hover {
-		// 	p {
-		// 		opacity: 0;
-		// 		transition: opacity 500ms cubic-bezier(0, 1, 0.5, 1);
-		// 	}
-		// }
-		
-		// .infoBox {
-		// 	position: absolute;
-		// 	overflow: hidden;
-
-		// 	background-color: $bg2;
-
-		// 	translate: transform ease-in-out 2s;
-
-		// 	//desktop veiw
-		// 	@media screen and (min-width: 768px) {
-		// 		$paddingHeight: 4vh;
-		// 		$paddingWidth: 4vw;
-
-		// 		$width: 50%;
-		// 		$height: 80%;
-				
-		// 		display: none;
-
-		// 		//display: none;
-		// 		width: $width;
-		// 		height: $height;
-	
-		// 		padding-left: $paddingWidth;
-		// 		padding-right: $paddingWidth;
-	
-		// 		padding-top: $paddingHeight;
-		// 		padding-bottom: 20px;
-
-		// 		margin: 0;
-
-		// 		border: solid 1px white;
-
-		// 		left: calc(#{(100% - $width)/2} - #{$paddingWidth});
-		// 		top: calc(#{(100% - $height)/2} - #{$paddingHeight});
-		// 	}
-			
-		// 	//tablet & mobile veiw
-		// 	@media screen and (max-width: 768px) {
-		// 		$paddingHeight: 4vh;
-		// 		$paddingWidth: 10vw;
-
-		// 		position: fixed;
-
-		// 		transform: translate(-100%);
-
-		// 		width: 100vw - $paddingWidth * 2;
-		// 		height: 100%;
-	
-		// 		padding-left: $paddingWidth;
-		// 		padding-right: $paddingWidth;
-	
-		// 		padding-top: $paddingHeight;
-		// 		padding-bottom: 20px;
-		// 		//height: calc(#{100vh - $paddingHeight * 2} - 20px);
-
-		// 		top: 0px;
-		// 		left: 0px;
-		// 	}
-			 
-		// 	* {
-		// 		display: block;
-		// 	}
-
-		// 	h2 {
-
-		// 		font-size: 10vh;
-
-		// 		margin: 0;
-		// 	}
-
-		// 	.skillInfo {
-		// 		$headerSize: 10vw;
-		// 		$subTitle: 28.8vh;
-
-		// 		width: 100%;
-		// 		height: $subTitle;
-
-		// 		display: grid;
-				
-		// 		grid-template-columns: $headerSize 1fr; 
-		// 		grid-template-rows: #{$subTitle * 0.25} 1fr; 
-		// 		grid-template-areas: 
-		// 		  "Title SubTitle"
-		// 		  "Title Content"; 
-
-		// 		h3 {
-		// 			$fontSize: $headerSize * 0.60;
-
-		// 			width: fit-content;
-		// 			height: 100%;
-
-		// 			margin-left: ($headerSize - $fontSize) / 2;
-		// 			margin-right: ($headerSize - $fontSize) / 2;
-
-		// 			grid-area: Title;
-
-		// 			font-size: $fontSize;
-
-		// 			writing-mode: vertical-lr;
-    	// 			text-orientation: mixed;
-
-		// 			text-align:center;
-
-		// 			transform: scale(-1);
-		// 		}
-
-		// 		h4 {
-		// 			margin: 0;
-		// 			grid-area: SubTitle;
-
-		// 			align-self: start;
-
-		// 			font-size: $subTitle * 0.25 * 0.60;
-		// 		}
-
-		// 		sub{
-		// 			grid-area: SubTitle;
-
-		// 			align-self: end;
-
-		// 			font-size: $subTitle * 0.25 * 0.25;
-		// 		}
-
-		// 		p {
-		// 			margin-bottom: 10%;
-		// 			height: 80%;
-
-		// 			grid-area: Content;
-
-		// 			align-self: start;
-
-		// 			text-overflow: ellipsis;
-		// 			overflow: hidden;
-		// 		}
-
-		// 		a {
-		// 			height: 10%;
-
-		// 			grid-area: Content;
-
-		// 			justify-self: end;
-		// 			align-self: end;
-
-		// 		}
-		// 	}
-
-		// 	nav {
-		// 		background-color: $bg2;
-		// 		a {
-		// 			width: fit-content;
-		// 		}
-		// 	}
-		// }
-
-		// .active {
-		// 	//desktop veiw
-		// 	@media screen and (min-width: 768px) {
-		// 		display: flex;
-		// 		flex-direction: column;
-		// 	}
-			
-		// 	//tablet & mobile veiw
-		// 	@media screen and (max-width: 768px) {
-		// 		transform: translate(0);
-		// 	}
-		// }
-		}
-	}
-
-	#portfolio {
-		$tagPadding: 2px;
-		$tagBorderWidth: 3px;
-
-		display: flex;
-		flex-direction: column;
-
-		justify-content: center;
-		align-items: center;
-
-		height: -moz-fit-content;
-		height: fit-content;
-
-		> * {
-			width: 75%;
-		}
-
-		#search {
-			display: flex;
-			position: relative;
-			
-			justify-content: flex-start;
-
-			flex-wrap: wrap;
-
-			padding-bottom: 5px;
-			border-bottom: solid white 2px;
-
-			* {
-				margin-left: 4px;
-			}
-
-			.searchBox{
-				position: relative;
-
-				flex-grow: 1;
-
-				input{
-					all: unset;
-					width: 100%;
-					padding: $tagPadding + $tagBorderWidth;
-				}
-
-				input:focus ~ .suggestions, .suggestions:hover{
-					display:block !important;
-				}
-				input:focus ~ img {
-					right: 0;
-				}
-				.suggestions {
-					display: none !important;
-					> div {
-						background-color: $bg1;
-
-						padding: 5px 10px;
-
-						transform: translate(-10px, 0px);
-
-						color: white;
-
-						cursor: pointer;
-
-						b {
-							margin: 0;
-						}
-					}
-					> div:hover {
-						background-color: white;
-						color: $bg2;
-					}
-					position: absolute;
-				}
-
-				img {
-					z-index: -1;
-					position: absolute;
-
-					height: 28.4px;
-					width: 28.4px;
-
-					top: 0;
-
-					right: calc(100% - 28.4px);
-
-					transition: right 500ms;
-				}
-			}
-		}
-
-		@media only screen and (max-width: 460px) {
-			#columns {
-				display: block !important;
-				> * {
-					display: none !important;
-				}
-				.sortBy {
-					display: inline-block !important;
-				}
-			}
-		}
-		#columns {
-			display: grid;
-			grid-template-columns: auto 100px 150px;
-			column-gap: 10px;
-			
-			*:not(.sortBy) {
-				width: -moz-fit-content;
-				width: fit-content;
-
-				cursor: pointer;
-
-				border-bottom: solid 2px rgba(0,0,0,0);
-			}
-			*:not(:first-child) {
-				justify-self: center;
-				align-self: center;
-			}
-			*:not(.sortBy):hover, .selected {
-				border-bottom-color: white;
-			}
-
-			.sortBy {
-				display: none;
-			}
-		}
-
-		@media only screen and (max-width: 460px) {
-			#results > div {
-				grid-template-columns: auto auto !important;
-				grid-template-rows: 1fr 1fr auto auto !important;
-
-				grid-template-areas:
-				"name name"
-				"start update"
-				"tag tag"
-				"desc desc"
-				!important;
-
-				* {
-					align-content: center;
-					align-self: center;
-				}
-			}
-		}
-
-		#results > div {
-			display: grid;
-			grid-template-columns: auto 100px 150px;
-			grid-template-rows: 1fr 1fr auto;
-
-			column-gap: 10px;
-			row-gap: 8px;
-
-			grid-template-areas:
-			"name start update"
-			"tag tag tag"
-			"desc desc desc";
-
-			margin-top: 8px;
-			//margin-top: 10px;
-
-			* {
-				align-self: center;
-			}
-
-			#start {
-				grid-area: start;
-				text-align: center;
-			}
-			#update {
-				grid-area: update;
-				text-align: center;
-			}
-			#desc {
-				grid-area: desc;
-			}
-			#name {
-				all: unset;
-
-				grid-area: name;
-
-				width: -moz-fit-content;
-				width: fit-content;
-
-				font-size: 1.5em;
-
-				border-bottom: solid rgba(0,0,0,0) 2px;
-
-				cursor: pointer;
-			}
-			#name:hover {
-				font-style: bold;
-				border-bottom: solid white 2px;
-			}
-			#tags {
-				grid-area: tag;
-
-				display: flex;
-				flex-direction: row;
-
-				flex-wrap: wrap;
-
-				overflow: hidden;
-
-				.tag {
-					cursor: pointer;
-				}
-			}
-		}
-
-		.tag {
-			width: -moz-fit-content;
-			width: fit-content;
-			height: min-content;
-			border: solid white $tagBorderWidth;
-
-			padding: $tagPadding;
-		}
-	}
-
 	#footer {
 		display: flex;
 		flex-direction: column;
@@ -987,14 +225,12 @@ body {
 		background-color: $col2;
 
 		> a {
-			all: unset;
 			border-bottom: solid rgba(0,0,0,0) 2px;
-
-			cursor: pointer;
 		}
-
-		> a:hover {
-			border-bottom: solid white 2px;
+		> a::after{
+			height: 3px;
+			background-color: white;
+			bottom: -10px;
 		}
 
 		> *, > a {
@@ -1037,4 +273,27 @@ body {
 .ball {
 	border-radius: 100%;
 	overflow: hidden;
+}
+
+#tags {
+	display: flex;
+	flex-direction: row;
+
+	flex-wrap: wrap;
+
+	overflow: hidden;
+	
+	margin-top: 2.5px;
+	margin-bottom: 2.5px;
+}
+
+.tag {
+	width: -moz-fit-content;
+	width: fit-content;
+	height: min-content;
+	border: solid white $tagBorderWidth;
+
+	padding: $tagPadding;
+
+	font-size: small;
 }
