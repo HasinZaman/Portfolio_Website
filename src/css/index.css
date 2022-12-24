@@ -426,32 +426,42 @@ body #portfolio #results > div #desc {
 }
 
 /* line 463, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #results > div #desc a {
+  font-weight: bold;
+}
+
+/* line 467, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+body #portfolio #results > div #desc a::after {
+  bottom: -2px;
+  height: 2px;
+}
+
+/* line 472, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
 body #portfolio #results > div #name {
   grid-area: name;
   width: -moz-fit-content;
   width: fit-content;
   font-size: 1.5em;
   border-bottom: solid rgba(0, 0, 0, 0) 2px;
-  cursor: pointer;
 }
 
-/* line 475, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+/* line 482, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
 body #portfolio #results > div #name:hover {
   font-style: bold;
 }
 
-/* line 479, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+/* line 486, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
 body #portfolio #results > div #name::after {
   bottom: -5px;
   height: 2px;
 }
 
-/* line 483, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+/* line 490, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
 body #portfolio #results > div #tags {
   grid-area: tag;
 }
 
-/* line 486, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
+/* line 493, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/index.scss */
 body #portfolio #results > div #tags .tag {
   cursor: pointer;
 }

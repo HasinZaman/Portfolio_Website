@@ -89,8 +89,6 @@ class ProjectList {
     constructor() {
         this.updateWait = false;
         this.callbackFunctions = [() => { this.updateWait = false; }];
-        this.timeout = undefined;
-        this.waitTime = 50;
         this._projects = [];
     }
     get keys() {
@@ -115,9 +113,16 @@ class ProjectList {
         }
         return ProjectList.instance;
     }
+    /**
+     * updateCallbackFunctions method adds a listener to the end of callback function stack
+     * @param {() => void} listener
+     */
     updateCallbackFunctions(listener) {
         this.callbackFunctions.push(listener);
     }
+    /**
+     * runCallbacks method calls and pops every closure stored in callbackFunctions
+     */
     runCallbacks() {
         let i1 = 0;
         while (0 < this.callbackFunctions.length) {
@@ -137,37 +142,35 @@ class ProjectList {
             .update(() => {
             this.updateCallbackFunctions(listener);
             if (!this.updateWait) {
-                this.timeout = setTimeout(() => {
-                    $.ajax({
-                        type: "POST",
-                        url: "get_data",
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        data: JSON.stringify(["projects"])
-                    }).done((dataRaw) => {
-                        if (dataRaw.length != 1) {
-                            throw Error("Expect one value");
+                $.ajax({
+                    type: "POST",
+                    url: "get_data",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify(["projects"])
+                }).done((dataRaw) => {
+                    if (dataRaw.length != 1) {
+                        throw Error("Expect one value");
+                    }
+                    let projectJson = JSON.parse(dataRaw[0])["data"];
+                    let tags = Tag_1.TagList.getInstance().tags;
+                    for (let i = 0; i < projectJson.length; i++) {
+                        let tmp = projectJson[i];
+                        if (tmp["Update"] == "null") {
+                            let date = new Date();
+                            let day = date.getDate();
+                            let month = date.getMonth() + 1;
+                            let year = date.getFullYear();
+                            tmp["Update"] = year + "-" + month + "-" + day;
                         }
-                        let projectJson = JSON.parse(dataRaw[0])["data"];
-                        let tags = Tag_1.TagList.getInstance().tags;
-                        for (let i = 0; i < projectJson.length; i++) {
-                            let tmp = projectJson[i];
-                            if (tmp["Update"] == "null") {
-                                let date = new Date();
-                                let day = date.getDate();
-                                let month = date.getMonth() + 1;
-                                let year = date.getFullYear();
-                                tmp["Update"] = year + "-" + month + "-" + day;
-                            }
-                            ProjectList.getInstance()
-                                .updateProject(tags.findIndex((tag) => {
-                                return tag.id == tmp["Tag"];
-                            }), new Date(tmp["Start"]), new Date(tmp["Update"]), tmp["Description"], tmp["link"]);
-                        }
-                        this.runCallbacks();
-                    });
-                }, this.waitTime);
+                        ProjectList.getInstance()
+                            .updateProject(tags.findIndex((tag) => {
+                            return tag.id == tmp["Tag"];
+                        }), new Date(tmp["Start"]), new Date(tmp["Update"]), tmp["Description"], tmp["link"]);
+                    }
+                    this.runCallbacks();
+                });
                 this.updateWait = true;
             }
         });
@@ -247,8 +250,6 @@ class TagList {
         this.lastUpdate = Date.now();
         this.updateWait = false;
         this.callbackFunctions = [() => { this.updateWait = false; }];
-        this.timeout = undefined;
-        this.waitTime = 50;
         this.tags_ = {};
         this.connections_ = [];
     }
@@ -322,9 +323,16 @@ class TagList {
     getById(id) {
         return this.tags_[id];
     }
+    /**
+     * updateCallbackFunctions method adds a listener to the end of callback function stack
+     * @param {() => void} listener
+     */
     updateCallbackFunctions(listener) {
         this.callbackFunctions.push(listener);
     }
+    /**
+     * runCallbacks method calls and pops every closure stored in callbackFunctions
+     */
     runCallbacks() {
         let i1 = 0;
         while (0 < this.callbackFunctions.length) {
@@ -342,29 +350,27 @@ class TagList {
     update(listener) {
         this.updateCallbackFunctions(listener);
         if (!this.updateWait) {
-            this.timeout = setTimeout(() => {
-                $.ajax({
-                    type: "POST",
-                    url: "get_data",
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    data: JSON.stringify(["tag", "related"])
-                }).done((dataRaw) => {
-                    if (dataRaw.length != 2) {
-                        throw Error("Expect one value");
-                    }
-                    let tagJson = JSON.parse(dataRaw[0])["data"];
-                    let connectionsJson = JSON.parse(dataRaw[1])["data"];
-                    for (let i = 0; i < tagJson.length; i++) {
-                        TagList.getInstance().updateTag(tagJson[i]["id"], tagJson[i]["colour"], tagJson[i]["symbol"], tagJson[i]["tag_type"]);
-                    }
-                    for (let i = 0; i < connectionsJson.length; i++) {
-                        TagList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"]);
-                    }
-                    this.runCallbacks();
-                });
-            }, this.waitTime);
+            $.ajax({
+                type: "POST",
+                url: "get_data",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify(["tag", "related"])
+            }).done((dataRaw) => {
+                if (dataRaw.length != 2) {
+                    throw Error("Expect one value");
+                }
+                let tagJson = JSON.parse(dataRaw[0])["data"];
+                let connectionsJson = JSON.parse(dataRaw[1])["data"];
+                for (let i = 0; i < tagJson.length; i++) {
+                    TagList.getInstance().updateTag(tagJson[i]["id"], tagJson[i]["colour"], tagJson[i]["symbol"], tagJson[i]["tag_type"]);
+                }
+                for (let i = 0; i < connectionsJson.length; i++) {
+                    TagList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"]);
+                }
+                this.runCallbacks();
+            });
             this.updateWait = true;
         }
     }
@@ -764,9 +770,13 @@ function generateProjects(projects) {
         let desc = new HTMLBuilder_1.HTMLElem("div");
         desc.get("id").push(new HTMLBuilder_1.AttrVal("desc"));
         desc.addChild(new HTMLBuilder_1.HTMLText(project.description));
+        let readMore = new HTMLBuilder_1.HTMLElem("a");
+        readMore.get("href").push(new HTMLBuilder_1.AttrVal(`\\${project.name.split(" ").join("_")}`));
+        readMore.addChild(new HTMLBuilder_1.HTMLText("read more"));
+        desc.addChild(readMore);
         let name = new HTMLBuilder_1.HTMLElem("a");
         name.get("id").push(new HTMLBuilder_1.AttrVal("name"));
-        name.get("href").push(new HTMLBuilder_1.AttrVal(project.link));
+        name.get("href").push(new HTMLBuilder_1.AttrVal(`\\${project.name.split(" ").join("_")}`));
         name.addChild(new HTMLBuilder_1.HTMLText(project.name));
         let tags = new HTMLBuilder_1.HTMLElem("div");
         tags.get("id").push(new HTMLBuilder_1.AttrVal("tags"));

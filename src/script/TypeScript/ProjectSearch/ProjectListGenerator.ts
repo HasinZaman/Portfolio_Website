@@ -60,10 +60,14 @@ function generateProjects(projects : Project[]) {
         let desc = new HTMLElem("div");
         desc.get("id").push(new AttrVal("desc"));
         desc.addChild(new HTMLText(project.description));
+        let readMore = new HTMLElem("a");
+        readMore.get("href").push(new AttrVal(`\\${project.name.split(" ").join("_")}`));
+        readMore.addChild(new HTMLText("read more"));
+        desc.addChild(readMore);
 
         let name = new HTMLElem("a");
         name.get("id").push(new AttrVal("name"));
-        name.get("href").push(new AttrVal(project.link));
+        name.get("href").push(new AttrVal(`\\${project.name.split(" ").join("_")}`));
         name.addChild(new HTMLText(project.name));
 
         let tags = new HTMLElem("div");

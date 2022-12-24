@@ -1,0 +1,10 @@
+<article>
+    <h1>{title}</h1>
+    <span class="date">{update}</span>
+    <div id="tags">
+        {tags}
+    </div>
+    <div class="content">
+        {content}
+    </div>
+</article>

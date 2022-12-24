@@ -459,6 +459,15 @@ body {
 			}
 			#desc {
 				grid-area: desc;
+
+				a {
+					font-weight: bold;
+				}
+				
+				a::after {
+					bottom: -2px;
+    				height: 2px;
+				}
 			}
 			#name {
 				grid-area: name;
@@ -469,8 +478,6 @@ body {
 				font-size: 1.5em;
 
 				border-bottom: solid rgba(0,0,0,0) 2px;
-
-				cursor: pointer;
 			}
 			#name:hover {
 				font-style: bold;
