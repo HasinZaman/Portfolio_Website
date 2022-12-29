@@ -139,12 +139,12 @@ export class ProjectList {
             this.updateCallbackFunctions(listener);
             if (!this.updateWait) {
                 $.ajax({
-                            type: "POST",
-                            url: "get_data",
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            data : JSON.stringify(["projects"])
+                    type: "POST",
+                    url: "get_data",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data : JSON.stringify(["projects"])
                 }).done((dataRaw) => {
                     if (dataRaw.length != 1) {
                         throw Error("Expect one value")
@@ -179,7 +179,19 @@ export class ProjectList {
                             );
                     }
                     this.runCallbacks();
-                });
+                }).fail(
+                    () => {
+                        setTimeout(
+                            () => {
+                                this.updateWait = false;
+
+                                ProjectList.getInstance()
+                                    .update(()=>{})
+                            },
+                            1000
+                        );  
+                    }
+                );
                 this.updateWait = true;
             }
             

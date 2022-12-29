@@ -223,7 +223,18 @@ export class TagList{
                     TagList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"])
                 }
                 this.runCallbacks();
-            })
+            }).fail(
+                () => {
+                    setTimeout(
+                        () => {
+                            this.updateWait = false;
+                            TagList.getInstance()
+                                .update(()=>{})
+                        },
+                        1000
+                    );  
+                }
+            );
             this.updateWait = true;
         }
         

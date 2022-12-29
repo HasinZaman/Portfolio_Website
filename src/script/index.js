@@ -170,6 +170,12 @@ class ProjectList {
                         }), new Date(tmp["Start"]), new Date(tmp["Update"]), tmp["Description"], tmp["link"]);
                     }
                     this.runCallbacks();
+                }).fail(() => {
+                    setTimeout(() => {
+                        this.updateWait = false;
+                        ProjectList.getInstance()
+                            .update(() => { });
+                    }, 1000);
                 });
                 this.updateWait = true;
             }
@@ -370,6 +376,12 @@ class TagList {
                     TagList.getInstance().updateConnection(connectionsJson[i]["tag_1"], connectionsJson[i]["tag_2"]);
                 }
                 this.runCallbacks();
+            }).fail(() => {
+                setTimeout(() => {
+                    this.updateWait = false;
+                    TagList.getInstance()
+                        .update(() => { });
+                }, 1000);
             });
             this.updateWait = true;
         }
