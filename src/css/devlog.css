@@ -116,4 +116,10 @@ article .content h5::before, article summary h5::before {
   margin-right: 10px;
 }
 
+/* line 85, ../../Users/hasin/Documents/Portfolio/Portfolio_Server_Not_Compiled/source/Portfolio_Website/src/style/devlog.scss */
+article img {
+  width: 100%;
+  height: auto;
+}
+
 /*# sourceMappingURL=devlog.css.map */
