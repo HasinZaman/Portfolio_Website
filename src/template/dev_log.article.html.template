@@ -1,4 +1,4 @@
-<article>
+<article id={id}>
     <h1>{title}</h1>
     <span class="date">{update}</span>
     <div id="tags">
