@@ -83,6 +83,7 @@ export class ProjectList {
     }
 
     private dataCache : String| undefined = undefined;
+    private tagCheck:boolean = false;
 
     private callbackFunctions: (()=> void)[] = [() => {this.updating = false}];
 
@@ -138,6 +139,7 @@ export class ProjectList {
         this.callbackFunctions = [() => {this.updating = false}];
     }
 
+
     /**
      * update method gets list of Skill and organizational tags from database
      * @param {() => void} listener: function that is called after database information is retrieved
@@ -145,12 +147,15 @@ export class ProjectList {
     public update(listener: () => void) {
 
         this.updateCallbackFunctions(listener);
-        
         if (!this.updating) {
+            this.tagCheck = false;
+            
             TagList.getInstance()
                 .update(
                     () => {
-                        if (!this.updating && this.dataCache != undefined) {
+                        this.tagCheck = true;
+                        
+                        if (this.tagCheck && this.dataCache != undefined) {
                             this.updateProjectList(this.dataCache);
                         }
                     }
@@ -170,7 +175,7 @@ export class ProjectList {
 
                 this.dataCache=dataRaw;
 
-                if (!TagList.getInstance().updating && this.dataCache != undefined) {
+                if (this.tagCheck && this.dataCache != undefined) {
                     this.updateProjectList(this.dataCache);
                 }
             }).fail(
@@ -224,6 +229,7 @@ export class ProjectList {
         this.runCallbacks();
 
         this.dataCache = undefined;
+        this.updating = false;
     }
 
     public updateProject(primaryTag : number, start : Date, update : Date, desc : string, link : string) {

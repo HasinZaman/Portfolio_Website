@@ -89,6 +89,7 @@ class ProjectList {
     constructor() {
         this._updating = false;
         this.dataCache = undefined;
+        this.tagCheck = false;
         this.callbackFunctions = [() => { this.updating = false; }];
         this._projects = [];
     }
@@ -147,9 +148,11 @@ class ProjectList {
     update(listener) {
         this.updateCallbackFunctions(listener);
         if (!this.updating) {
+            this.tagCheck = false;
             Tag_1.TagList.getInstance()
                 .update(() => {
-                if (!this.updating && this.dataCache != undefined) {
+                this.tagCheck = true;
+                if (this.tagCheck && this.dataCache != undefined) {
                     this.updateProjectList(this.dataCache);
                 }
             });
@@ -165,7 +168,7 @@ class ProjectList {
                     throw Error("Expect one value");
                 }
                 this.dataCache = dataRaw;
-                if (!Tag_1.TagList.getInstance().updating && this.dataCache != undefined) {
+                if (this.tagCheck && this.dataCache != undefined) {
                     this.updateProjectList(this.dataCache);
                 }
             }).fail(() => {
@@ -197,6 +200,7 @@ class ProjectList {
         }
         this.runCallbacks();
         this.dataCache = undefined;
+        this.updating = false;
     }
     updateProject(primaryTag, start, update, desc, link) {
         this._projects[primaryTag] = new Project(primaryTag, start, update, desc, link);
