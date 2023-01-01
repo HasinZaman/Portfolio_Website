@@ -143,46 +143,52 @@ export class ProjectList {
      * @param {() => void} listener: function that is called after database information is retrieved
      */
     public update(listener: () => void) {
+
         this.updateCallbackFunctions(listener);
-        TagList.getInstance()
-            .update(
-                () => {
-                    if (!this.updating && this.dataCache != undefined) {
-                        this.updateProjectList(this.dataCache);
-                    }
-                }
-            )
-
-        $.ajax({
-            type: "POST",
-            url: "get_data",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data : JSON.stringify(["projects"])
-        }).done((dataRaw) => {
-            if (dataRaw.length != 1) {
-                throw Error("Expect one value")
-            }
-
-            this.dataCache=dataRaw;
-
-            if (!TagList.getInstance().updating && this.dataCache != undefined) {
-                this.updateProjectList(this.dataCache);
-            }
-        }).fail(
-            () => {
-                setTimeout(
+        
+        if (!this.updating) {
+            TagList.getInstance()
+                .update(
                     () => {
-                        this.updating = false;
+                        if (!this.updating && this.dataCache != undefined) {
+                            this.updateProjectList(this.dataCache);
+                        }
+                    }
+                )
 
-                        ProjectList.getInstance()
-                            .update(()=>{})
-                    },
-                    1000
-                );  
-            }
-        );
+            $.ajax({
+                type: "POST",
+                url: "get_data",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data : JSON.stringify(["projects"])
+            }).done((dataRaw) => {
+                if (dataRaw.length != 1) {
+                    throw Error("Expect one value")
+                }
+
+                this.dataCache=dataRaw;
+
+                if (!TagList.getInstance().updating && this.dataCache != undefined) {
+                    this.updateProjectList(this.dataCache);
+                }
+            }).fail(
+                () => {
+                    setTimeout(
+                        () => {
+                            this.updating = false;
+
+                            ProjectList.getInstance()
+                                .update(()=>{})
+                        },
+                        1000
+                    );  
+                }
+            );
+                
+            this.updating = true;
+        }
     }
 
     private updateProjectList(dataRaw: String) {

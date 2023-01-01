@@ -146,34 +146,37 @@ class ProjectList {
      */
     update(listener) {
         this.updateCallbackFunctions(listener);
-        Tag_1.TagList.getInstance()
-            .update(() => {
-            if (!this.updating && this.dataCache != undefined) {
-                this.updateProjectList(this.dataCache);
-            }
-        });
-        $.ajax({
-            type: "POST",
-            url: "get_data",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: JSON.stringify(["projects"])
-        }).done((dataRaw) => {
-            if (dataRaw.length != 1) {
-                throw Error("Expect one value");
-            }
-            this.dataCache = dataRaw;
-            if (!Tag_1.TagList.getInstance().updating && this.dataCache != undefined) {
-                this.updateProjectList(this.dataCache);
-            }
-        }).fail(() => {
-            setTimeout(() => {
-                this.updating = false;
-                ProjectList.getInstance()
-                    .update(() => { });
-            }, 1000);
-        });
+        if (!this.updating) {
+            Tag_1.TagList.getInstance()
+                .update(() => {
+                if (!this.updating && this.dataCache != undefined) {
+                    this.updateProjectList(this.dataCache);
+                }
+            });
+            $.ajax({
+                type: "POST",
+                url: "get_data",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify(["projects"])
+            }).done((dataRaw) => {
+                if (dataRaw.length != 1) {
+                    throw Error("Expect one value");
+                }
+                this.dataCache = dataRaw;
+                if (!Tag_1.TagList.getInstance().updating && this.dataCache != undefined) {
+                    this.updateProjectList(this.dataCache);
+                }
+            }).fail(() => {
+                setTimeout(() => {
+                    this.updating = false;
+                    ProjectList.getInstance()
+                        .update(() => { });
+                }, 1000);
+            });
+            this.updating = true;
+        }
     }
     updateProjectList(dataRaw) {
         let projectJson = JSON.parse(dataRaw[0])["data"];
