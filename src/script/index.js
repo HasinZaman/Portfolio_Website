@@ -87,9 +87,16 @@ exports.Project = Project;
  */
 class ProjectList {
     constructor() {
-        this.updateWait = false;
-        this.callbackFunctions = [() => { this.updateWait = false; }];
+        this._updating = false;
+        this.dataCache = undefined;
+        this.callbackFunctions = [() => { this.updating = false; }];
         this._projects = [];
+    }
+    get updating() {
+        return this._updating;
+    }
+    set updating(val) {
+        this._updating = val;
     }
     get keys() {
         return Tag_1.TagList.getInstance().projects;
@@ -131,55 +138,62 @@ class ProjectList {
                 callback();
             }
         }
-        this.callbackFunctions = [() => { this.updateWait = false; }];
+        this.callbackFunctions = [() => { this.updating = false; }];
     }
     /**
      * update method gets list of Skill and organizational tags from database
      * @param {() => void} listener: function that is called after database information is retrieved
      */
     update(listener) {
+        this.updateCallbackFunctions(listener);
         Tag_1.TagList.getInstance()
             .update(() => {
-            this.updateCallbackFunctions(listener);
-            if (!this.updateWait) {
-                $.ajax({
-                    type: "POST",
-                    url: "get_data",
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    data: JSON.stringify(["projects"])
-                }).done((dataRaw) => {
-                    if (dataRaw.length != 1) {
-                        throw Error("Expect one value");
-                    }
-                    let projectJson = JSON.parse(dataRaw[0])["data"];
-                    let tags = Tag_1.TagList.getInstance().tags;
-                    for (let i = 0; i < projectJson.length; i++) {
-                        let tmp = projectJson[i];
-                        if (tmp["Update"] == "null") {
-                            let date = new Date();
-                            let day = date.getDate();
-                            let month = date.getMonth() + 1;
-                            let year = date.getFullYear();
-                            tmp["Update"] = year + "-" + month + "-" + day;
-                        }
-                        ProjectList.getInstance()
-                            .updateProject(tags.findIndex((tag) => {
-                            return tag.id == tmp["Tag"];
-                        }), new Date(tmp["Start"]), new Date(tmp["Update"]), tmp["Description"], tmp["link"]);
-                    }
-                    this.runCallbacks();
-                }).fail(() => {
-                    setTimeout(() => {
-                        this.updateWait = false;
-                        ProjectList.getInstance()
-                            .update(() => { });
-                    }, 1000);
-                });
-                this.updateWait = true;
+            if (!this.updating && this.dataCache != undefined) {
+                this.updateProjectList(this.dataCache);
             }
         });
+        $.ajax({
+            type: "POST",
+            url: "get_data",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(["projects"])
+        }).done((dataRaw) => {
+            if (dataRaw.length != 1) {
+                throw Error("Expect one value");
+            }
+            this.dataCache = dataRaw;
+            if (!Tag_1.TagList.getInstance().updating && this.dataCache != undefined) {
+                this.updateProjectList(this.dataCache);
+            }
+        }).fail(() => {
+            setTimeout(() => {
+                this.updating = false;
+                ProjectList.getInstance()
+                    .update(() => { });
+            }, 1000);
+        });
+    }
+    updateProjectList(dataRaw) {
+        let projectJson = JSON.parse(dataRaw[0])["data"];
+        let tags = Tag_1.TagList.getInstance().tags;
+        for (let i = 0; i < projectJson.length; i++) {
+            let tmp = projectJson[i];
+            if (tmp["Update"] == "null") {
+                let date = new Date();
+                let day = date.getDate();
+                let month = date.getMonth() + 1;
+                let year = date.getFullYear();
+                tmp["Update"] = year + "-" + month + "-" + day;
+            }
+            ProjectList.getInstance()
+                .updateProject(tags.findIndex((tag) => {
+                return tag.id == tmp["Tag"];
+            }), new Date(tmp["Start"]), new Date(tmp["Update"]), tmp["Description"], tmp["link"]);
+        }
+        this.runCallbacks();
+        this.dataCache = undefined;
     }
     updateProject(primaryTag, start, update, desc, link) {
         this._projects[primaryTag] = new Project(primaryTag, start, update, desc, link);
@@ -254,10 +268,16 @@ class TagList {
         this.keys = [];
         this.connections_ = [];
         this.lastUpdate = Date.now();
-        this.updateWait = false;
-        this.callbackFunctions = [() => { this.updateWait = false; }];
+        this._updating = false;
+        this.callbackFunctions = [() => { this.updating = false; }];
         this.tags_ = {};
         this.connections_ = [];
+    }
+    get updating() {
+        return this._updating;
+    }
+    set updating(val) {
+        this._updating = val;
     }
     /**
      * tags getter returns array of tags
@@ -347,7 +367,7 @@ class TagList {
                 callback();
             }
         }
-        this.callbackFunctions = [() => { this.updateWait = false; }];
+        this.callbackFunctions = [() => { this.updating = false; }];
     }
     /**
      * update method gets list of Tag and organizational tags from database
@@ -355,7 +375,7 @@ class TagList {
      */
     update(listener) {
         this.updateCallbackFunctions(listener);
-        if (!this.updateWait) {
+        if (!this.updating) {
             $.ajax({
                 type: "POST",
                 url: "get_data",
@@ -378,12 +398,12 @@ class TagList {
                 this.runCallbacks();
             }).fail(() => {
                 setTimeout(() => {
-                    this.updateWait = false;
+                    this.updating = false;
                     TagList.getInstance()
                         .update(() => { });
                 }, 1000);
             });
-            this.updateWait = true;
+            this.updating = true;
         }
     }
     /**
@@ -784,6 +804,7 @@ function generateProjects(projects) {
         desc.addChild(new HTMLBuilder_1.HTMLText(project.description));
         let readMore = new HTMLBuilder_1.HTMLElem("a");
         readMore.get("href").push(new HTMLBuilder_1.AttrVal(`\\${project.name.split(" ").join("_")}`));
+        readMore.addChild(new HTMLBuilder_1.HTMLElem("br"));
         readMore.addChild(new HTMLBuilder_1.HTMLText("read more"));
         desc.addChild(readMore);
         let name = new HTMLBuilder_1.HTMLElem("a");

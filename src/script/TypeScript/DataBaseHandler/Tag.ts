@@ -73,8 +73,15 @@ export class TagList{
     private connections_ : number[][] = [];
     private lastUpdate: number = Date.now();
 
-    private updateWait: boolean = false;
-    private callbackFunctions: (()=> void)[] = [() => {this.updateWait = false}];
+    private _updating: boolean = false;
+    public get updating(): boolean {
+        return this._updating;
+    }
+    private set updating(val: boolean) {
+        this._updating = val;
+    }
+
+    private callbackFunctions: (()=> void)[] = [() => {this.updating = false}];
     /**
      * tags getter returns array of tags 
      */
@@ -191,7 +198,7 @@ export class TagList{
                 callback();
             }
         }
-        this.callbackFunctions = [() => {this.updateWait = false}];
+        this.callbackFunctions = [() => {this.updating = false}];
     }
 
     /**
@@ -200,7 +207,7 @@ export class TagList{
      */
     public update(listener: () => void) {
         this.updateCallbackFunctions(listener);
-        if (!this.updateWait) {
+        if (!this.updating) {
             $.ajax({
                 type: "POST",
                 url: "get_data",
@@ -227,7 +234,7 @@ export class TagList{
                 () => {
                     setTimeout(
                         () => {
-                            this.updateWait = false;
+                            this.updating = false;
                             TagList.getInstance()
                                 .update(()=>{})
                         },
@@ -235,7 +242,7 @@ export class TagList{
                     );  
                 }
             );
-            this.updateWait = true;
+            this.updating = true;
         }
         
     }

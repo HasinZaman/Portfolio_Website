@@ -62,6 +62,7 @@ function generateProjects(projects : Project[]) {
         desc.addChild(new HTMLText(project.description));
         let readMore = new HTMLElem("a");
         readMore.get("href").push(new AttrVal(`\\${project.name.split(" ").join("_")}`));
+        readMore.addChild(new HTMLElem("br"));
         readMore.addChild(new HTMLText("read more"));
         desc.addChild(readMore);
 
